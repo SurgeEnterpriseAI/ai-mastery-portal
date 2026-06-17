@@ -34,6 +34,9 @@ A senior trainer logs in, schedules sessions, emails the class, and teaches from
 ```bash
 cd ai-mastery-portal
 npm install
+# point DATABASE_URL at a Postgres DB (Neon free tier works great):
+echo 'DATABASE_URL="postgresql://user:pass@host/db?sslmode=require"' > .env
+npx prisma db push      # create the tables
 npm run dev
 ```
 
@@ -43,10 +46,9 @@ Open **http://localhost:4321**
 - email: `trainer@surgesoftware.co.in`
 - password: `teachai2026`
 
-> No database, no external services required. Data is stored in `data/db.json` (auto-created). Emails without SMTP are saved to the in-app **Outbox** so every feature is testable immediately.
+> **Quick local DB without Postgres:** flip `provider = "postgresql"` → `"sqlite"` in `prisma/schema.prisma`, set `DATABASE_URL="file:./dev.db"`, then `npx prisma db push`. The schema is portable (arrays stored as JSON strings). Switch back to `postgresql` before deploying.
 
-### Enable real email (optional)
-Copy `.env.example` → `.env.local` and set `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` (Hostinger works out of the box). Restart `npm run dev`.
+> Without keys, the coach uses a built-in demo responder, RAG falls back to keyword search, emails go to the **Outbox**, and the paywall simulates a UPI payment — so every feature is testable. Add keys (`.env`, see `.env.example`) to go live.
 
 ---
 
@@ -109,4 +111,4 @@ Add the keys in `.env.local` (see `.env.example`) to go live.
 
 ## Tech
 
-Next.js 14 (App Router) · TypeScript · Tailwind · file-based JSON store · **@anthropic-ai/sdk** (streaming coach, adaptive thinking) · Resend/nodemailer email · Razorpay UPI payments · react-markdown. No native dependencies — installs and runs anywhere Node 18+ runs.
+Next.js 14 (App Router) · TypeScript · Tailwind · **Postgres + Prisma** (per-row writes & transactions) · **@anthropic-ai/sdk** (streaming coach) · **Voyage** embeddings (per-learner vector RAG) · Vercel KV rate limiting · Resend/nodemailer email · Razorpay UPI payments · react-markdown.

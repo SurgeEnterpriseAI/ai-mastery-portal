@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import { getSessionTrainerId } from "@/lib/auth";
-import { readDB } from "@/lib/db";
+import { getTrainer } from "@/lib/data";
 import { sendMail } from "@/lib/email";
 
 export async function POST(req: Request) {
   if (!getSessionTrainerId()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { to } = await req.json().catch(() => ({}));
-  const db = await readDB();
-  const recipient = to || db.trainer.email;
+  const recipient = to || (await getTrainer()).email;
   const { delivered } = await sendMail({
     to: [recipient],
     subject: "✅ AI Mastery Portal — test email",

@@ -18,4 +18,7 @@ jobs:
       - name: Type-check
         run: npx tsc --noEmit
       - name: Build
+        # dummy URL: force-dynamic pages don't query at build; this only satisfies client construction
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/db
         run: npm run build

@@ -1,0 +1,170 @@
+// AI Mastery Portal — production data model (Vercel Postgres / Neon).
+// Portable: String enums + Json for arrays so it also runs on SQLite for local verification.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Trainer {
+  id           String @id
+  name         String
+  email        String
+  passwordHash String
+}
+
+// Singleton (id = "app"): cohort settings + the class's live teaching cursor.
+model AppState {
+  id            String  @id
+  cohortName    String
+  startDate     String?
+  currentDay    Int
+  currentSlide  Int
+  completedDays String // JSON-encoded number[]
+  lastTaughtAt  String?
+}
+
+model Trainee {
+  id      String @id
+  name    String
+  email   String
+  addedAt String
+}
+
+model ScheduledSession {
+  id          String  @id
+  day         Int
+  date        String
+  time        String
+  title       String
+  status      String
+  invitesSent Boolean
+  createdAt   String
+}
+
+model Learner {
+  id                   String         @id
+  name                 String
+  email                String         @unique
+  passwordHash         String
+  background           String
+  goals                String
+  level                String
+  handholdingCount     Int            @default(0)
+  approved             Boolean        @default(false)
+  paid                 Boolean        @default(false)
+  plan                 String         @default("free")
+  completedDays        String // JSON-encoded number[]
+  profileEmbedding     String? // JSON-encoded number[]
+  profileEmbeddingText String?
+  createdAt            String
+  journey              JourneyEvent[]
+  coachSessions        CoachSession[]
+
+  @@index([email])
+}
+
+model JourneyEvent {
+  id        String  @id
+  learnerId String
+  learner   Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  type      String
+  day       Int?
+  summary   String
+  detail    String?
+  at        String
+
+  @@index([learnerId])
+}
+
+model CoachSession {
+  id        String        @id
+  learnerId String
+  learner   Learner       @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  title     String
+  createdAt String
+  updatedAt String
+  messages  ChatMessage[]
+
+  @@index([learnerId])
+}
+
+// One row per message — appending is a single INSERT (no whole-session rewrite → no clobber).
+model ChatMessage {
+  id        String       @id @default(cuid())
+  sessionId String
+  session   CoachSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String
+  content   String
+  at        String
+  ord       Int
+
+  @@index([sessionId])
+}
+
+model HelpTicket {
+  id             String  @id
+  learnerId      String
+  learnerName    String
+  learnerEmail   String
+  coachSessionId String?
+  question       String
+  context        String
+  status         String
+  response       String?
+  createdAt      String
+  resolvedAt     String?
+}
+
+model Payment {
+  id        String  @id
+  learnerId String
+  orderId   String  @unique
+  paymentId String?
+  amount    Int
+  currency  String
+  status    String
+  method    String?
+  provider  String
+  createdAt String
+  paidAt    String?
+}
+
+model OutboxMail {
+  id        String  @id
+  to        String // JSON-encoded string[]
+  subject   String
+  body      String
+  sentAt    String
+  delivered Boolean
+  via       String
+  kind      String
+}
+
+// Publicly-verifiable completion certificate (one per learner).
+model Certificate {
+  id              String  @id @default(cuid())
+  credentialId    String  @unique // public, shareable, unguessable
+  learnerId       String  @unique
+  learnerName     String
+  learnerEmail    String
+  cohort          String
+  daysCompleted   Int
+  capstoneTitle   String
+  capstoneSummary String // the clear one-page explanation shown on the cert + verify page
+  capstoneRaw     String // the learner's original description
+  status          String  @default("valid") // valid | revoked
+  issuedAt        String
+  revokedAt       String?
+
+  @@index([learnerId])
+}
+
+// key/value for singletons like the cached curriculum embeddings
+model Setting {
+  key   String @id
+  value String // JSON-encoded value
+}

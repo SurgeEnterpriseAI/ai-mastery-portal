@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSessionTrainerId } from "@/lib/auth";
-import { readDB } from "@/lib/db";
+import { getAppState, listTrainees, sessionsForDay } from "@/lib/data";
 import { getDay, TOTAL_DAYS } from "@/lib/curriculum";
 import { sendMail, announcementEmail } from "@/lib/email";
 
@@ -12,13 +12,13 @@ import { sendMail, announcementEmail } from "@/lib/email";
 export async function POST(req: Request) {
   if (!getSessionTrainerId()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json().catch(() => ({}));
-  const db = await readDB();
+  const { cohortName, progress } = await getAppState();
 
-  const targetDay = Number(body.day) || db.progress.currentDay;
+  const targetDay = Number(body.day) || progress.currentDay;
   if (targetDay > TOTAL_DAYS) {
     return NextResponse.json({ error: "Course complete — no next day to announce." }, { status: 400 });
   }
-  const recipients = db.trainees.map((t) => t.email);
+  const recipients = (await listTrainees()).map((t) => t.email);
   if (recipients.length === 0) {
     return NextResponse.json({ error: "Add at least one trainee first" }, { status: 400 });
   }
@@ -31,13 +31,13 @@ export async function POST(req: Request) {
     `Get ready for Day ${targetDay}: ${nextContent?.title || ""}.`;
 
   // attach the next matching scheduled session date/time if one exists
-  const upcoming = db.sessions
-    .filter((s) => s.day === targetDay && s.status !== "completed")
+  const upcoming = (await sessionsForDay(targetDay))
+    .filter((s) => s.status !== "completed")
     .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))[0];
 
   const portalUrl = `${new URL(req.url).origin}/present/${targetDay}`;
   const { subject, body: mailBody } = announcementEmail({
-    cohortName: db.cohortName,
+    cohortName,
     dayNumber: targetDay,
     dayTitle: nextContent?.title || `Day ${targetDay}`,
     teaser,

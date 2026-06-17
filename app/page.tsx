@@ -77,8 +77,9 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="mt-20 border-t border-white/10 pt-6 text-sm text-gray-500">
-        Built for trainers who want to teach AI en masse — clearly, vividly, and current to the day.
+      <footer className="mt-20 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6 text-sm text-gray-500">
+        <span>Built for trainers who want to teach AI en masse — clearly, vividly, and current to the day.</span>
+        <Link href="/verify" className="text-accent hover:underline">Verify a credential →</Link>
       </footer>
     </main>
   );

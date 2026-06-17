@@ -2,18 +2,22 @@
 
 The app is Vercel-ready: curriculum is bundled (no runtime filesystem reads), and persistence auto-switches from the local JSON file to **Vercel KV (Upstash Redis)** when its env vars are present.
 
-## 1. Provision storage (required — serverless has no writable disk)
+## 1. Provision the database (required)
 
-In the Vercel dashboard → your project → **Storage** → create a **KV / Upstash Redis** database and "Connect" it. That injects `KV_REST_API_URL` and `KV_REST_API_TOKEN` automatically. (The app also accepts `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`.)
+The app uses **Postgres via Prisma** (per-row writes, transactions). In the Vercel dashboard → your project → **Storage** → create a **Postgres** database (Neon) and "Connect" it. Set **`DATABASE_URL`** to the **direct / non-pooling** connection string (so `prisma db push` can create the tables at build time).
 
-Without KV, the app falls back to a local file and **will lose all data between requests on Vercel** — so KV is required in production.
+Tables are created automatically on the first deploy — the Vercel build command is `prisma generate && prisma db push && next build` (already set in `vercel.json`).
+
+**Optional — rate limiting:** also create a **KV / Upstash Redis** store and Connect it (injects `KV_REST_API_URL` / `KV_REST_API_TOKEN`). Without it, rate limiting falls back to per-instance memory.
 
 ## 2. Set environment variables (Project → Settings → Environment Variables)
 
 | Variable | Purpose | Needed? |
 |---|---|---|
 | `PORTAL_SECRET` | signs session cookies | strongly recommended |
-| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | persistence | **required** (auto-set by step 1) |
+| `DATABASE_URL` | Postgres (direct/non-pooling URL) | **required** (from step 1) |
+| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | rate limiting | optional (auto-set if you add KV) |
+| `TRAINER_EMAIL` / `TRAINER_PASSWORD` | seed login (avoid the public default) | recommended |
 | `ANTHROPIC_API_KEY` | the Claude coach | for the real coach |
 | `COACH_MODEL` | model override (default `claude-opus-4-8`) | optional |
 | `VOYAGE_API_KEY` | per-learner vector embeddings (RAG) | for vector RAG (else keyword fallback) |
