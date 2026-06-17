@@ -16,6 +16,9 @@ interface TicketRow {
 interface PaymentRow {
   id: string; amount: number; currency: string; status: string; provider: string; createdAt: string;
 }
+interface CertRow {
+  credentialId: string; learnerName: string; capstoneTitle: string; status: string; issuedAt: string;
+}
 
 interface InitialData {
   cohortName: string;
@@ -31,6 +34,7 @@ interface InitialData {
   learners: LearnerRow[];
   tickets: TicketRow[];
   payments: PaymentRow[];
+  certificates: CertRow[];
 }
 
 export default function TrainerDashboard({ initial }: { initial: InitialData }) {
@@ -40,7 +44,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
 
   const {
     cohortName, trainees, sessions, progress, outbox, dayMetas,
-    daysReady, totalDays, smtpConfigured, learners, tickets, payments,
+    daysReady, totalDays, smtpConfigured, learners, tickets, payments, certificates,
   } = initial;
 
   const openTickets = tickets.filter((t) => t.status === "open");
@@ -501,6 +505,49 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
               )}
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Certificates */}
+      <section className="mt-8">
+        <h3 className="text-lg font-bold text-white">🎓 Issued certificates ({certificates.length})</h3>
+        <p className="mt-0.5 text-sm text-gray-400">Every credential is publicly verifiable at <code>/verify/&lt;id&gt;</code>. Revoke to invalidate.</p>
+        <div className="mt-4 overflow-x-auto rounded-2xl border border-white/10 bg-panel/60">
+          <table className="w-full text-left text-sm">
+            <thead className="text-xs uppercase tracking-wider text-gray-400">
+              <tr className="border-b border-white/10">
+                <th className="px-4 py-3">Credential</th>
+                <th className="px-4 py-3">Holder</th>
+                <th className="px-4 py-3">Capstone</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {certificates.length === 0 && (
+                <tr><td colSpan={5} className="px-4 py-4 text-gray-500">No certificates issued yet.</td></tr>
+              )}
+              {certificates.map((c) => (
+                <tr key={c.credentialId} className="border-b border-white/5">
+                  <td className="px-4 py-3"><a href={`/verify/${c.credentialId}`} target="_blank" className="font-mono text-xs text-accent hover:underline">{c.credentialId}</a></td>
+                  <td className="px-4 py-3 text-white">{c.learnerName}</td>
+                  <td className="px-4 py-3 text-gray-300">{c.capstoneTitle}</td>
+                  <td className="px-4 py-3">
+                    {c.status === "revoked" ? <span className="text-red-400">revoked</span> : <span className="text-emerald-400">valid</span>}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() => call("/api/certificate/revoke", { credentialId: c.credentialId, revoke: c.status !== "revoked" })}
+                      disabled={busy}
+                      className="rounded-md border border-white/10 px-3 py-1.5 text-xs text-gray-300 hover:bg-white/5 disabled:opacity-50"
+                    >
+                      {c.status === "revoked" ? "Reinstate" : "Revoke"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 

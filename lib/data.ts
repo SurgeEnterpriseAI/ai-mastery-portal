@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "./auth";
 import type {
   Trainer, Trainee, Session as SchedSession, Progress, OutboxMail,
-  Learner, JourneyEvent, CoachSession, ChatMessage, HelpTicket, Payment,
+  Learner, JourneyEvent, CoachSession, ChatMessage, HelpTicket, Payment, Certificate,
 } from "./types";
 
 const g = globalThis as unknown as { prisma?: PrismaClient };
@@ -337,6 +337,63 @@ export async function unlockByOrderTx(orderId: string, opts: { paymentId?: strin
 }
 
 // ---------------------------------------------------------------------------
+// Certificates (publicly verifiable)
+// ---------------------------------------------------------------------------
+function genCredentialId(): string {
+  const raw = crypto.randomBytes(8).toString("hex").toUpperCase(); // 16 hex chars
+  return `AIM-${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8, 12)}-${raw.slice(12, 16)}`;
+}
+function mapCert(c: any): Certificate {
+  return {
+    id: c.id, credentialId: c.credentialId, learnerId: c.learnerId, learnerName: c.learnerName, learnerEmail: c.learnerEmail,
+    cohort: c.cohort, daysCompleted: c.daysCompleted, capstoneTitle: c.capstoneTitle, capstoneSummary: c.capstoneSummary,
+    capstoneRaw: c.capstoneRaw, status: c.status, issuedAt: c.issuedAt, revokedAt: c.revokedAt ?? undefined,
+  };
+}
+export async function getCertificateForLearner(learnerId: string): Promise<Certificate | null> {
+  const c = await prisma.certificate.findUnique({ where: { learnerId } });
+  return c ? mapCert(c) : null;
+}
+export async function getCertificateByCredentialId(credentialId: string): Promise<Certificate | null> {
+  const c = await prisma.certificate.findUnique({ where: { credentialId } });
+  return c ? mapCert(c) : null;
+}
+export async function issueCertificate(input: {
+  learnerId: string; learnerName: string; learnerEmail: string; cohort: string;
+  daysCompleted: number; capstoneTitle: string; capstoneSummary: string; capstoneRaw: string;
+}): Promise<Certificate> {
+  const existing = await prisma.certificate.findUnique({ where: { learnerId: input.learnerId } });
+  if (existing) return mapCert(existing);
+  // retry on the rare credentialId collision
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      const c = await prisma.certificate.create({
+        data: { id: newId("cert"), credentialId: genCredentialId(), issuedAt: new Date().toISOString(), status: "valid", ...input },
+      });
+      return mapCert(c);
+    } catch (e: any) {
+      if (e?.code === "P2002" && String(e?.meta?.target || "").includes("credentialId")) continue;
+      throw e;
+    }
+  }
+  throw new Error("Could not allocate a unique credential ID");
+}
+export async function listCertificates(): Promise<Certificate[]> {
+  return (await prisma.certificate.findMany({ orderBy: { issuedAt: "desc" } })).map(mapCert);
+}
+export async function setCertificateStatus(credentialId: string, status: "valid" | "revoked"): Promise<Certificate | null> {
+  try {
+    const c = await prisma.certificate.update({
+      where: { credentialId },
+      data: { status, revokedAt: status === "revoked" ? new Date().toISOString() : null },
+    });
+    return mapCert(c);
+  } catch {
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Outbox + settings
 // ---------------------------------------------------------------------------
 export async function addOutbox(m: OutboxMail): Promise<void> {
@@ -361,7 +418,7 @@ export async function setSetting(key: string, value: unknown): Promise<void> {
 // ---------------------------------------------------------------------------
 export async function getTrainerSnapshot() {
   await ensureSeed();
-  const [app, trainees, sessions, learners, tickets, payments, outbox] = await Promise.all([
+  const [app, trainees, sessions, learners, tickets, payments, outbox, certificates] = await Promise.all([
     prisma.appState.findUniqueOrThrow({ where: { id: APP } }),
     listTrainees(),
     listSessions(),
@@ -369,6 +426,7 @@ export async function getTrainerSnapshot() {
     prisma.helpTicket.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.payment.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.outboxMail.findMany({ orderBy: { sentAt: "desc" }, take: 12 }),
+    prisma.certificate.findMany({ orderBy: { issuedAt: "desc" } }),
   ]);
   return {
     cohortName: app.cohortName,
@@ -380,5 +438,6 @@ export async function getTrainerSnapshot() {
     learners: learners.map((l) => ({ id: l.id, name: l.name, email: l.email, plan: l.plan, paid: l.paid, handholdingCount: l.handholdingCount, goals: l.goals, createdAt: l.createdAt })),
     tickets: tickets.map(mapTicket),
     payments: payments.map((p) => ({ id: p.id, amount: p.amount, currency: p.currency, status: p.status, provider: p.provider, createdAt: p.createdAt })),
+    certificates: certificates.map((c) => ({ credentialId: c.credentialId, learnerName: c.learnerName, capstoneTitle: c.capstoneTitle, status: c.status, issuedAt: c.issuedAt })),
   };
 }

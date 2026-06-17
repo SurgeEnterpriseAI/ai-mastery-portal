@@ -32,6 +32,7 @@ export default async function TrainerPage() {
           question: t.question, context: t.context, status: t.status, response: t.response, createdAt: t.createdAt,
         })),
         payments: snap.payments,
+        certificates: snap.certificates,
       }}
     />
   );
