@@ -3,8 +3,11 @@ import { mutateDB, readDB, newId } from "@/lib/db";
 import { hashPassword, setLearnerCookie } from "@/lib/auth";
 import { sendMail, welcomeEmail } from "@/lib/email";
 import { FREE_HANDHOLDING_LIMIT, type Learner } from "@/lib/types";
+import { rateLimit, clientIp } from "@/lib/ratelimit";
 
 export async function POST(req: Request) {
+  const rl = await rateLimit(`signup:${clientIp(req)}`, 5, 60);
+  if (!rl.ok) return NextResponse.json({ error: `Too many sign-ups from this network. Try again in ${rl.retryAfter}s.` }, { status: 429 });
   const { name, email, password, background, goals, level } = await req.json().catch(() => ({}));
   if (!name || !email || !password) {
     return NextResponse.json({ error: "Name, email and password are required" }, { status: 400 });
@@ -28,6 +31,7 @@ export async function POST(req: Request) {
     approved: false,
     paid: false,
     plan: "free",
+    completedDays: [],
     journey: [
       { id: newId("jrn"), type: "signup", summary: `Joined AI Mastery`, at: new Date().toISOString() },
     ],

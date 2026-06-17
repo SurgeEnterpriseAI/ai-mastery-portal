@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentLearner, gateStatus } from "@/lib/learner";
 import { readDB } from "@/lib/db";
-import { TOTAL_DAYS } from "@/lib/curriculum";
+import { TOTAL_DAYS, getAllDayMeta } from "@/lib/curriculum";
 import { hasClaudeKey } from "@/lib/claude";
 import { isRazorpayConfigured, PRO_PRICE_PAISE, CURRENCY } from "@/lib/payments";
 import LearnDashboard from "./LearnDashboard";
@@ -32,8 +32,10 @@ export default async function LearnPage() {
           level: learner.level,
           paid: learner.paid,
           plan: learner.plan,
+          completedDays: learner.completedDays || [],
           journey: learner.journey.slice(-15).reverse(),
         },
+        dayMetas: getAllDayMeta(),
         gate: { locked: gate.locked, used: gate.used, limit: gate.limit, remaining: gate.remaining === Infinity ? null : gate.remaining },
         progress: { currentDay: db.progress.currentDay, completedDays: db.progress.completedDays },
         totalDays: TOTAL_DAYS,

@@ -10,8 +10,10 @@ interface Initial {
   learner: {
     name: string; email: string; background: string; goals: string; level: string;
     paid: boolean; plan: string;
+    completedDays: number[];
     journey: { id: string; type: string; summary: string; at: string }[];
   };
+  dayMetas: { day: number; title: string; subtitle: string }[];
   gate: { locked: boolean; used: number; limit: number; remaining: number | null };
   progress: { currentDay: number; completedDays: number[] };
   totalDays: number;
@@ -26,7 +28,20 @@ interface Initial {
 
 export default function LearnDashboard({ initial }: { initial: Initial }) {
   const router = useRouter();
-  const { learner, gate, progress, totalDays, sessions, tickets, claudeConfigured, payConfigured, price, currency } = initial;
+  const { learner, gate, progress, totalDays, sessions, tickets, claudeConfigured, payConfigured, price, currency, dayMetas } = initial;
+
+  const [completed, setCompleted] = useState<number[]>(learner.completedDays);
+  const myPct = Math.round((completed.length / totalDays) * 100);
+
+  async function toggleDay(day: number, done: boolean) {
+    setCompleted((c) => (done ? [...c, day].sort((a, b) => a - b) : c.filter((d) => d !== day)));
+    await fetch("/api/learner/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ day, done }),
+    });
+    router.refresh();
+  }
 
   const [paywall, setPaywall] = useState(false);
   const [paywallReason, setPaywallReason] = useState("");
@@ -124,6 +139,42 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
             <Markdown className="prose-slide prose-compact mt-2 text-sm text-gray-100">{rec}</Markdown>
           </div>
         )}
+      </section>
+
+      {/* Self-paced curriculum + certificate */}
+      <section className="mt-6 rounded-2xl border border-white/10 bg-panel/60 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-lg font-bold text-white">📚 Your self-paced curriculum</h3>
+            <p className="mt-0.5 text-sm text-gray-400">Work through the 20 days at your pace. Tick each off as you finish.</p>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-extrabold text-white">{completed.length}/{totalDays}</div>
+            <div className="text-xs uppercase tracking-wider text-gray-400">days done</div>
+          </div>
+        </div>
+        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-black/40">
+          <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-accent transition-all" style={{ width: `${myPct}%` }} />
+        </div>
+        {completed.length >= totalDays && (
+          <Link href="/learn/certificate" className="mt-4 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-500">
+            🎓 Get your certificate
+          </Link>
+        )}
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {dayMetas.map((d) => {
+            const done = completed.includes(d.day);
+            return (
+              <div key={d.day} className={`flex items-start gap-3 rounded-lg border p-3 ${done ? "border-emerald-500/40 bg-emerald-600/5" : "border-white/10 bg-black/20"}`}>
+                <input type="checkbox" checked={done} onChange={(e) => toggleDay(d.day, e.target.checked)} className="mt-1 h-4 w-4 accent-emerald-500" />
+                <div className="min-w-0">
+                  <div className="text-xs font-bold uppercase tracking-wider text-brand-400">Day {d.day}</div>
+                  <Link href={`/present/${d.day}`} className="block truncate text-sm font-semibold text-white hover:text-accent">{d.title}</Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </section>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
