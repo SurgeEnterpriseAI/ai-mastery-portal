@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { mutateDB, readDB, newId } from "@/lib/db";
+import { newId, getCoachSession, createTicket, getTrainer } from "@/lib/data";
 import { getCurrentLearner, pushJourney } from "@/lib/learner";
 import { sendMail, helpRequestEmail } from "@/lib/email";
-import type { HelpTicket } from "@/lib/types";
 
 export async function POST(req: Request) {
   const learner = await getCurrentLearner();
@@ -12,41 +11,42 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Please describe what you'd like help with" }, { status: 400 });
   }
 
-  const db = await readDB();
   // pull a short context from the related coaching session, if any
   let context = "(no coaching session attached)";
-  const cs = db.coachSessions.find((s) => s.id === coachSessionId && s.learnerId === learner.id);
-  if (cs) {
-    context = cs.messages
-      .slice(-4)
-      .map((m) => `${m.role === "user" ? learner.name : "Coach"}: ${m.content.slice(0, 300)}`)
-      .join("\n");
+  if (coachSessionId) {
+    const cs = await getCoachSession(coachSessionId, learner.id);
+    if (cs) {
+      context = cs.messages
+        .slice(-4)
+        .map((m) => `${m.role === "user" ? learner.name : "Coach"}: ${m.content.slice(0, 300)}`)
+        .join("\n");
+    }
   }
 
-  const ticket: HelpTicket = {
+  const q = String(question).trim();
+  await createTicket({
     id: newId("tkt"),
     learnerId: learner.id,
     learnerName: learner.name,
     learnerEmail: learner.email,
     coachSessionId: coachSessionId || undefined,
-    question: String(question).trim(),
+    question: q,
     context,
-    status: "open",
     createdAt: new Date().toISOString(),
-  };
-  await mutateDB((d) => d.tickets.unshift(ticket));
-  await pushJourney(learner.id, { type: "help_request", summary: `Requested human help: ${ticket.question.slice(0, 80)}` });
+  });
+  await pushJourney(learner.id, { type: "help_request", summary: `Requested human help: ${q.slice(0, 80)}` });
 
+  const trainer = await getTrainer();
   const portalUrl = `${new URL(req.url).origin}/trainer`;
   const { subject, body } = helpRequestEmail({
-    trainerEmail: db.trainer.email,
+    trainerEmail: trainer.email,
     learnerName: learner.name,
     learnerEmail: learner.email,
-    question: ticket.question,
+    question: q,
     context,
     portalUrl,
   });
-  const { delivered } = await sendMail({ to: [db.trainer.email], subject, body, kind: "help" });
+  const { delivered } = await sendMail({ to: [trainer.email], subject, body, kind: "help" });
 
   return NextResponse.json({
     ok: true,

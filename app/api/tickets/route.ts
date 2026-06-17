@@ -1,23 +1,15 @@
 import { NextResponse } from "next/server";
 import { getSessionTrainerId } from "@/lib/auth";
-import { mutateDB, readDB } from "@/lib/db";
+import { getTicket, resolveTicket } from "@/lib/data";
 import { sendMail } from "@/lib/email";
 
 export async function POST(req: Request) {
   if (!getSessionTrainerId()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id, response } = await req.json().catch(() => ({}));
-  const db = await readDB();
-  const ticket = db.tickets.find((t) => t.id === id);
+  const ticket = await getTicket(id);
   if (!ticket) return NextResponse.json({ error: "Ticket not found" }, { status: 404 });
 
-  await mutateDB((d) => {
-    const t = d.tickets.find((x) => x.id === id);
-    if (t) {
-      t.status = "resolved";
-      t.response = String(response || "").trim();
-      t.resolvedAt = new Date().toISOString();
-    }
-  });
+  await resolveTicket(id, String(response || "").trim());
 
   if (response && String(response).trim()) {
     const portalUrl = `${new URL(req.url).origin}/learn`;

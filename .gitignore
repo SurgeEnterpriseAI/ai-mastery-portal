@@ -6,3 +6,9 @@ out
 data/db.json
 npm-debug.log*
 .DS_Store
+
+# local prisma sqlite (verification only)
+prisma/dev.db
+*.db
+*.db-journal
+.env

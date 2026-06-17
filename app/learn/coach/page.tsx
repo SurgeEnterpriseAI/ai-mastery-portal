@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentLearner } from "@/lib/learner";
-import { readDB } from "@/lib/db";
+import { getCoachSession } from "@/lib/data";
 import CoachChat from "./CoachChat";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ export default async function CoachPage({ searchParams }: { searchParams: { s?: 
   const learner = await getCurrentLearner();
   if (!learner) redirect("/signin");
   const sessionId = searchParams.s;
-  const session = (await readDB()).coachSessions.find((s) => s.id === sessionId && s.learnerId === learner.id);
+  const session = sessionId ? await getCoachSession(sessionId, learner.id) : null;
   if (!session) {
     return (
       <main className="grid min-h-screen place-items-center px-6 text-center">
