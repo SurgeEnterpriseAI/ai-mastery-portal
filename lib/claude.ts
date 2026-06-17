@@ -90,6 +90,44 @@ export async function recommendNext(learner: Learner, currentDay: number, comple
     .trim();
 }
 
+/**
+ * Turns a learner's capstone description into a clear, professional ONE-PAGE
+ * summary that any evaluating organization can read to understand exactly what
+ * the candidate built. Third-person, evaluator-facing. Mock fallback if no key.
+ */
+export async function polishCapstone(learner: Learner, title: string, raw: string): Promise<string> {
+  if (!hasClaudeKey()) {
+    return (
+      `**${title}**\n\n` +
+      `${learner.name} completed the 20-day AI Mastery program and built the following capstone:\n\n` +
+      `${raw}\n\n` +
+      `*(This summary is shown as submitted — configure ANTHROPIC_API_KEY to auto-generate a polished evaluator-facing one-pager.)*`
+    );
+  }
+  const system =
+    `You write the official one-page capstone summary printed on a verifiable certificate of completion for the "AI Mastery" program ` +
+    `(a 20-day course from the 2017 "Attention Is All You Need" paper to the 2026 frontier: transformers, RAG, fine-tuning, agents, multimodal, reasoning models). ` +
+    `An external organization (an employer or admissions committee) will read this to evaluate the candidate, so it must be clear, concrete, and credible — NOT marketing fluff.\n\n` +
+    `Write in the THIRD PERSON about ${learner.name}. Produce ABOUT ONE PAGE of markdown with these sections:\n` +
+    `## Project — a one-line description of what was built\n` +
+    `## Problem & context — what real problem it addresses\n` +
+    `## What ${learner.name.split(" ")[0]} built — the actual product/system, concretely\n` +
+    `## Approach & AI techniques — which concepts from the course were applied (name them)\n` +
+    `## Outcome & skills demonstrated — what works, and the competencies it evidences\n\n` +
+    `Be specific and grounded ONLY in what the learner describes; do not invent features or metrics. If the description is thin, summarise honestly and note scope. Keep to ~400-550 words.`;
+  const res = await client().messages.create({
+    model: MODEL,
+    max_tokens: 1500,
+    system,
+    messages: [{ role: "user", content: `Capstone title: ${title}\n\nMy description of what I built:\n${raw}\n\nMy background: ${learner.background || "n/a"}. My goal: ${learner.goals || "n/a"}.` }],
+  });
+  return res.content
+    .filter((b): b is Anthropic.TextBlock => b.type === "text")
+    .map((b) => b.text)
+    .join("\n")
+    .trim();
+}
+
 // ---------------------------------------------------------------------------
 // Mock fallback (no API key) — keeps the product fully demoable
 // ---------------------------------------------------------------------------

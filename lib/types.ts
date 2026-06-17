@@ -167,4 +167,20 @@ export interface DB {
   payments: Payment[];
 }
 
+export interface Certificate {
+  id: string;
+  credentialId: string;
+  learnerId: string;
+  learnerName: string;
+  learnerEmail: string;
+  cohort: string;
+  daysCompleted: number;
+  capstoneTitle: string;
+  capstoneSummary: string;
+  capstoneRaw: string;
+  status: "valid" | "revoked";
+  issuedAt: string;
+  revokedAt?: string;
+}
+
 export const FREE_HANDHOLDING_LIMIT = 3;

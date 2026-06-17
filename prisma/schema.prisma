@@ -144,6 +144,25 @@ model OutboxMail {
   kind      String
 }
 
+// Publicly-verifiable completion certificate (one per learner).
+model Certificate {
+  id              String  @id @default(cuid())
+  credentialId    String  @unique // public, shareable, unguessable
+  learnerId       String  @unique
+  learnerName     String
+  learnerEmail    String
+  cohort          String
+  daysCompleted   Int
+  capstoneTitle   String
+  capstoneSummary String // the clear one-page explanation shown on the cert + verify page
+  capstoneRaw     String // the learner's original description
+  status          String  @default("valid") // valid | revoked
+  issuedAt        String
+  revokedAt       String?
+
+  @@index([learnerId])
+}
+
 // key/value for singletons like the cached curriculum embeddings
 model Setting {
   key   String @id
