@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { mutateDB, readDB, newId } from "@/lib/db";
+import { newId, learnerEmailExists, createLearner } from "@/lib/data";
 import { hashPassword, setLearnerCookie } from "@/lib/auth";
 import { sendMail, welcomeEmail } from "@/lib/email";
-import { FREE_HANDHOLDING_LIMIT, type Learner } from "@/lib/types";
+import { FREE_HANDHOLDING_LIMIT, type JourneyEvent } from "@/lib/types";
 import { rateLimit, clientIp } from "@/lib/ratelimit";
 
 export async function POST(req: Request) {
@@ -15,33 +15,28 @@ export async function POST(req: Request) {
   if (String(password).length < 6) {
     return NextResponse.json({ error: "Password must be at least 6 characters" }, { status: 400 });
   }
-  if ((await readDB()).learners.some((l) => l.email.toLowerCase() === String(email).toLowerCase())) {
+  if (await learnerEmailExists(String(email))) {
     return NextResponse.json({ error: "An account with this email already exists. Try signing in." }, { status: 409 });
   }
 
-  const learner: Learner = {
-    id: newId("lrn"),
-    name: String(name).trim(),
-    email: String(email).trim(),
-    passwordHash: hashPassword(String(password)),
-    background: String(background || "").trim(),
-    goals: String(goals || "").trim(),
-    level: ["beginner", "intermediate", "advanced"].includes(level) ? level : "",
-    handholdingCount: 0,
-    approved: false,
-    paid: false,
-    plan: "free",
-    completedDays: [],
-    journey: [
-      { id: newId("jrn"), type: "signup", summary: `Joined AI Mastery`, at: new Date().toISOString() },
-    ],
-    createdAt: new Date().toISOString(),
-  };
-  if (learner.goals) {
-    learner.journey.push({ id: newId("jrn"), type: "goal_set", summary: `Goal: ${learner.goals}`, at: new Date().toISOString() });
-  }
+  const id = newId("lrn");
+  const goalsStr = String(goals || "").trim();
+  const now = new Date().toISOString();
+  const journey: Omit<JourneyEvent, "day" | "detail">[] = [{ id: newId("jrn"), type: "signup", summary: "Joined AI Mastery", at: now }];
+  if (goalsStr) journey.push({ id: newId("jrn"), type: "goal_set", summary: `Goal: ${goalsStr}`, at: now });
 
-  await mutateDB((db) => db.learners.push(learner));
+  const learner = await createLearner(
+    {
+      id,
+      name: String(name).trim(),
+      email: String(email).trim(),
+      passwordHash: hashPassword(String(password)),
+      background: String(background || "").trim(),
+      goals: goalsStr,
+      level: ["beginner", "intermediate", "advanced"].includes(level) ? level : "",
+    },
+    journey,
+  );
   setLearnerCookie(learner.id);
 
   const portalUrl = `${new URL(req.url).origin}/learn`;

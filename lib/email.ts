@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { mutateDB, newId } from "./db";
+import { addOutbox, newId } from "./data";
 import type { OutboxMail } from "./types";
 
 interface SendArgs {
@@ -84,10 +84,7 @@ export async function sendMail({ to, subject, body, kind }: SendArgs): Promise<{
     via,
     kind,
   };
-  await mutateDB((db) => {
-    db.outbox.unshift(record);
-    if (db.outbox.length > 200) db.outbox.length = 200;
-  });
+  await addOutbox(record);
   return { delivered, via };
 }
 

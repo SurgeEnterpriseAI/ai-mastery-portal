@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentLearner, gateStatus } from "@/lib/learner";
-import { readDB } from "@/lib/db";
+import { getAppState, listCoachSessionMeta, listTicketsForLearner } from "@/lib/data";
 import { TOTAL_DAYS, getAllDayMeta } from "@/lib/curriculum";
 import { hasClaudeKey } from "@/lib/claude";
 import { isRazorpayConfigured, PRO_PRICE_PAISE, CURRENCY } from "@/lib/payments";
@@ -11,15 +11,13 @@ export const dynamic = "force-dynamic";
 export default async function LearnPage() {
   const learner = await getCurrentLearner();
   if (!learner) redirect("/signin");
-  const db = await readDB();
+  const [{ cohortName, progress }, mySessions, ticketRows] = await Promise.all([
+    getAppState(),
+    listCoachSessionMeta(learner.id),
+    listTicketsForLearner(learner.id),
+  ]);
   const gate = gateStatus(learner);
-  const mySessions = db.coachSessions
-    .filter((s) => s.learnerId === learner.id)
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .map((s) => ({ id: s.id, title: s.title, updatedAt: s.updatedAt, count: s.messages.length }));
-  const myTickets = db.tickets
-    .filter((t) => t.learnerId === learner.id)
-    .map((t) => ({ id: t.id, question: t.question, status: t.status, response: t.response, createdAt: t.createdAt }));
+  const myTickets = ticketRows.map((t) => ({ id: t.id, question: t.question, status: t.status, response: t.response, createdAt: t.createdAt }));
 
   return (
     <LearnDashboard
@@ -37,9 +35,9 @@ export default async function LearnPage() {
         },
         dayMetas: getAllDayMeta(),
         gate: { locked: gate.locked, used: gate.used, limit: gate.limit, remaining: gate.remaining === Infinity ? null : gate.remaining },
-        progress: { currentDay: db.progress.currentDay, completedDays: db.progress.completedDays },
+        progress: { currentDay: progress.currentDay, completedDays: progress.completedDays },
         totalDays: TOTAL_DAYS,
-        cohortName: db.cohortName,
+        cohortName,
         sessions: mySessions,
         tickets: myTickets,
         claudeConfigured: hasClaudeKey(),

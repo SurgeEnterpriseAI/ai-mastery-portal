@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readDB } from "@/lib/db";
+import { getTrainer } from "@/lib/data";
 import { verifyPassword, setSessionCookie } from "@/lib/auth";
 import { rateLimit, clientIp } from "@/lib/ratelimit";
 
@@ -10,13 +10,10 @@ export async function POST(req: Request) {
   if (!email || !password) {
     return NextResponse.json({ error: "Email and password required" }, { status: 400 });
   }
-  const db = await readDB();
-  if (db.trainer.email.toLowerCase() !== String(email).toLowerCase()) {
+  const trainer = await getTrainer();
+  if (trainer.email.toLowerCase() !== String(email).toLowerCase() || !verifyPassword(password, trainer.passwordHash)) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }
-  if (!verifyPassword(password, db.trainer.passwordHash)) {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-  }
-  setSessionCookie(db.trainer.id);
+  setSessionCookie(trainer.id);
   return NextResponse.json({ ok: true });
 }

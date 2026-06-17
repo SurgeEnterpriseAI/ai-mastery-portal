@@ -1,5 +1,5 @@
-import { mutateDB, readDB } from "@/lib/db";
-import { getCurrentLearner, ensureProfileEmbedding } from "@/lib/learner";
+import { getCurrentLearner, ensureProfileEmbedding, pushJourney } from "@/lib/learner";
+import { getCoachSession, getAppState, appendMessage, setSessionTitle } from "@/lib/data";
 import { rateLimit, tooMany } from "@/lib/ratelimit";
 import { streamCoachReply } from "@/lib/claude";
 import type { ChatMessage } from "@/lib/types";
@@ -18,35 +18,28 @@ export async function POST(req: Request) {
   const text = String(message || "").trim();
   if (!sessionId || !text) return new Response(JSON.stringify({ error: "sessionId and message required" }), { status: 400 });
 
-  const db = await readDB();
-  const session = db.coachSessions.find((s) => s.id === sessionId && s.learnerId === learner.id);
+  const session = await getCoachSession(sessionId, learner.id);
   if (!session) return new Response(JSON.stringify({ error: "Session not found" }), { status: 404 });
 
-  const now = new Date().toISOString();
-  const userMsg: ChatMessage = { role: "user", content: text, at: now };
+  const userMsg: ChatMessage = { role: "user", content: text, at: new Date().toISOString() };
   const history: ChatMessage[] = [...session.messages, userMsg];
+  const isFirst = session.messages.length === 0;
 
   // refresh this learner's persisted profile embedding (per-learner RAG vector)
   const enriched = await ensureProfileEmbedding(learner);
+  const { progress } = await getAppState();
 
-  // persist the user message immediately
-  await mutateDB((d) => {
-    const s = d.coachSessions.find((x) => x.id === sessionId);
-    if (s) {
-      s.messages.push(userMsg);
-      s.updatedAt = now;
-      if (s.messages.length === 1) s.title = text.slice(0, 60);
-    }
-    const l = d.learners.find((x) => x.id === learner.id);
-    if (l) l.journey.push({ id: `jrn-${now}`, type: "asked", summary: `Asked: ${text.slice(0, 80)}`, at: now });
-  });
+  // persist the user message + journey immediately (each is its own row insert)
+  await appendMessage(sessionId, "user", text);
+  if (isFirst) await setSessionTitle(sessionId, text.slice(0, 60));
+  await pushJourney(learner.id, { type: "asked", summary: `Asked: ${text.slice(0, 80)}` });
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
       let full = "";
       try {
-        for await (const chunk of streamCoachReply(enriched, db.progress.currentDay, db.progress.completedDays, history)) {
+        for await (const chunk of streamCoachReply(enriched, progress.currentDay, progress.completedDays, history)) {
           full += chunk;
           controller.enqueue(encoder.encode(chunk));
         }
@@ -55,14 +48,11 @@ export async function POST(req: Request) {
         full += msg;
         controller.enqueue(encoder.encode(msg));
       } finally {
-        const at = new Date().toISOString();
-        await mutateDB((d) => {
-          const s = d.coachSessions.find((x) => x.id === sessionId);
-          if (s) {
-            s.messages.push({ role: "assistant", content: full, at });
-            s.updatedAt = at;
-          }
-        });
+        try {
+          await appendMessage(sessionId, "assistant", full);
+        } catch (e) {
+          console.error("[coach/chat] failed to persist assistant message:", (e as Error).message);
+        }
         controller.close();
       }
     },

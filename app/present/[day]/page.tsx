@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getDay, TOTAL_DAYS } from "@/lib/curriculum";
-import { readDB } from "@/lib/db";
+import { getAppState } from "@/lib/data";
 import { getSessionTrainerId } from "@/lib/auth";
 import Presenter from "./Presenter";
 
@@ -10,7 +10,7 @@ export default async function PresentPage({ params }: { params: { day: string } 
   const dayNum = Number(params.day);
   const day = getDay(dayNum);
   const isTrainer = Boolean(getSessionTrainerId());
-  const db = await readDB();
+  const { cohortName, progress } = await getAppState();
 
   if (!day) {
     return (
@@ -29,14 +29,14 @@ export default async function PresentPage({ params }: { params: { day: string } 
     );
   }
 
-  const resumeAt = dayNum === db.progress.currentDay ? db.progress.currentSlide : 0;
+  const resumeAt = dayNum === progress.currentDay ? progress.currentSlide : 0;
 
   return (
     <Presenter
       day={day}
       isTrainer={isTrainer}
       resumeAt={resumeAt}
-      cohortName={db.cohortName}
+      cohortName={cohortName}
       totalDays={TOTAL_DAYS}
       hasNextDay={dayNum < TOTAL_DAYS && Boolean(getDay(dayNum + 1))}
     />
