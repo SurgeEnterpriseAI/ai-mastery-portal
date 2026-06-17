@@ -22,11 +22,7 @@ export default function LoginPage() {
         </div>
         <LoginForm />
         <p className="mt-6 rounded-lg bg-black/30 p-3 text-xs text-gray-400">
-          <strong className="text-gray-300">First time?</strong> Default login —
-          <br />
-          email <code className="text-accent">trainer@surgesoftware.co.in</code>
-          <br />
-          password <code className="text-accent">teachai2026</code>
+          Trainer access only. Use the credentials provided by your administrator. Forgot them? Contact your portal admin.
         </p>
       </div>
     </main>
