@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "functions": {
+    "app/api/coach/chat/route.ts": { "maxDuration": 60 },
+    "app/api/coach/recommend/route.ts": { "maxDuration": 60 }
+  }
+}

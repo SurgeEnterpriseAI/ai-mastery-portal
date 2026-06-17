@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(99, 102, 241, 0.18), transparent),
+    radial-gradient(900px 500px at -10% 20%, rgba(34, 211, 238, 0.12), transparent),
+    #0b1020;
+  color: #e5e7eb;
+  min-height: 100vh;
+}
+
+/* Rich markdown rendering used in slides and notes */
+.prose-slide h1 { font-size: 1.9rem; font-weight: 800; margin: 0.6em 0 0.4em; color: #fff; }
+.prose-slide h2 { font-size: 1.5rem; font-weight: 700; margin: 0.8em 0 0.35em; color: #c7d2fe; }
+.prose-slide h3 { font-size: 1.2rem; font-weight: 700; margin: 0.7em 0 0.3em; color: #a5b4fc; }
+.prose-slide p { margin: 0.6em 0; line-height: 1.75; font-size: 1.05rem; }
+.prose-slide ul { list-style: disc; padding-left: 1.5em; margin: 0.5em 0; }
+.prose-slide ol { list-style: decimal; padding-left: 1.5em; margin: 0.5em 0; }
+.prose-slide li { margin: 0.3em 0; line-height: 1.65; }
+.prose-slide strong { color: #fff; font-weight: 700; }
+.prose-slide em { color: #fbcfe8; }
+.prose-slide a { color: #67e8f9; text-decoration: underline; }
+.prose-slide blockquote {
+  border-left: 3px solid #6366f1;
+  padding-left: 1em;
+  margin: 0.8em 0;
+  color: #c7d2fe;
+  font-style: italic;
+}
+.prose-slide code {
+  background: #1e293b;
+  padding: 0.15em 0.4em;
+  border-radius: 0.3em;
+  font-size: 0.9em;
+  color: #7dd3fc;
+}
+.prose-slide pre {
+  background: #0a0f1f;
+  border: 1px solid #1e293b;
+  border-radius: 0.6em;
+  padding: 1em;
+  overflow-x: auto;
+  margin: 0.8em 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.prose-slide pre code { background: transparent; padding: 0; color: #cbd5e1; }
+.prose-slide table { border-collapse: collapse; margin: 0.8em 0; width: 100%; }
+.prose-slide th, .prose-slide td { border: 1px solid #334155; padding: 0.5em 0.75em; text-align: left; }
+.prose-slide th { background: #1e293b; color: #e2e8f0; }
+
+.prose-compact p { margin: 0.35em 0; line-height: 1.6; font-size: 0.95rem; }
+.prose-compact ul { list-style: disc; padding-left: 1.3em; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #2a3656; border-radius: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
