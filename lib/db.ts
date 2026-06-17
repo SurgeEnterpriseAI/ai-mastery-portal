@@ -10,9 +10,9 @@ function defaultDB(): DB {
     trainer: {
       id: "trainer-1",
       name: "Lead Trainer",
-      email: "trainer@surgesoftware.co.in",
-      // default password: "teachai2026" — change after first login
-      passwordHash: hashPassword("teachai2026"),
+      // In production set TRAINER_EMAIL / TRAINER_PASSWORD so the seed isn't the public default.
+      email: process.env.TRAINER_EMAIL || "trainer@surgesoftware.co.in",
+      passwordHash: hashPassword(process.env.TRAINER_PASSWORD || "teachai2026"),
     },
     cohortName: "AI Mastery — Cohort 1",
     startDate: null,
@@ -34,6 +34,7 @@ function migrate(db: DB): DB {
   db.tickets ||= [];
   db.payments ||= [];
   db.outbox ||= [];
+  for (const l of db.learners) l.completedDays ||= [];
   return db;
 }
 

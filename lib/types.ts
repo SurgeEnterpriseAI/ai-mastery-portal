@@ -116,6 +116,7 @@ export interface Learner {
   approved: boolean; // unlocked (auto-true after payment)
   paid: boolean;
   plan: "free" | "pro";
+  completedDays: number[]; // this learner's own self-paced completion
   journey: JourneyEvent[];
   createdAt: string;
   // per-learner vector embedding of their profile + journey (Voyage); used for RAG retrieval

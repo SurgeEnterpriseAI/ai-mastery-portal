@@ -1,5 +1,6 @@
 import { mutateDB, readDB } from "@/lib/db";
 import { getCurrentLearner, ensureProfileEmbedding } from "@/lib/learner";
+import { rateLimit, tooMany } from "@/lib/ratelimit";
 import { streamCoachReply } from "@/lib/claude";
 import type { ChatMessage } from "@/lib/types";
 
@@ -9,6 +10,9 @@ export const maxDuration = 60; // Vercel: 60s is the Hobby ceiling; Pro can rais
 export async function POST(req: Request) {
   const learner = await getCurrentLearner();
   if (!learner) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+
+  const rl = await rateLimit(`chat:${learner.id}`, 30, 60);
+  if (!rl.ok) return tooMany(rl.retryAfter);
 
   const { sessionId, message } = await req.json().catch(() => ({}));
   const text = String(message || "").trim();

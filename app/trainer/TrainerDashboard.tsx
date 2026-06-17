@@ -47,6 +47,8 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
   const paidCount = learners.filter((l) => l.paid).length;
   const revenue = payments.filter((p) => p.status === "paid").reduce((s, p) => s + p.amount, 0);
   const [ticketReply, setTicketReply] = useState<Record<string, string>>({});
+  const [pwCurrent, setPwCurrent] = useState("");
+  const [pwNext, setPwNext] = useState("");
 
   const currentDayMeta = dayMetas.find((d) => d.day === progress.currentDay);
   const pct = Math.round((progress.completedDays.length / totalDays) * 100);
@@ -373,6 +375,35 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
           >
             Send a test email
           </button>
+
+          <div className="mt-5 border-t border-white/10 pt-4">
+            <div className="text-xs font-bold uppercase tracking-wider text-gray-400">Change password</div>
+            <input
+              type="password"
+              value={pwCurrent}
+              onChange={(e) => setPwCurrent(e.target.value)}
+              placeholder="Current password"
+              className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white"
+            />
+            <input
+              type="password"
+              value={pwNext}
+              onChange={(e) => setPwNext(e.target.value)}
+              placeholder="New password (min 8 chars)"
+              className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white"
+            />
+            <button
+              onClick={async () => {
+                if (pwNext.length < 8) return flash("New password must be at least 8 characters", false);
+                const d = await call("/api/trainer/password", { current: pwCurrent, next: pwNext });
+                if (d) { setPwCurrent(""); setPwNext(""); }
+              }}
+              disabled={busy}
+              className="mt-2 w-full rounded-lg bg-brand-600 py-2 text-sm font-semibold text-white hover:bg-brand-500 disabled:opacity-50"
+            >
+              Update password
+            </button>
+          </div>
         </Panel>
 
         <Panel title="📨 Outbox" subtitle="Every invite, announcement & test — most recent first.">
