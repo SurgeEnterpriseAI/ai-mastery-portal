@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "./auth";
 import type {
   Trainer, Trainee, Session as SchedSession, Progress, OutboxMail,
-  Learner, JourneyEvent, CoachSession, ChatMessage, HelpTicket, Payment, Certificate,
+  Learner, JourneyEvent, CoachSession, ChatMessage, HelpTicket, Payment, Certificate, Lead,
 } from "./types";
 
 const g = globalThis as unknown as { prisma?: PrismaClient };
@@ -411,6 +411,61 @@ export async function getSetting(key: string): Promise<unknown | null> {
 export async function setSetting(key: string, value: unknown): Promise<void> {
   const v = JSON.stringify(value);
   await prisma.setting.upsert({ where: { key }, update: { value: v }, create: { key, value: v } });
+}
+
+// ---------------------------------------------------------------------------
+// Module A — Leads (capture + Surge cross-sell pipeline)
+// ---------------------------------------------------------------------------
+function mapLead(l: any): Lead {
+  return {
+    id: l.id, name: l.name, email: l.email, phone: l.phone, background: l.background,
+    interest: l.interest, heardFrom: l.heardFrom, source: l.source, status: l.status as Lead["status"],
+    consent: l.consent, notes: l.notes ?? undefined, learnerId: l.learnerId ?? undefined,
+    createdAt: l.createdAt, updatedAt: l.updatedAt,
+  };
+}
+export async function createLead(input: {
+  name: string; email: string; phone: string; background: string;
+  interest: string; heardFrom: string; source: string; consent: boolean;
+}): Promise<Lead> {
+  const now = new Date().toISOString();
+  const l = await prisma.lead.create({
+    data: { id: newId("lead"), status: "new", createdAt: now, updatedAt: now, ...input },
+  });
+  return mapLead(l);
+}
+export async function listLeads(source?: string): Promise<Lead[]> {
+  return (await prisma.lead.findMany({ where: source ? { source } : undefined, orderBy: { createdAt: "desc" } })).map(mapLead);
+}
+export async function getLead(id: string): Promise<Lead | null> {
+  const l = await prisma.lead.findUnique({ where: { id } });
+  return l ? mapLead(l) : null;
+}
+export async function setLeadStatus(id: string, status: Lead["status"]): Promise<Lead | null> {
+  try {
+    return mapLead(await prisma.lead.update({ where: { id }, data: { status, updatedAt: new Date().toISOString() } }));
+  } catch { return null; }
+}
+export async function setLeadNotes(id: string, notes: string): Promise<Lead | null> {
+  try {
+    return mapLead(await prisma.lead.update({ where: { id }, data: { notes, updatedAt: new Date().toISOString() } }));
+  } catch { return null; }
+}
+export async function markLeadConverted(id: string, learnerId: string | null): Promise<Lead | null> {
+  try {
+    return mapLead(await prisma.lead.update({ where: { id }, data: { status: "enrolled", learnerId, updatedAt: new Date().toISOString() } }));
+  } catch { return null; }
+}
+/** Funnel counts for the admin overview. */
+export async function leadStats(): Promise<{ total: number; bySource: Record<string, number>; byStatus: Record<string, number> }> {
+  const leads = await prisma.lead.findMany({ select: { source: true, status: true } });
+  const bySource: Record<string, number> = {};
+  const byStatus: Record<string, number> = {};
+  for (const l of leads) {
+    bySource[l.source] = (bySource[l.source] || 0) + 1;
+    byStatus[l.status] = (byStatus[l.status] || 0) + 1;
+  }
+  return { total: leads.length, bySource, byStatus };
 }
 
 // ---------------------------------------------------------------------------

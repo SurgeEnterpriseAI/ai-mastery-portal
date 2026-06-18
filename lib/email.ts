@@ -152,6 +152,42 @@ export function helpRequestEmail(args: {
   return { subject, body };
 }
 
+export function leadAckEmail(args: { name: string; portalUrl: string }) {
+  const subject = `👋 Thanks for your interest in Tensorpath`;
+  const body =
+    `Hi ${args.name || "there"},\n\n` +
+    `Thanks for reaching out about Tensorpath — our 20-day, instructor-led AI training that takes you from ` +
+    `fundamentals to building real AI applications, ending in a verifiable certificate and placement support.\n\n` +
+    `Our team will be in touch shortly. In the meantime, you can explore the program here: ${args.portalUrl}\n\n` +
+    `— The Tensorpath team`;
+  return { subject, body };
+}
+
+export function leadNotifyEmail(args: {
+  name: string; email: string; phone: string; background: string;
+  interest: string; heardFrom: string; source: string; portalUrl: string;
+}) {
+  const subject = `📥 New Tensorpath enquiry — ${args.name}${args.source === "surge_crosssell" ? " (Surge cross-sell)" : ""}`;
+  const body =
+    `A new enquiry just came in.\n\n` +
+    `👤 ${args.name}\n📧 ${args.email}\n📞 ${args.phone}\n\n` +
+    `Background: ${args.background}\nInterest: ${args.interest || "—"}\nHeard via: ${args.heardFrom || "—"}\n` +
+    `Source: ${args.source}\n\n` +
+    `Manage in the admin pipeline: ${args.portalUrl}/admin`;
+  return { subject, body };
+}
+
+export function enrollInviteEmail(args: { name: string; joinUrl: string }) {
+  const subject = `🎟️ You're invited to enroll in Tensorpath`;
+  const body =
+    `Hi ${args.name || "there"},\n\n` +
+    `Great news — you're invited to enroll in the next Tensorpath AI cohort. ` +
+    `It's free to begin, and you'll learn live with an expert trainer plus a personal AI coach.\n\n` +
+    `Enroll here to set up your account: ${args.joinUrl}\n\n` +
+    `See you inside! — The Tensorpath team`;
+  return { subject, body };
+}
+
 export function announcementEmail(args: {
   cohortName: string;
   dayNumber: number;

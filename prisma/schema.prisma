@@ -168,3 +168,26 @@ model Setting {
   key   String @id
   value String // JSON-encoded value
 }
+
+// ---------------------------------------------------------------------------
+// Module A — Lead capture & Surge cross-sell bridge
+// ---------------------------------------------------------------------------
+model Lead {
+  id         String  @id
+  name       String
+  email      String
+  phone      String
+  background String // student | working_professional | surge_track | other
+  interest   String // free text / interest area
+  heardFrom  String // "how did you hear about us"
+  source     String // surge_crosssell | organic | ...
+  status     String  @default("new") // new | contacted | enrolled | dropped
+  consent    Boolean @default(false)
+  notes      String? // admin notes
+  learnerId  String? // set once converted to a Student account
+  createdAt  String
+  updatedAt  String
+
+  @@index([source])
+  @@index([status])
+}

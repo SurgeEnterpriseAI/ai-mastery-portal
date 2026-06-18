@@ -71,7 +71,7 @@ export interface OutboxMail {
   sentAt: string;
   delivered: boolean; // true if a real transport (Resend/SMTP) accepted it
   via: "resend" | "smtp" | "outbox";
-  kind: "invite" | "announcement" | "test" | "welcome" | "payment" | "help";
+  kind: "invite" | "announcement" | "test" | "welcome" | "payment" | "help" | "lead" | "enroll";
 }
 
 // ---------------------------------------------------------------------------
@@ -181,6 +181,28 @@ export interface Certificate {
   status: "valid" | "revoked";
   issuedAt: string;
   revokedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Module A — Lead capture & Surge cross-sell bridge
+// ---------------------------------------------------------------------------
+export type LeadStatus = "new" | "contacted" | "enrolled" | "dropped";
+
+export interface Lead {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  background: string; // student | working_professional | surge_track | other
+  interest: string;
+  heardFrom: string;
+  source: string; // surge_crosssell | organic | ...
+  status: LeadStatus;
+  consent: boolean;
+  notes?: string;
+  learnerId?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const FREE_HANDHOLDING_LIMIT = 3;
