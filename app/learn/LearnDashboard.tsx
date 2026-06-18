@@ -5,6 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Markdown from "@/components/Markdown";
 import Paywall from "@/components/Paywall";
+import Tour from "@/components/Tour";
+
+const LEARN_STEPS = [
+  { title: "Welcome to your AI journey 🎓", body: "Here's how to use the portal. Three quick stops." },
+  { target: '[data-tour="ld-start"]', title: "1. Start with your AI coach", body: "Tap here to open Aria, your personal coach. Ask anything, request practice scenarios, and get hand-held through each topic." },
+  { target: '[data-tour="ld-recommend"]', title: "2. Not sure where to begin?", body: "Get a personalised next step based on your goal and progress — Aria tells you exactly what to learn next." },
+  { target: '[data-tour="ld-curriculum"]', title: "3. Work the 20 days & earn your certificate", body: "Go through the days at your pace and tick each off. Finish all 20 to claim a publicly verifiable certificate. (Inside any coaching session you can also 'Raise human help'.)" },
+];
 
 interface Initial {
   learner: {
@@ -90,6 +98,7 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
         payConfigured={payConfigured}
         reason={paywallReason}
       />
+      <Tour steps={LEARN_STEPS} storageKey="learn" />
 
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -126,23 +135,23 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
           </p>
         )}
         <div className="mt-5 flex flex-wrap gap-3">
-          <button onClick={startSession} disabled={busy} className="rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
+          <button data-tour="ld-start" onClick={startSession} disabled={busy} className="rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
             {busy ? "Starting…" : "✨ Start a coaching session"}
           </button>
-          <button onClick={getRecommendation} disabled={recLoading} className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60">
+          <button data-tour="ld-recommend" onClick={getRecommendation} disabled={recLoading} className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60">
             {recLoading ? "Thinking…" : "🧭 What should I learn next?"}
           </button>
         </div>
         {rec && (
           <div className="mt-5 rounded-xl border border-accent-200 bg-accent-50 p-4">
-            <div className="text-xs font-bold uppercase tracking-wider text-accent-700-700">🧭 Your personalised next step</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-accent-700">🧭 Your personalised next step</div>
             <Markdown className="prose-slide prose-compact mt-2 text-sm text-slate-800">{rec}</Markdown>
           </div>
         )}
       </section>
 
       {/* Self-paced curriculum + certificate */}
-      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
+      <section data-tour="ld-curriculum" className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="text-lg font-bold text-slate-900">📚 Your self-paced curriculum</h3>

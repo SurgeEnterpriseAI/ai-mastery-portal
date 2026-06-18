@@ -4,6 +4,15 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Trainee, Session, Progress, OutboxMail, DayMeta } from "@/lib/types";
+import Tour from "@/components/Tour";
+
+const TRAINER_STEPS = [
+  { title: "Your trainer console 👋", body: "Everything you need to run the cohort lives here. Quick tour of the flow." },
+  { target: '[data-tour="td-start"]', title: "Teach the live class", body: "Start or resume the class — it reopens at the exact slide you left off, and advances the cohort automatically as you finish each day." },
+  { target: '[data-tour="td-schedule"]', title: "Schedule & invite", body: "Pick a day, date and time, then email invites to your learners in one click." },
+  { target: '[data-tour="td-trainees"]', title: "Add your learners", body: "Add learners here — paste many emails at once (comma or newline separated)." },
+  { target: '[data-tour="td-curriculum"]', title: "20 ready-to-teach days", body: "Open any day to present it. Learners can also self-enrol, use the AI coach, and earn verifiable certificates you manage below. That's it!" },
+];
 
 interface LearnerRow {
   id: string; name: string; email: string; plan: string; paid: boolean;
@@ -99,6 +108,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
+      <Tour steps={TRAINER_STEPS} storageKey="trainer" />
       {toast && (
         <div
           className={`fixed left-1/2 top-6 z-50 -translate-x-1/2 rounded-lg px-5 py-3 text-sm font-medium shadow-xl ${
@@ -146,6 +156,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
               href={`/present/${progress.currentDay}`}
+              data-tour="td-start"
               className="rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700"
             >
               ▶ Start / Resume class
@@ -217,6 +228,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
               await call("/api/sessions", { day: schedDay, date: schedDate, time: schedTime });
             }}
             disabled={busy}
+            data-tour="td-schedule"
             className="mt-3 w-full rounded-lg bg-brand-600 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
           >
             + Schedule session
@@ -283,6 +295,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
               }
             }}
             disabled={busy}
+            data-tour="td-trainees"
             className="mt-3 w-full rounded-lg bg-brand-600 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
           >
             + Add trainee(s)
@@ -310,7 +323,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
       </div>
 
       {/* Curriculum browser */}
-      <section className="mt-8">
+      <section className="mt-8" data-tour="td-curriculum">
         <h3 className="text-lg font-bold text-slate-900">📚 Curriculum — 20 days</h3>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {dayMetas.map((d) => {

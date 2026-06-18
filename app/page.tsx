@@ -1,7 +1,15 @@
 import Link from "next/link";
 import { getAllDayMeta, availableDayCount, TOTAL_DAYS } from "@/lib/curriculum";
+import Tour from "@/components/Tour";
 
 export const dynamic = "force-dynamic";
+
+const HOME_STEPS = [
+  { title: "Welcome to AI Mastery 👋", body: "A 20-day journey from the 2017 Transformer paper to today's AI agents. There are two ways in — let me show you." },
+  { target: '[data-tour="learn-cta"]', title: "1. Learn with an AI coach", body: "New here and want to learn? Start here. You'll get a personal AI coach that hand-holds you through all 20 days at your own pace." },
+  { target: '[data-tour="trainer-cta"]', title: "2. Trainer login", body: "Teaching a cohort? Log in to schedule live sessions, present the ready-made slides, and email your class." },
+  { target: '[data-tour="arc"]', title: "Preview the whole journey", body: "Scroll down to see all 20 days — each is a complete, presentation-ready lesson. That's it, enjoy!" },
+];
 
 export default function Home() {
   const days = getAllDayMeta();
@@ -20,12 +28,14 @@ export default function Home() {
         <div className="flex items-center gap-2">
           <Link
             href="/login"
+            data-tour="trainer-cta"
             className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 font-semibold text-slate-700 transition hover:bg-slate-50"
           >
             Trainer Login
           </Link>
           <Link
             href="/join"
+            data-tour="learn-cta"
             className="rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white transition hover:bg-brand-700"
           >
             Learn with an AI coach →
@@ -34,7 +44,7 @@ export default function Home() {
       </header>
 
       <section className="mt-16 animate-fadein">
-        <p className="text-accent-700-700 font-semibold">A 20-day journey · From the 2017 paper to the June 2026 frontier</p>
+        <p className="text-accent-700 font-semibold">A 20-day journey · From the 2017 paper to the June 2026 frontier</p>
         <h1 className="mt-3 max-w-4xl text-5xl font-extrabold leading-tight text-slate-900">
           From <span className="text-brand-600">&ldquo;Attention Is All You Need&rdquo;</span> to the age of AI agents.
         </h1>
@@ -53,7 +63,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mt-16">
+      <section className="mt-16" data-tour="arc">
         <h2 className="text-2xl font-bold text-slate-900">The 20-day arc</h2>
         <p className="mt-1 text-slate-500">Each card is a full, presentation-ready day with speaker notes and market context.</p>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -81,6 +91,8 @@ export default function Home() {
         <span>Built for trainers who want to teach AI en masse — clearly, vividly, and current to the day.</span>
         <Link href="/verify" className="text-brand-600 hover:underline">Verify a credential →</Link>
       </footer>
+
+      <Tour steps={HOME_STEPS} storageKey="home" label="How it works" />
     </main>
   );
 }
