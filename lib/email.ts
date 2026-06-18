@@ -58,10 +58,9 @@ export async function sendMail({ to, subject, body, kind }: SendArgs): Promise<{
   let delivered = false;
   let via: OutboxMail["via"] = "outbox";
 
-  if (to.length > 0 && (await sendViaResend(to, subject, body))) {
-    delivered = true;
-    via = "resend";
-  } else if (to.length > 0) {
+  if (to.length > 0) {
+    // Prefer real SMTP (own domain) when configured — Resend's sandbox sender
+    // only delivers to the account owner, so SMTP must win when present.
     const transport = getSmtpTransport();
     if (transport) {
       try {
@@ -69,8 +68,12 @@ export async function sendMail({ to, subject, body, kind }: SendArgs): Promise<{
         delivered = true;
         via = "smtp";
       } catch (e) {
-        console.error("[email] SMTP send failed, falling back to outbox:", (e as Error).message);
+        console.error("[email] SMTP send failed, trying next transport:", (e as Error).message);
       }
+    }
+    if (!delivered && (await sendViaResend(to, subject, body))) {
+      delivered = true;
+      via = "resend";
     }
   }
 
