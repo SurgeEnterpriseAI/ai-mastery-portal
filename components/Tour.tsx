@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface TourStep {
   target?: string; // CSS selector to spotlight; omit for a centered step
@@ -19,6 +19,7 @@ export default function Tour({ steps, storageKey, label = "Take a tour" }: { ste
   const [active, setActive] = useState(false);
   const [i, setI] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
+  const prevRectRef = useRef<Rect | null>(null);
   const key = `aimp_tour_${storageKey}`;
 
   // auto-start once per browser
@@ -29,14 +30,21 @@ export default function Tour({ steps, storageKey, label = "Take a tour" }: { ste
     }
   }, [key]);
 
-  // read the target's current position without moving the page
+  // read the target's current position without moving the page.
+  // skips the state update when nothing moved, so scroll ticks don't thrash re-renders.
   const measureRect = useCallback(() => {
     const step = steps[i];
-    if (!step?.target) { setRect(null); return; }
+    if (!step?.target) { prevRectRef.current = null; setRect(null); return; }
     const el = document.querySelector(step.target) as HTMLElement | null;
-    if (!el) { setRect(null); return; }
+    if (!el) { prevRectRef.current = null; setRect(null); return; }
     const r = el.getBoundingClientRect();
-    setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+    const next = { top: r.top, left: r.left, width: r.width, height: r.height };
+    const p = prevRectRef.current;
+    if (p && Math.abs(p.top - next.top) < 0.5 && Math.abs(p.left - next.left) < 0.5 && Math.abs(p.width - next.width) < 0.5 && Math.abs(p.height - next.height) < 0.5) {
+      return; // unchanged — don't re-render
+    }
+    prevRectRef.current = next;
+    setRect(next);
   }, [i, steps]);
 
   // when the step changes, scroll the target into view once, then measure
@@ -49,18 +57,26 @@ export default function Tour({ steps, storageKey, label = "Take a tour" }: { ste
     // tall sections (taller than the viewport) align to top so the card has room;
     // everything else centers
     const block = el.getBoundingClientRect().height > window.innerHeight * 0.85 ? "start" : "center";
-    el.scrollIntoView({ behavior: "smooth", block });
-    const t = setTimeout(measureRect, 350);
-    return () => clearTimeout(t);
+    // instant (not smooth) scroll on purpose: a smooth scroll repaints the full-screen
+    // spotlight shadow on every frame, which stutters the animation into a long flicker.
+    el.scrollIntoView({ block });
+    const raf = requestAnimationFrame(measureRect);
+    return () => cancelAnimationFrame(raf);
   }, [active, i, steps, measureRect]);
 
-  // keep the spotlight aligned while the page scrolls/resizes — do NOT re-scroll
+  // keep the spotlight aligned while the page scrolls/resizes — do NOT re-scroll.
+  // throttle to one measurement per animation frame so scroll bursts don't flicker.
   useEffect(() => {
     if (!active) return;
-    const onChange = () => measureRect();
+    let raf = 0;
+    const onChange = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => { raf = 0; measureRect(); });
+    };
     window.addEventListener("resize", onChange);
     window.addEventListener("scroll", onChange, true);
     return () => {
+      if (raf) cancelAnimationFrame(raf);
       window.removeEventListener("resize", onChange);
       window.removeEventListener("scroll", onChange, true);
     };
@@ -138,7 +154,6 @@ export default function Tour({ steps, storageKey, label = "Take a tour" }: { ste
             boxShadow: "0 0 0 9999px rgba(15,23,42,0.55)",
             outline: "2px solid #2563eb",
             outlineOffset: "2px",
-            transition: "all 0.2s ease",
           }}
         />
       )}
