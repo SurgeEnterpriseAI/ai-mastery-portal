@@ -61,14 +61,13 @@ function isoDaysAgo(_n: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export async function ensureDemoContent(): Promise<void> {
-  if (demoSeeded) return;
+// Replace the curated India job-search listings (source="seed"); manual & scraped
+// openings are untouched. Called on cold-start and by the every-3-days cron.
+export async function reseedIndiaOpenings(): Promise<number> {
   await ensureCareerSeed();
   const now = new Date().toISOString();
   const roles = await prisma.jobRole.findMany({ select: { id: true, slug: true } });
   const roleId = (slug?: string) => roles.find((r) => r.slug === slug)?.id || null;
-
-  // Refresh the India job-search results each cold-start (manual/scraped untouched).
   await prisma.opening.deleteMany({ where: { source: "seed" } });
   for (const o of OPENINGS) {
     await prisma.opening.create({
@@ -79,6 +78,17 @@ export async function ensureDemoContent(): Promise<void> {
       },
     });
   }
+  return OPENINGS.length;
+}
+
+export async function ensureDemoContent(): Promise<void> {
+  if (demoSeeded) return;
+  await ensureCareerSeed();
+  const now = new Date().toISOString();
+  const roles = await prisma.jobRole.findMany({ select: { id: true, slug: true } });
+  const roleId = (slug?: string) => roles.find((r) => r.slug === slug)?.id || null;
+
+  await reseedIndiaOpenings();
 
   if ((await prisma.media.count()) === 0) {
     let order = 0;

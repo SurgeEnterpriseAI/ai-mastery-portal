@@ -50,7 +50,7 @@ export default function AdminCareers({ roles, openings }: { roles: JobRole[]; op
             <button onClick={refreshScraped} className="rounded-lg border border-brand-200 bg-brand-50 px-3 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-100">🔄 Refresh live AI openings</button>
           </div>
         </div>
-        <p className="mt-0.5 text-sm text-slate-500">Auto-refreshed daily from public job feeds; admin-added openings stay put. Public hub: <a href="/careers" className="text-brand-600 hover:underline">/careers</a>.</p>
+        <p className="mt-0.5 text-sm text-slate-500">Auto-refreshed every 3 days from public job feeds + India listings; admin-added openings stay put. Public hub: <a href="/careers" className="text-brand-600 hover:underline">/careers</a>.</p>
 
         <form onSubmit={addOpening} className="mt-4 grid gap-3 rounded-2xl border border-slate-200 bg-white p-5 sm:grid-cols-2">
           <input required value={o.title} onChange={(e) => setO({ ...o, title: e.target.value })} placeholder="Role title (e.g. LLM Engineer)" className={inp} />
