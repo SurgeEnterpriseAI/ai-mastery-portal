@@ -8,10 +8,10 @@ import Paywall from "@/components/Paywall";
 import Tour from "@/components/Tour";
 
 const LEARN_STEPS = [
-  { title: "Welcome to your AI journey 🎓", body: "Here's how to use the portal. Three quick stops." },
-  { target: '[data-tour="ld-start"]', title: "1. Start with your AI coach", body: "Tap here to open Aria, your personal coach. Ask anything, request practice scenarios, and get hand-held through each topic." },
-  { target: '[data-tour="ld-recommend"]', title: "2. Not sure where to begin?", body: "Get a personalised next step based on your goal and progress — Aria tells you exactly what to learn next." },
-  { target: '[data-tour="ld-curriculum"]', title: "3. Work the 20 days & earn your certificate", body: "Go through the days at your pace and tick each off. Finish all 20 to claim a publicly verifiable certificate. (Inside any coaching session you can also 'Raise human help'.)" },
+  { title: "Welcome to your AI journey 🎓", body: "Your trainer teaches each day live. Between classes, here's how to keep learning. Three quick stops." },
+  { target: '[data-tour="ld-start"]', title: "1. Your AI coach between classes", body: "Tap here to open Aria, your personal coach. She reinforces what your trainer covered — ask anything, request practice scenarios, and get hand-held through each topic." },
+  { target: '[data-tour="ld-recommend"]', title: "2. Not sure what to review?", body: "Get a personalised next step based on your goal and progress — Aria tells you exactly what to focus on next." },
+  { target: '[data-tour="ld-curriculum"]', title: "3. Review each day & earn your certificate", body: "After your trainer teaches a day, open it here to go through the material — that marks it done. Finish all 20 to claim a publicly verifiable certificate. (Inside any coaching session you can also 'Raise human help'.)" },
 ];
 
 interface Initial {
@@ -49,6 +49,18 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
       body: JSON.stringify({ day, done }),
     });
     router.refresh();
+  }
+
+  // Going through a day's material counts as completing it — mark it done (fire-and-forget,
+  // so the click can navigate straight to the material without waiting on the request).
+  function markReviewed(day: number) {
+    if (completed.includes(day)) return;
+    setCompleted((c) => [...c, day].sort((a, b) => a - b));
+    fetch("/api/learner/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ day, done: true }),
+    }).catch(() => {});
   }
 
   const [paywall, setPaywall] = useState(false);
@@ -125,8 +137,9 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
         <div className="text-xs uppercase tracking-widest text-brand-700">Your personal AI coach</div>
         <h1 className="mt-1 text-3xl font-extrabold text-slate-900">Aria is ready to hand-hold your learning.</h1>
         <p className="mt-2 max-w-2xl text-slate-600">
-          Ask anything, get scenarios and materials, and find out exactly what to learn next — personalised to your goal
-          of <strong className="text-slate-900">{learner.goals || "mastering AI"}</strong>. The cohort is on{" "}
+          Your trainer teaches each day live. Between classes, ask Aria anything, get scenarios and materials, and find
+          out exactly what to review next — personalised to your goal of{" "}
+          <strong className="text-slate-900">{learner.goals || "mastering AI"}</strong>. The cohort is on{" "}
           <strong className="text-slate-900">Day {progress.currentDay}</strong>.
         </p>
         {!claudeConfigured && (
@@ -154,8 +167,8 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
       <section data-tour="ld-curriculum" className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-lg font-bold text-slate-900">📚 Your self-paced curriculum</h3>
-            <p className="mt-0.5 text-sm text-slate-500">Work through the 20 days at your pace. Tick each off as you finish.</p>
+            <h3 className="text-lg font-bold text-slate-900">📚 Your course progress</h3>
+            <p className="mt-0.5 text-sm text-slate-500">Your trainer teaches each day live — open a day here to go through the material, which marks it done. You can also tick it yourself.</p>
           </div>
           <div className="text-right">
             <div className="text-2xl font-extrabold text-slate-900">{completed.length}/{totalDays}</div>
@@ -178,7 +191,7 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
                 <input type="checkbox" checked={done} onChange={(e) => toggleDay(d.day, e.target.checked)} className="mt-1 h-4 w-4 accent-emerald-500" />
                 <div className="min-w-0">
                   <div className="text-xs font-bold uppercase tracking-wider text-brand-600">Day {d.day}</div>
-                  <Link href={`/present/${d.day}`} className="block truncate text-sm font-semibold text-slate-900 hover:text-accent-700">{d.title}</Link>
+                  <Link href={`/present/${d.day}`} onClick={() => markReviewed(d.day)} className="block truncate text-sm font-semibold text-slate-900 hover:text-accent-700">{d.title}</Link>
                 </div>
               </div>
             );

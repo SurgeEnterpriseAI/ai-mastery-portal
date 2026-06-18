@@ -64,25 +64,25 @@ export async function* streamCoachReply(
   }
 }
 
-/** One-shot personalised "what should I learn next" recommendation (uses adaptive thinking). */
+/** One-shot personalised "what should I learn next" recommendation. Kept fast (no extended thinking). */
 export async function recommendNext(learner: Learner, currentDay: number, completedDays: number[]): Promise<string> {
   const ask =
     "Based on my profile, my journey so far, and where the cohort is, tell me exactly what I should focus on next and why. " +
-    "Give me 1 concrete next topic, 1 short exercise or scenario to try, and 1 thing to watch for in the 2026 market.";
+    "Give me 1 concrete next topic, 1 short exercise or scenario to try, and 1 thing to watch for in the 2026 market. Keep it tight.";
 
   if (!hasClaudeKey()) {
     return mockRecommendation(learner, currentDay);
   }
 
   const system = await buildSystem(learner, currentDay, completedDays, ask);
+  // No extended thinking here on purpose — this is a short, snappy suggestion, so we
+  // skip the deliberation latency and cap tokens to keep it responsive.
   const res = await client().messages.create({
-    model: MODEL,
-    max_tokens: 1200,
-    // adaptive thinking (Opus 4.8); cast guards against installed-SDK type drift
-    thinking: { type: "adaptive" },
+    model: process.env.RECOMMEND_MODEL || MODEL,
+    max_tokens: 700,
     system,
     messages: [{ role: "user", content: ask }],
-  } as unknown as Anthropic.MessageCreateParamsNonStreaming);
+  });
   return res.content
     .filter((b): b is Anthropic.TextBlock => b.type === "text")
     .map((b) => b.text)
