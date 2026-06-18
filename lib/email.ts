@@ -16,11 +16,14 @@ function getSmtpTransport() {
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
   if (!host || !user || !pass) return null;
+  const secure = process.env.SMTP_SECURE === "true"; // true=465/SSL, false=587/STARTTLS
   return nodemailer.createTransport({
     host,
     port: Number(process.env.SMTP_PORT || 587),
-    secure: process.env.SMTP_SECURE === "true",
+    secure,
+    requireTLS: !secure, // force STARTTLS on 587 (needed for Office 365)
     auth: { user, pass },
+    tls: { minVersion: "TLSv1.2" },
   });
 }
 
