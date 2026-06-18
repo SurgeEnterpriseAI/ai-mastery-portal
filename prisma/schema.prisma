@@ -191,3 +191,59 @@ model Lead {
   @@index([source])
   @@index([status])
 }
+
+// ---------------------------------------------------------------------------
+// Module E — Careers / Placement hub
+// ---------------------------------------------------------------------------
+model JobRole {
+  id             String @id
+  slug           String @unique
+  title          String
+  description    String
+  skills         String // JSON-encoded string[]
+  curriculumDays String // JSON-encoded number[] — days that build this role
+  level          String // entry | mid | senior
+  salaryBand     String // India band, e.g. "₹8–18 LPA"
+  demandNotes    String
+  capstoneFit    String
+  sortOrder      Int    @default(0)
+  createdAt      String
+}
+
+model Opening {
+  id          String  @id
+  roleId      String?
+  title       String
+  company     String // real or "Confidential"
+  location    String
+  mode        String // onsite | remote | hybrid
+  packageBand String
+  applyUrl    String?
+  status      String  @default("open") // open | closed
+  postedAt    String
+
+  @@index([roleId])
+  @@index([status])
+}
+
+// One per learner — their shareable, hiring-partner-facing one-pager.
+model PlacementProfile {
+  learnerId     String  @id
+  shareableSlug String  @unique
+  status        String  @default("ready") // ready | in_process | placed
+  headline      String?
+  updatedAt     String
+}
+
+model Placement {
+  id          String @id
+  learnerId   String
+  learnerName String
+  role        String
+  company     String
+  packageBand String
+  date        String
+  createdAt   String
+
+  @@index([learnerId])
+}

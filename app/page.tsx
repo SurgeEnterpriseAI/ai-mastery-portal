@@ -110,6 +110,7 @@ export default function Home() {
       <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-6 text-sm text-slate-400">
         <span>Tensorpath — upskilling professionals &amp; students on AI, end to end.</span>
         <span className="flex flex-wrap gap-4">
+          <Link href="/careers" className="text-brand-600 hover:underline">Careers & salaries</Link>
           <Link href="/ai-track" className="text-brand-600 hover:underline">On a Surge track? Add AI</Link>
           <Link href="/enquiry" className="text-brand-600 hover:underline">Talk to us</Link>
           <Link href="/verify" className="text-brand-600 hover:underline">Verify a credential</Link>

@@ -205,4 +205,56 @@ export interface Lead {
   updatedAt: string;
 }
 
+// ---------------------------------------------------------------------------
+// Module E — Careers / Placement hub
+// ---------------------------------------------------------------------------
+export interface JobRole {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  skills: string[];
+  curriculumDays: number[];
+  level: string; // entry | mid | senior
+  salaryBand: string;
+  demandNotes: string;
+  capstoneFit: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface Opening {
+  id: string;
+  roleId?: string;
+  title: string;
+  company: string;
+  location: string;
+  mode: string; // onsite | remote | hybrid
+  packageBand: string;
+  applyUrl?: string;
+  status: string; // open | closed
+  postedAt: string;
+}
+
+export type PlacementStatus = "ready" | "in_process" | "placed";
+
+export interface PlacementProfile {
+  learnerId: string;
+  shareableSlug: string;
+  status: PlacementStatus;
+  headline?: string;
+  updatedAt: string;
+}
+
+export interface Placement {
+  id: string;
+  learnerId: string;
+  learnerName: string;
+  role: string;
+  company: string;
+  packageBand: string;
+  date: string;
+  createdAt: string;
+}
+
 export const FREE_HANDHOLDING_LIMIT = 3;

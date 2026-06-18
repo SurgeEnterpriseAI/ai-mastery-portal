@@ -52,20 +52,11 @@ export default function AdminLeads({ leads: initial, stats }: { leads: Lead[]; s
   const surgeCount = stats.bySource["surge_crosssell"] || 0;
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-8">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">⚙️</div>
-          <div>
-            <div className="text-xs uppercase tracking-widest text-brand-600">Tensorpath · Admin</div>
-            <div className="text-lg font-bold text-slate-900">Lead pipeline</div>
-          </div>
-        </div>
-        <nav className="flex items-center gap-3 text-sm">
-          <Link href="/trainer" className="rounded-lg border border-slate-200 px-3 py-1.5 text-slate-600 hover:bg-slate-50">Trainer console</Link>
-          <Link href="/ai-track" className="rounded-lg border border-slate-200 px-3 py-1.5 text-slate-600 hover:bg-slate-50">Cross-sell page ↗</Link>
-        </nav>
-      </header>
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-xl font-bold text-slate-900">Lead pipeline</h2>
+        <Link href="/ai-track" className="text-sm text-brand-600 hover:underline">Cross-sell page ↗</Link>
+      </div>
 
       {/* Funnel summary */}
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -127,7 +118,7 @@ export default function AdminLeads({ leads: initial, stats }: { leads: Lead[]; s
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }
 

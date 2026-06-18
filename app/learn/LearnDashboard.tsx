@@ -128,6 +128,7 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
               {gate.remaining ?? 0} free session{gate.remaining === 1 ? "" : "s"} left
             </span>
           )}
+          <Link href="/careers" className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">💼 Careers</Link>
           <button onClick={logout} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">Log out</button>
         </div>
       </header>
