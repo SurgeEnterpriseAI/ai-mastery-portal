@@ -11,14 +11,14 @@ export default function AdminCareers({ roles, openings }: { roles: JobRole[]; op
   const roleName = Object.fromEntries(roles.map((r) => [r.id, r.title]));
 
   // ---- new opening form ----
-  const [o, setO] = useState({ title: "", company: "", location: "", mode: "onsite", packageBand: "", applyUrl: "", roleId: "" });
+  const [o, setO] = useState({ title: "", company: "", location: "", mode: "onsite", packageBand: "", applyUrl: "", roleId: "", notify: false });
   const [savingO, setSavingO] = useState(false);
   async function addOpening(e: React.FormEvent) {
     e.preventDefault();
     setSavingO(true);
     await fetch("/api/admin/openings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(o) });
     setSavingO(false);
-    setO({ title: "", company: "", location: "", mode: "onsite", packageBand: "", applyUrl: "", roleId: "" });
+    setO({ title: "", company: "", location: "", mode: "onsite", packageBand: "", applyUrl: "", roleId: "", notify: false });
     router.refresh();
   }
   async function toggleOpening(id: string, status: string) {
@@ -50,6 +50,10 @@ export default function AdminCareers({ roles, openings }: { roles: JobRole[]; op
             {roles.map((r) => <option key={r.id} value={r.id}>{r.title}</option>)}
           </select>
           <input value={o.applyUrl} onChange={(e) => setO({ ...o, applyUrl: e.target.value })} placeholder="Apply URL (optional)" className={`${inp} sm:col-span-2`} />
+          <label className="flex items-center gap-2 text-sm text-slate-600 sm:col-span-2">
+            <input type="checkbox" checked={o.notify} onChange={(e) => setO({ ...o, notify: e.target.checked })} className="h-4 w-4 accent-brand-600" />
+            Email placement-ready candidates about this opening
+          </label>
           <button disabled={savingO} className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60 sm:col-span-2">
             {savingO ? "Adding…" : "Add opening"}
           </button>

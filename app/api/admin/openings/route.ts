@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionTrainerId } from "@/lib/auth";
-import { createOpening, setOpeningStatus, deleteOpening } from "@/lib/careers";
+import { createOpening, setOpeningStatus, deleteOpening, listNotifyCandidates } from "@/lib/careers";
+import { sendMail, newOpeningEmail } from "@/lib/email";
 
 export async function POST(req: Request) {
   if (!getSessionTrainerId()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -12,7 +13,19 @@ export async function POST(req: Request) {
     mode: ["onsite", "remote", "hybrid"].includes(b.mode) ? b.mode : "onsite",
     packageBand: String(b.packageBand || ""), applyUrl: b.applyUrl ? String(b.applyUrl) : undefined,
   });
-  return NextResponse.json({ ok: true, opening });
+
+  // Module H — notify placement-ready candidates when explicitly asked.
+  let notified = 0;
+  if (b.notify) {
+    const origin = new URL(req.url).origin;
+    const candidates = await listNotifyCandidates();
+    for (const c of candidates) {
+      const m = newOpeningEmail({ name: c.name, roleTitle: opening.title, company: opening.company, portalUrl: origin });
+      await sendMail({ to: [c.email], subject: m.subject, body: m.body, kind: "announcement" });
+      notified++;
+    }
+  }
+  return NextResponse.json({ ok: true, opening, notified });
 }
 
 export async function PATCH(req: Request) {

@@ -225,6 +225,17 @@ export async function getPublicProfile(slug: string): Promise<{
   };
 }
 
+/** Placement-ready / in-process candidates to ping when a new opening lands. */
+export async function listNotifyCandidates(): Promise<Array<{ name: string; email: string }>> {
+  const profiles = await prisma.placementProfile.findMany({ where: { status: { in: ["ready", "in_process"] } } });
+  if (profiles.length === 0) return [];
+  const learners = await prisma.learner.findMany({
+    where: { id: { in: profiles.map((p) => p.learnerId) } },
+    select: { name: true, email: true },
+  });
+  return learners;
+}
+
 /** Learners + their cert/profile state, for the admin placements screen. */
 export async function adminPlacementData(): Promise<Array<{
   learnerId: string; name: string; email: string; daysCompleted: number;

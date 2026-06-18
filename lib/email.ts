@@ -188,6 +188,64 @@ export function enrollInviteEmail(args: { name: string; joinUrl: string }) {
   return { subject, body };
 }
 
+export function capstoneReviewedEmail(args: { name: string; title: string; approved: boolean; feedback?: string; portalUrl: string }) {
+  if (args.approved) {
+    const subject = `🎉 Your capstone is approved — certificate issued!`;
+    const body =
+      `Hi ${args.name},\n\n` +
+      `Great news — your capstone "${args.title}" has been approved by your trainer, and your Tensorpath ` +
+      `certificate has been issued! 🎓\n\n` +
+      `View, download (PDF) and share your verifiable credential here: ${args.portalUrl}\n\n` +
+      `Next up: your placement profile is now active. — The Tensorpath team`;
+    return { subject, body };
+  }
+  const subject = `📝 Capstone feedback — a few revisions requested`;
+  const body =
+    `Hi ${args.name},\n\n` +
+    `Your trainer reviewed your capstone "${args.title}" and asked for a few revisions before approval:\n\n` +
+    `${args.feedback || "See the notes on your capstone page."}\n\n` +
+    `Update and resubmit here: ${args.portalUrl}\n\n` +
+    `You've got this. — The Tensorpath team`;
+  return { subject, body };
+}
+
+export function certificateIssuedEmail(args: { name: string; credentialId: string; verifyUrl: string; portalUrl: string }) {
+  const subject = `🎓 Your Tensorpath certificate is ready`;
+  const body =
+    `Hi ${args.name},\n\n` +
+    `Congratulations — you're now Tensorpath-certified! Your credential ID is ${args.credentialId}.\n\n` +
+    `Verify / share: ${args.verifyUrl}\n` +
+    `Download the PDF and add it to LinkedIn from your dashboard: ${args.portalUrl}\n\n` +
+    `— The Tensorpath team`;
+  return { subject, body };
+}
+
+export function sessionReminderEmail(args: { cohortName: string; dayNumber: number; dayTitle: string; date: string; time: string; portalUrl: string }) {
+  const subject = `⏰ Reminder — ${args.cohortName} Day ${args.dayNumber} is ${args.date} @ ${args.time}`;
+  const body =
+    `Hello,\n\nA quick reminder about your next live Tensorpath session:\n\n` +
+    `🧠 Day ${args.dayNumber}: ${args.dayTitle}\n🗓️ ${args.date} @ ${args.time}\n\n` +
+    `Join here: ${args.portalUrl}\n\nSee you there! — ${args.cohortName} Trainer`;
+  return { subject, body };
+}
+
+export function capstoneDueEmail(args: { name: string; dueDate: string; portalUrl: string }) {
+  const subject = `📌 Your capstone is due ${args.dueDate}`;
+  const body =
+    `Hi ${args.name},\n\nA reminder that your Tensorpath capstone is due on ${args.dueDate}. ` +
+    `Submitting it unlocks trainer review and your certificate.\n\nSubmit here: ${args.portalUrl}\n\n— The Tensorpath team`;
+  return { subject, body };
+}
+
+export function newOpeningEmail(args: { name: string; roleTitle: string; company: string; portalUrl: string }) {
+  const subject = `💼 New opening: ${args.roleTitle}${args.company ? ` @ ${args.company}` : ""}`;
+  const body =
+    `Hi ${args.name},\n\nA new opportunity matching your training just landed on the Tensorpath careers board:\n\n` +
+    `${args.roleTitle}${args.company ? ` · ${args.company}` : ""}\n\n` +
+    `See details and apply: ${args.portalUrl}/careers\n\n— The Tensorpath team`;
+  return { subject, body };
+}
+
 export function announcementEmail(args: {
   cohortName: string;
   dayNumber: number;

@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { getSessionTrainerId } from "@/lib/auth";
-import { reviewCapstone, getCapstone } from "@/lib/capstone";
+import { reviewCapstone } from "@/lib/capstone";
 import { getAppState, getCertificateForLearner, issueCertificate, getLearnerById } from "@/lib/data";
 import { polishCapstone } from "@/lib/claude";
+import { sendMail, capstoneReviewedEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -25,13 +26,15 @@ export async function PATCH(req: Request) {
   });
   if (!cap) return NextResponse.json({ error: "Capstone not found" }, { status: 404 });
 
+  const learner = await getLearnerById(cap.learnerId);
+  const origin = new URL(req.url).origin;
+
   let credentialId: string | undefined;
   if (b.status === "approved") {
     const existing = await getCertificateForLearner(cap.learnerId);
     if (existing) {
       credentialId = existing.credentialId;
     } else {
-      const learner = await getLearnerById(cap.learnerId);
       const { cohortName } = await getAppState();
       const summary = learner ? await polishCapstone(learner, cap.title, cap.description) : cap.description;
       const cert = await issueCertificate({
@@ -41,6 +44,15 @@ export async function PATCH(req: Request) {
       });
       credentialId = cert.credentialId;
     }
+  }
+
+  // Notify the learner (Module H): approval (cert issued) or revisions (feedback).
+  if (learner?.email && (b.status === "approved" || b.status === "revisions")) {
+    const mail = capstoneReviewedEmail({
+      name: cap.learnerName, title: cap.title, approved: b.status === "approved",
+      feedback: cap.comments, portalUrl: `${origin}/learn/certificate`,
+    });
+    await sendMail({ to: [learner.email], subject: mail.subject, body: mail.body, kind: "welcome" });
   }
 
   return NextResponse.json({ ok: true, capstone: cap, credentialId });
