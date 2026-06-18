@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   const id = newId("lrn");
   const goalsStr = String(goals || "").trim();
   const now = new Date().toISOString();
-  const journey: Omit<JourneyEvent, "day" | "detail">[] = [{ id: newId("jrn"), type: "signup", summary: "Joined AI Mastery", at: now }];
+  const journey: Omit<JourneyEvent, "day" | "detail">[] = [{ id: newId("jrn"), type: "signup", summary: "Joined Tensorpath", at: now }];
   if (goalsStr) journey.push({ id: newId("jrn"), type: "goal_set", summary: `Goal: ${goalsStr}`, at: now });
 
   const learner = await createLearner(

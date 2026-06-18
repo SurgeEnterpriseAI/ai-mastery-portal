@@ -5,7 +5,7 @@ import Tour from "@/components/Tour";
 export const dynamic = "force-dynamic";
 
 const HOME_STEPS = [
-  { title: "Welcome to Surge's AI Mastery program 👋", body: "Surge Software trains professionals and students on AI — from the fundamentals to the 2026 frontier. Here's how to get started." },
+  { title: "Welcome to Surge's Tensorpath program 👋", body: "Surge Software trains professionals and students on AI — from the fundamentals to the 2026 frontier. Here's how to get started." },
   { target: '[data-tour="enroll-cta"]', title: "1. Enroll — it's free to start", body: "Join the program here. You'll be guided live by a Surge trainer and a personal AI coach that hand-holds you through all 20 days at your own pace." },
   { target: '[data-tour="arc"]', title: "2. The 20-day journey", body: "Every day is a complete, story-driven lesson — from the first Transformer to reasoning models, multimodal AI, and agents." },
   { title: "3. Earn a verifiable certificate", body: "Finish the 20 days and a hands-on capstone to earn a certificate any employer can verify. Ready? Enroll above to begin." },
@@ -22,7 +22,7 @@ export default function Home() {
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">🧠</div>
           <div>
             <div className="text-sm uppercase tracking-widest text-brand-600">Surge Software · AI Academy</div>
-            <div className="text-lg font-bold text-slate-900">AI Mastery Program</div>
+            <div className="text-lg font-bold text-slate-900">Tensorpath</div>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -101,7 +101,7 @@ export default function Home() {
 
       <section className="mt-16 rounded-2xl border border-brand-100 bg-brand-50 p-8 text-center">
         <h2 className="text-2xl font-extrabold text-slate-900">Start your AI journey with Surge</h2>
-        <p className="mx-auto mt-2 max-w-xl text-slate-600">Join the professionals and students upskilling on AI through Surge&rsquo;s AI Mastery program.</p>
+        <p className="mx-auto mt-2 max-w-xl text-slate-600">Join the professionals and students upskilling on AI through Surge&rsquo;s Tensorpath program.</p>
         <Link href="/join" className="mt-5 inline-block rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700">
           Enroll free →
         </Link>

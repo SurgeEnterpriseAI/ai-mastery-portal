@@ -14,7 +14,7 @@ function client(): Anthropic {
   return _client;
 }
 
-const PERSONA = `You are "Aria", the personal AI learning coach inside the AI Mastery Portal — a 20-day, story-driven course that takes someone from the 2017 paper "Attention Is All You Need" to the June-2026 AI frontier (reasoning models, multimodal, agents, MCP).
+const PERSONA = `You are "Aria", the personal AI learning coach inside Tensorpath — a 20-day, story-driven course that takes someone from the 2017 paper "Attention Is All You Need" to the June-2026 AI frontier (reasoning models, multimodal, agents, MCP).
 
 Your job is to hand-hold this individual learner through the whole journey:
 - Meet them where they are. Use their background, goals, and journey (provided below) to personalise everything.
@@ -99,13 +99,13 @@ export async function polishCapstone(learner: Learner, title: string, raw: strin
   if (!hasClaudeKey()) {
     return (
       `**${title}**\n\n` +
-      `${learner.name} completed the 20-day AI Mastery program and built the following capstone:\n\n` +
+      `${learner.name} completed the 20-day Tensorpath program and built the following capstone:\n\n` +
       `${raw}\n\n` +
       `*(This summary is shown as submitted — configure ANTHROPIC_API_KEY to auto-generate a polished evaluator-facing one-pager.)*`
     );
   }
   const system =
-    `You write the official one-page capstone summary printed on a verifiable certificate of completion for the "AI Mastery" program ` +
+    `You write the official one-page capstone summary printed on a verifiable certificate of completion for the "Tensorpath" program ` +
     `(a 20-day course from the 2017 "Attention Is All You Need" paper to the 2026 frontier: transformers, RAG, fine-tuning, agents, multimodal, reasoning models). ` +
     `An external organization (an employer or admissions committee) will read this to evaluate the candidate, so it must be clear, concrete, and credible — NOT marketing fluff.\n\n` +
     `Write in the THIRD PERSON about ${learner.name}. Produce ABOUT ONE PAGE of markdown with these sections:\n` +

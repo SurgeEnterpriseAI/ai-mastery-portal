@@ -9,7 +9,7 @@ interface SendArgs {
   kind: OutboxMail["kind"];
 }
 
-const FROM = () => process.env.MAIL_FROM || process.env.SMTP_FROM || process.env.SMTP_USER || "AI Mastery <onboarding@resend.dev>";
+const FROM = () => process.env.MAIL_FROM || process.env.SMTP_FROM || process.env.SMTP_USER || "Tensorpath <onboarding@resend.dev>";
 
 function getSmtpTransport() {
   const host = process.env.SMTP_HOST;
@@ -110,7 +110,7 @@ export function inviteEmail(args: {
 }
 
 export function welcomeEmail(args: { name: string; portalUrl: string; freeCount: number }) {
-  const subject = `🎓 Welcome to AI Mastery, ${args.name}!`;
+  const subject = `🎓 Welcome to Tensorpath, ${args.name}!`;
   const body =
     `Hi ${args.name},\n\n` +
     `Welcome aboard! Your personal AI learning journey starts now.\n\n` +
@@ -118,19 +118,19 @@ export function welcomeEmail(args: { name: string; portalUrl: string; freeCount:
     `giving you scenarios and materials, and recommending exactly what to learn next based on your goals.\n\n` +
     `🎁 Your first ${args.freeCount} coaching sessions are on us.\n\n` +
     `Start here: ${args.portalUrl}\n\n` +
-    `— The AI Mastery team`;
+    `— The Tensorpath team`;
   return { subject, body };
 }
 
 export function paymentReceiptEmail(args: { name: string; amount: number; currency: string; portalUrl: string }) {
   const amt = `${args.currency === "INR" ? "₹" : ""}${(args.amount / 100).toFixed(2)}`;
-  const subject = `✅ Payment received — AI Mastery Pro unlocked`;
+  const subject = `✅ Payment received — Tensorpath Pro unlocked`;
   const body =
     `Hi ${args.name},\n\n` +
     `We've received your payment of ${amt}. Your account is now fully unlocked — ` +
     `unlimited AI coaching, personalised guidance, and human help whenever you need it.\n\n` +
     `Jump back in: ${args.portalUrl}\n\n` +
-    `Thank you for investing in your growth. — The AI Mastery team`;
+    `Thank you for investing in your growth. — The Tensorpath team`;
   return { subject, body };
 }
 

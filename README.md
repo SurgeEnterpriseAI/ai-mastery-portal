@@ -1,4 +1,4 @@
-# 🧠 AI Mastery Portal
+# 🧠 Tensorpath
 
 A complete training portal for a **20-day, story-driven AI course** — from the 2017 paper *"Attention Is All You Need"* all the way to the **June 2026 frontier** (reasoning models, multimodal AI, agents & MCP).
 

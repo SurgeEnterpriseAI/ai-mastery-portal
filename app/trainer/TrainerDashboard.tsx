@@ -124,7 +124,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
         <div className="flex items-center gap-3">
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">🧠</div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-brand-600">Surge AI Academy · Trainer Console</div>
+            <div className="text-xs uppercase tracking-widest text-brand-600">Tensorpath · Trainer Console</div>
             <div className="text-lg font-bold text-slate-900">{cohortName}</div>
           </div>
         </div>
@@ -565,7 +565,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
       </section>
 
       <footer className="mt-12 border-t border-slate-200 pt-6 text-center text-sm text-slate-400">
-        AI Mastery Portal · the room resumes itself, every single day.
+        Tensorpath · the room resumes itself, every single day.
       </footer>
     </main>
   );

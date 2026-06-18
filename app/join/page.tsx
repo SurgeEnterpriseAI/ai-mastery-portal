@@ -14,7 +14,7 @@ export default function JoinPage() {
         <div className="mt-4 flex items-center gap-3">
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">🎓</div>
           <div>
-            <div className="font-bold text-slate-900">Join Surge&rsquo;s AI Mastery program</div>
+            <div className="font-bold text-slate-900">Join Surge&rsquo;s Tensorpath program</div>
             <div className="text-xs text-slate-500">Live training + a personal AI coach · first 3 coaching sessions free</div>
           </div>
         </div>

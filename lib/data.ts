@@ -35,7 +35,7 @@ export async function ensureSeed(): Promise<void> {
   await prisma.appState.upsert({
     where: { id: APP },
     update: {},
-    create: { id: APP, cohortName: "AI Mastery — Cohort 1", startDate: null, currentDay: 1, currentSlide: 0, completedDays: "[]", lastTaughtAt: null },
+    create: { id: APP, cohortName: "Tensorpath — Cohort 1", startDate: null, currentDay: 1, currentSlide: 0, completedDays: "[]", lastTaughtAt: null },
   });
   seeded = true;
 }

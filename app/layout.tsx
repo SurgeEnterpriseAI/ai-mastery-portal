@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Surge AI Mastery — Upskill on AI, fundamentals to the 2026 frontier",
+  title: "Tensorpath — Learn AI, from first principles to agents · by Surge",
   description:
-    "Surge Software's AI Mastery program trains professionals and students on AI through a guided 20-day journey — from the 2017 paper 'Attention Is All You Need' to today's reasoning models and agents — led live by a Surge trainer with a personal AI coach, ending in a verifiable certificate.",
+    "Surge Software's Tensorpath program trains professionals and students on AI through a guided 20-day journey — from the 2017 paper 'Attention Is All You Need' to today's reasoning models and agents — led live by a Surge trainer with a personal AI coach, ending in a verifiable certificate.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

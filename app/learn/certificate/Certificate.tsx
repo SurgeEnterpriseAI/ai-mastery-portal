@@ -41,13 +41,13 @@ export default function Certificate({
         <div className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-accent-50 blur-2xl" />
 
         <div className="text-5xl">🎓</div>
-        <div className="mt-3 text-xs font-bold uppercase tracking-[0.3em] text-brand-700">Surge Software · AI Academy</div>
+        <div className="mt-3 text-xs font-bold uppercase tracking-[0.3em] text-brand-700">Tensorpath · by Surge Software</div>
         <h1 className="mt-4 text-4xl font-extrabold text-slate-900">Certificate of Completion</h1>
         <p className="mt-6 text-slate-600">This certifies that</p>
         <p className="mt-2 text-3xl font-extrabold text-accent-700">{name}</p>
         <p className="mx-auto mt-6 max-w-xl text-slate-600">
           has successfully completed all <strong className="text-slate-900">{days} days</strong> of the
-          {" "}<strong className="text-slate-900">AI Mastery</strong> program — from the 2017 paper
+          {" "}<strong className="text-slate-900">Tensorpath</strong> program — from the 2017 paper
           <em> &ldquo;Attention Is All You Need&rdquo;</em> to the June&nbsp;2026 frontier — and delivered the capstone project below.
         </p>
 

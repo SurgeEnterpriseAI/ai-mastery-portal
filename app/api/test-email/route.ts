@@ -9,8 +9,8 @@ export async function POST(req: Request) {
   const recipient = to || (await getTrainer()).email;
   const { delivered } = await sendMail({
     to: [recipient],
-    subject: "✅ AI Mastery Portal — test email",
-    body: "This is a test from your AI Mastery Portal.\n\nIf you received this by email, SMTP delivery is working. If you only see it in the Outbox, set SMTP_HOST / SMTP_USER / SMTP_PASS to enable real delivery.",
+    subject: "✅ Tensorpath — test email",
+    body: "This is a test from your Tensorpath portal.\n\nIf you received this by email, SMTP delivery is working. If you only see it in the Outbox, set SMTP_HOST / SMTP_USER / SMTP_PASS to enable real delivery.",
     kind: "test",
   });
   return NextResponse.json({

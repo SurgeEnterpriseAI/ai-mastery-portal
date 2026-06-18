@@ -17,7 +17,7 @@ export default function LoginPage() {
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">🧠</div>
           <div>
             <div className="font-bold text-slate-900">Surge Trainer Sign-in</div>
-            <div className="text-xs text-slate-500">Surge AI Academy · staff only</div>
+            <div className="text-xs text-slate-500">Tensorpath · Surge staff only</div>
           </div>
         </div>
         <LoginForm />

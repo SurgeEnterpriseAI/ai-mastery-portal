@@ -102,7 +102,7 @@ export async function assembleCoachContext(
     ? chunks.map((r, i) => `### Passage ${i + 1} — Day ${r.day} (${r.dayTitle}) · "${r.slideTitle}"\n${r.snippet}`).join("\n\n")
     : "(No specific passage matched — answer from the course arc above and your expertise.)";
 
-  return `## The 20-Day AI Mastery Course (the syllabus you are coaching against)
+  return `## The 20-Day Tensorpath Course (the syllabus you are coaching against)
 ${courseOverview()}
 
 ## This learner's profile
