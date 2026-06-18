@@ -292,4 +292,28 @@ export interface AttendanceMark {
   present: boolean;
 }
 
+// ---------------------------------------------------------------------------
+// Module C — Capstone submission & review
+// ---------------------------------------------------------------------------
+export type CapstoneStatus = "submitted" | "under_review" | "approved" | "revisions";
+
+export interface Capstone {
+  id: string;
+  learnerId: string;
+  learnerName: string;
+  title: string;
+  description: string;
+  links: string[];
+  fileUrl?: string;
+  status: CapstoneStatus;
+  scoreUnderstanding?: number;
+  scoreImplementation?: number;
+  scoreCompleteness?: number;
+  scorePresentation?: number;
+  comments?: string;
+  reviewerId?: string;
+  submittedAt: string;
+  reviewedAt?: string;
+}
+
 export const FREE_HANDHOLDING_LIMIT = 3;

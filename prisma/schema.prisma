@@ -290,3 +290,27 @@ model Attendance {
   @@unique([cohortId, learnerId, sessionDate])
   @@index([cohortId])
 }
+
+// ---------------------------------------------------------------------------
+// Module C — Capstone submission & review (gates certification)
+// ---------------------------------------------------------------------------
+model Capstone {
+  id                  String  @id
+  learnerId           String  @unique
+  learnerName         String
+  title               String
+  description         String
+  links               String // JSON-encoded string[]
+  fileUrl             String?
+  status              String  @default("submitted") // submitted | under_review | approved | revisions
+  scoreUnderstanding  Int?
+  scoreImplementation Int?
+  scoreCompleteness   Int?
+  scorePresentation   Int?
+  comments            String?
+  reviewerId          String?
+  submittedAt         String
+  reviewedAt          String?
+
+  @@index([status])
+}

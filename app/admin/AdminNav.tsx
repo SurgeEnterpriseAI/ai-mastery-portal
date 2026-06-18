@@ -5,11 +5,12 @@ const TABS = [
   { key: "leads", href: "/admin", label: "Leads" },
   { key: "cohorts", href: "/admin/cohorts", label: "Cohorts" },
   { key: "careers", href: "/admin/careers", label: "Careers CMS" },
+  { key: "capstones", href: "/admin/capstones", label: "Capstones" },
   { key: "placements", href: "/admin/placements", label: "Placements" },
   { key: "media", href: "/admin/media", label: "Media" },
 ] as const;
 
-export default function AdminNav({ active }: { active: "dashboard" | "leads" | "cohorts" | "careers" | "placements" | "media" }) {
+export default function AdminNav({ active }: { active: "dashboard" | "leads" | "cohorts" | "careers" | "capstones" | "placements" | "media" }) {
   return (
     <header className="mb-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
