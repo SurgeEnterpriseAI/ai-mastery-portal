@@ -247,3 +247,21 @@ model Placement {
 
   @@index([learnerId])
 }
+
+// ---------------------------------------------------------------------------
+// Module F — Interview prep & orientation media library
+// ---------------------------------------------------------------------------
+model Media {
+  id          String  @id
+  type        String // interview | orientation
+  title       String
+  description String
+  roleId      String?
+  url         String
+  gatedLevel  String  @default("enrolled") // public | enrolled | certified
+  tags        String // JSON-encoded string[]
+  sortOrder   Int     @default(0)
+  createdAt   String
+
+  @@index([type])
+}

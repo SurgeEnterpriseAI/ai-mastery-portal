@@ -4,9 +4,10 @@ const TABS = [
   { key: "leads", href: "/admin", label: "Leads" },
   { key: "careers", href: "/admin/careers", label: "Careers CMS" },
   { key: "placements", href: "/admin/placements", label: "Placements" },
+  { key: "media", href: "/admin/media", label: "Media" },
 ] as const;
 
-export default function AdminNav({ active }: { active: "leads" | "careers" | "placements" }) {
+export default function AdminNav({ active }: { active: "leads" | "careers" | "placements" | "media" }) {
   return (
     <header className="mb-6">
       <div className="flex flex-wrap items-center justify-between gap-3">

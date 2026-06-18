@@ -257,4 +257,20 @@ export interface Placement {
   createdAt: string;
 }
 
+// ---------------------------------------------------------------------------
+// Module F — Media library (interview prep + orientation)
+// ---------------------------------------------------------------------------
+export interface MediaItem {
+  id: string;
+  type: "interview" | "orientation";
+  title: string;
+  description: string;
+  roleId?: string;
+  url: string;
+  gatedLevel: "public" | "enrolled" | "certified";
+  tags: string[];
+  sortOrder: number;
+  createdAt: string;
+}
+
 export const FREE_HANDHOLDING_LIMIT = 3;
