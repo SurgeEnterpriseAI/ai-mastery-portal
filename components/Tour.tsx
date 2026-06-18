@@ -29,29 +29,42 @@ export default function Tour({ steps, storageKey, label = "Take a tour" }: { ste
     }
   }, [key]);
 
-  const measure = useCallback(() => {
+  // read the target's current position without moving the page
+  const measureRect = useCallback(() => {
     const step = steps[i];
     if (!step?.target) { setRect(null); return; }
     const el = document.querySelector(step.target) as HTMLElement | null;
     if (!el) { setRect(null); return; }
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
-    setTimeout(() => {
-      const r = el.getBoundingClientRect();
-      setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
-    }, 300);
+    const r = el.getBoundingClientRect();
+    setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
   }, [i, steps]);
 
+  // when the step changes, scroll the target into view once, then measure
   useEffect(() => {
     if (!active) return;
-    measure();
-    const onResize = () => measure();
-    window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", onResize, true);
+    const step = steps[i];
+    if (!step?.target) { setRect(null); return; }
+    const el = document.querySelector(step.target) as HTMLElement | null;
+    if (!el) { setRect(null); return; }
+    // tall sections (taller than the viewport) align to top so the card has room;
+    // everything else centers
+    const block = el.getBoundingClientRect().height > window.innerHeight * 0.85 ? "start" : "center";
+    el.scrollIntoView({ behavior: "smooth", block });
+    const t = setTimeout(measureRect, 350);
+    return () => clearTimeout(t);
+  }, [active, i, steps, measureRect]);
+
+  // keep the spotlight aligned while the page scrolls/resizes — do NOT re-scroll
+  useEffect(() => {
+    if (!active) return;
+    const onChange = () => measureRect();
+    window.addEventListener("resize", onChange);
+    window.addEventListener("scroll", onChange, true);
     return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", onResize, true);
+      window.removeEventListener("resize", onChange);
+      window.removeEventListener("scroll", onChange, true);
     };
-  }, [active, i, measure]);
+  }, [active, measureRect]);
 
   function finish() {
     localStorage.setItem(key, "done");
@@ -82,15 +95,25 @@ export default function Tour({ steps, storageKey, label = "Take a tour" }: { ste
   const step = steps[i];
   const pad = 8;
 
-  // card position: below the target if room, else above; centered if no target
+  // card position: below the target's visible bottom if there's room, else above
+  // its visible top, else centered on-screen. Always clamped into the viewport so
+  // the card never slides off (e.g. when the target is taller than the screen).
   let cardStyle: React.CSSProperties = {};
   if (rect) {
     const vh = window.innerHeight;
-    const below = rect.top + rect.height < vh * 0.62;
-    const left = Math.min(Math.max(rect.left, 16), window.innerWidth - 376);
-    cardStyle = below
-      ? { top: rect.top + rect.height + 16, left }
-      : { bottom: vh - rect.top + 16, left };
+    const vw = window.innerWidth;
+    const cardW = 344;
+    const estCardH = 240;
+    const left = Math.min(Math.max(rect.left, 16), vw - cardW - 16);
+    const visTop = Math.max(rect.top, 16);
+    const visBottom = Math.min(rect.top + rect.height, vh - 16);
+    if (visBottom + 16 + estCardH <= vh - 16) {
+      cardStyle = { top: visBottom + 16, left }; // below the visible bottom
+    } else if (visTop - 16 - estCardH >= 16) {
+      cardStyle = { top: visTop - 16 - estCardH, left }; // above the visible top
+    } else {
+      cardStyle = { top: Math.max(16, (vh - estCardH) / 2), left }; // target fills screen → center, on-screen
+    }
   } else {
     cardStyle = { top: "50%", left: "50%", transform: "translate(-50%,-50%)" };
   }
