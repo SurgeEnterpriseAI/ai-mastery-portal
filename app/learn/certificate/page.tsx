@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import QRCode from "qrcode";
 import { getCurrentLearner } from "@/lib/learner";
 import { getCertificateForLearner } from "@/lib/data";
 import { getCapstone } from "@/lib/capstone";
@@ -21,6 +22,8 @@ export default async function CertificatePage() {
 
   const cert = await getCertificateForLearner(learner.id);
   if (cert) {
+    const verifyUrl = `${origin()}/verify/${cert.credentialId}`;
+    const qr = await QRCode.toDataURL(verifyUrl, { width: 200, margin: 1, color: { dark: "#0f172a", light: "#ffffff" } }).catch(() => "");
     return (
       <Certificate
         name={cert.learnerName}
@@ -28,7 +31,8 @@ export default async function CertificatePage() {
         issued={new Date(cert.issuedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
         days={cert.daysCompleted}
         credentialId={cert.credentialId}
-        verifyUrl={`${origin()}/verify/${cert.credentialId}`}
+        verifyUrl={verifyUrl}
+        qr={qr}
         capstoneTitle={cert.capstoneTitle}
         capstoneSummary={cert.capstoneSummary}
         status={cert.status}

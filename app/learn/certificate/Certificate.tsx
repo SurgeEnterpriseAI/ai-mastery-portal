@@ -5,27 +5,34 @@ import Link from "next/link";
 import Markdown from "@/components/Markdown";
 
 export default function Certificate({
-  name, cohort, issued, days, credentialId, verifyUrl, capstoneTitle, capstoneSummary, status,
+  name, cohort, issued, days, credentialId, verifyUrl, qr, capstoneTitle, capstoneSummary, status,
 }: {
   name: string; cohort: string; issued: string; days: number;
-  credentialId: string; verifyUrl: string; capstoneTitle: string; capstoneSummary: string; status: string;
+  credentialId: string; verifyUrl: string; qr?: string; capstoneTitle: string; capstoneSummary: string; status: string;
 }) {
   const [copied, setCopied] = useState(false);
   const revoked = status === "revoked";
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verifyUrl)}`;
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3 print:hidden">
         <Link href="/learn" className="text-sm text-slate-500 hover:text-slate-900">← Back to dashboard</Link>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => { navigator.clipboard.writeText(verifyUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
             className="rounded-lg border border-slate-200 px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50"
           >
-            {copied ? "Link copied ✓" : "🔗 Copy verification link"}
+            {copied ? "Link copied ✓" : "🔗 Copy credential link"}
           </button>
+          <a
+            href={linkedInUrl} target="_blank" rel="noopener noreferrer"
+            className="rounded-lg border border-[#0a66c2] px-4 py-2.5 font-semibold text-[#0a66c2] hover:bg-[#0a66c2]/5"
+          >
+            in Share on LinkedIn
+          </a>
           <button onClick={() => window.print()} className="rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700">
-            🖨️ Print / Save PDF
+            ⬇️ Download PDF
           </button>
         </div>
       </div>
@@ -56,9 +63,12 @@ export default function Certificate({
           <div><div className="text-slate-900">{issued}</div><div>Issued</div></div>
           <div><div className="font-mono text-slate-900">{credentialId}</div><div>Credential ID</div></div>
         </div>
-        <p className="mt-4 text-xs text-slate-400">
-          Verify the authenticity of this certificate at <span className="text-accent-700">{verifyUrl}</span>
-        </p>
+        <div className="mt-6 flex flex-col items-center gap-2">
+          {qr && <img src={qr} alt="Scan to verify this credential" className="h-28 w-28" />}
+          <p className="text-xs text-slate-400">
+            Scan or visit <span className="text-accent-700">{verifyUrl}</span> to verify.
+          </p>
+        </div>
       </div>
 
       {/* Capstone one-pager */}
