@@ -7,7 +7,7 @@ import type { Trainee, Session, Progress, OutboxMail, DayMeta } from "@/lib/type
 import Tour from "@/components/Tour";
 
 const TRAINER_STEPS = [
-  { title: "Surge trainer console 👋", body: "This is where you run Surge's AI training at scale — schedule cohorts, present the 20-day program live, and track every learner. Quick tour of the flow." },
+  { title: "Tensorpath trainer console 👋", body: "This is where you run Tensorpath's AI training at scale — schedule cohorts, present the 20-day program live, and track every learner. Quick tour of the flow." },
   { target: '[data-tour="td-start"]', title: "Teach the live class", body: "Start or resume the class — it reopens at the exact slide you left off, and advances the cohort automatically as you finish each day." },
   { target: '[data-tour="td-schedule"]', title: "Schedule & invite", body: "Pick a day, date and time, then email invites to your learners in one click." },
   { target: '[data-tour="td-trainees"]', title: "Add your learners", body: "Add learners here — paste many emails at once (comma or newline separated)." },

@@ -18,7 +18,7 @@ export default async function VerifyPage({ params }: { params: { credentialId: s
       <header className="flex items-center gap-3">
         <div className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-xl">🧠</div>
         <div>
-          <div className="text-xs uppercase tracking-widest text-brand-600">Tensorpath · by Surge Software</div>
+          <div className="text-xs uppercase tracking-widest text-brand-600">Tensorpath</div>
           <div className="font-bold text-slate-900">Credential verification</div>
         </div>
       </header>
@@ -32,7 +32,7 @@ export default async function VerifyPage({ params }: { params: { credentialId: s
       ) : (
         <>
           <Result tone="green" icon="✓" title="Verified — genuine credential"
-            subtitle={`Issued by Tensorpath (Surge Software). This certificate is authentic and was issued to the holder named below.`} />
+            subtitle={`Issued by Tensorpath. This certificate is authentic and was issued to the holder named below.`} />
 
           <div className="mt-6 grid gap-3 rounded-2xl border border-slate-200 bg-white p-6 sm:grid-cols-2">
             <Field label="Issued to" value={cert.learnerName} />
