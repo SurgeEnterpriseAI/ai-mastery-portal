@@ -5,15 +5,24 @@ import { ensureCareerSeed } from "./careers";
 // Only inserts into a table when that table is empty.
 let demoSeeded = false;
 
-const OPENINGS: Array<{ roleSlug?: string; title: string; company: string; location: string; mode: string; packageBand: string; q: string }> = [
-  { roleSlug: "llm-application-developer", title: "Junior LLM Application Developer", company: "Confidential (Product startup)", location: "Bengaluru", mode: "hybrid", packageBand: "₹6–9 LPA", q: "LLM application developer fresher India" },
-  { roleSlug: "prompt-rag-engineer", title: "Prompt / RAG Engineer (Entry)", company: "Confidential (SaaS)", location: "Hyderabad", mode: "onsite", packageBand: "₹6–10 LPA", q: "RAG engineer India" },
-  { roleSlug: "ai-ml-engineer", title: "AI / ML Engineer", company: "Confidential (Fintech)", location: "Pune", mode: "hybrid", packageBand: "₹10–18 LPA", q: "AI ML engineer India" },
-  { roleSlug: "ai-agent-developer", title: "AI Agent Developer", company: "Confidential (AI lab)", location: "Remote (India)", mode: "remote", packageBand: "₹14–24 LPA", q: "AI agent developer LLM India" },
-  { roleSlug: "ai-product-analyst", title: "AI Product Analyst", company: "Confidential (E-commerce)", location: "Gurugram", mode: "hybrid", packageBand: "₹5–9 LPA", q: "AI product analyst India" },
-  { roleSlug: "ai-solutions-consultant", title: "AI Solutions Consultant", company: "Confidential (IT services)", location: "Chennai", mode: "onsite", packageBand: "₹10–20 LPA", q: "AI solutions consultant India" },
-  { roleSlug: "ai-ml-engineer", title: "Senior ML Engineer (LLMs)", company: "Confidential (Enterprise)", location: "Remote (India)", mode: "remote", packageBand: "₹24–40 LPA", q: "senior machine learning engineer LLM India" },
-  { roleSlug: "llm-application-developer", title: "GenAI Engineer (1–3 yrs)", company: "Confidential (Consulting)", location: "Mumbai", mode: "hybrid", packageBand: "₹9–16 LPA", q: "generative AI engineer India" },
+// Live India job-search results (deep links to current, filtered listings on the
+// major India boards). Refreshed via web search; "Apply / details" opens the real
+// listing page. source="seed" — replaced on each deploy/cold-start.
+const OPENINGS: Array<{ roleSlug?: string; title: string; company: string; location: string; mode: string; packageBand: string; url: string }> = [
+  { roleSlug: "ai-ml-engineer", title: "AI / ML Engineer — Fresher", company: "Multiple · via Naukri India", location: "India", mode: "onsite", packageBand: "₹6–12 LPA", url: "https://www.naukri.com/fresher-artificial-intelligence-jobs" },
+  { roleSlug: "ai-ml-engineer", title: "Machine Learning Engineer", company: "Multiple · via Wellfound", location: "India", mode: "hybrid", packageBand: "₹8–18 LPA", url: "https://wellfound.com/role/l/machine-learning-engineer/india" },
+  { roleSlug: "ai-ml-engineer", title: "AI Engineer", company: "Multiple · via Wellfound", location: "India", mode: "hybrid", packageBand: "₹10–20 LPA", url: "https://wellfound.com/role/l/ai-engineer/india" },
+  { roleSlug: "ai-ml-engineer", title: "Machine Learning Engineer — Entry level", company: "Multiple · via LinkedIn India", location: "India", mode: "onsite", packageBand: "₹6–10 LPA", url: "https://in.linkedin.com/jobs/machine-learning-entry-level-jobs" },
+  { roleSlug: "ai-product-analyst", title: "Artificial Intelligence — Fresher roles", company: "Multiple · via Internshala", location: "India", mode: "onsite", packageBand: "₹4–8 LPA", url: "https://internshala.com/fresher-jobs/artificial-intelligence-ai-jobs/" },
+  { roleSlug: "ai-ml-engineer", title: "ML / AI Engineer — Fresher", company: "Multiple · via Indeed India", location: "India", mode: "onsite", packageBand: "₹6–10 LPA", url: "https://in.indeed.com/q-machine-learning-ai-engineer-fresher-jobs.html" },
+  { roleSlug: "llm-application-developer", title: "Generative AI Engineer", company: "Multiple · via LinkedIn India", location: "India", mode: "hybrid", packageBand: "₹10–22 LPA", url: "https://in.linkedin.com/jobs/generative-ai-engineer-jobs" },
+  { roleSlug: "llm-application-developer", title: "Gen AI roles", company: "Multiple · via Naukri India", location: "India", mode: "hybrid", packageBand: "₹10–20 LPA", url: "https://www.naukri.com/gen-ai-jobs" },
+  { roleSlug: "ai-agent-developer", title: "Generative AI · LLM · NLP", company: "Multiple · via Indeed", location: "Bengaluru", mode: "onsite", packageBand: "₹12–24 LPA", url: "https://in.indeed.com/q-generative-ai,-llm,-nlp-l-bengaluru,-karnataka-jobs.html" },
+  { roleSlug: "ai-agent-developer", title: "LLM Engineer roles", company: "Multiple · via Naukri", location: "Hyderabad", mode: "onsite", packageBand: "₹12–24 LPA", url: "https://www.naukri.com/llm-jobs-in-hyderabad-secunderabad" },
+  { roleSlug: "ai-ml-engineer", title: "AI / ML Engineer", company: "Multiple · via LinkedIn India", location: "Hyderabad", mode: "hybrid", packageBand: "₹10–20 LPA", url: "https://in.linkedin.com/jobs/ai-ml-engineer-jobs-hyderabad" },
+  { roleSlug: "ai-ml-engineer", title: "AI / ML Engineer", company: "Multiple · via LinkedIn India", location: "Bengaluru", mode: "hybrid", packageBand: "₹10–20 LPA", url: "https://in.linkedin.com/jobs/ai-ml-engineer-jobs-bengaluru" },
+  { roleSlug: "ai-agent-developer", title: "LLM Engineer roles", company: "Multiple · via hirist.tech", location: "Bangalore", mode: "hybrid", packageBand: "₹12–22 LPA", url: "https://www.hirist.tech/llm-jobs-in-bangalore" },
+  { roleSlug: "llm-application-developer", title: "Generative AI Engineer", company: "Multiple · via Indeed", location: "Bengaluru", mode: "onsite", packageBand: "₹10–20 LPA", url: "https://in.indeed.com/q-generative-ai-l-bengaluru,-karnataka-jobs.html" },
 ];
 
 const INTERVIEWS: Array<{ roleSlug?: string; title: string; description: string; q: string; tags: string[] }> = [
@@ -59,16 +68,16 @@ export async function ensureDemoContent(): Promise<void> {
   const roles = await prisma.jobRole.findMany({ select: { id: true, slug: true } });
   const roleId = (slug?: string) => roles.find((r) => r.slug === slug)?.id || null;
 
-  if ((await prisma.opening.count()) === 0) {
-    for (const o of OPENINGS) {
-      await prisma.opening.create({
-        data: {
-          id: newId("open"), postedAt: now, status: "open", source: "seed",
-          roleId: roleId(o.roleSlug), title: o.title, company: o.company,
-          location: o.location, mode: o.mode, packageBand: o.packageBand, applyUrl: yt(o.q),
-        },
-      });
-    }
+  // Refresh the India job-search results each cold-start (manual/scraped untouched).
+  await prisma.opening.deleteMany({ where: { source: "seed" } });
+  for (const o of OPENINGS) {
+    await prisma.opening.create({
+      data: {
+        id: newId("open"), postedAt: now, status: "open", source: "seed",
+        roleId: roleId(o.roleSlug), title: o.title, company: o.company,
+        location: o.location, mode: o.mode, packageBand: o.packageBand, applyUrl: o.url,
+      },
+    });
   }
 
   if ((await prisma.media.count()) === 0) {
