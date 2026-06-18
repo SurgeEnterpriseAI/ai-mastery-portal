@@ -7,7 +7,7 @@ import type { Trainee, Session, Progress, OutboxMail, DayMeta } from "@/lib/type
 import Tour from "@/components/Tour";
 
 const TRAINER_STEPS = [
-  { title: "Your trainer console 👋", body: "Everything you need to run the cohort lives here. Quick tour of the flow." },
+  { title: "Surge trainer console 👋", body: "This is where you run Surge's AI training at scale — schedule cohorts, present the 20-day program live, and track every learner. Quick tour of the flow." },
   { target: '[data-tour="td-start"]', title: "Teach the live class", body: "Start or resume the class — it reopens at the exact slide you left off, and advances the cohort automatically as you finish each day." },
   { target: '[data-tour="td-schedule"]', title: "Schedule & invite", body: "Pick a day, date and time, then email invites to your learners in one click." },
   { target: '[data-tour="td-trainees"]', title: "Add your learners", body: "Add learners here — paste many emails at once (comma or newline separated)." },
@@ -124,7 +124,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
         <div className="flex items-center gap-3">
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">🧠</div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-brand-600">Trainer Console</div>
+            <div className="text-xs uppercase tracking-widest text-brand-600">Surge AI Academy · Trainer Console</div>
             <div className="text-lg font-bold text-slate-900">{cohortName}</div>
           </div>
         </div>

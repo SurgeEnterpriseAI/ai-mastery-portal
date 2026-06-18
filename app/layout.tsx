@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "AI Mastery Portal — From Attention to Agents",
+  title: "Surge AI Mastery — Upskill on AI, fundamentals to the 2026 frontier",
   description:
-    "A 20-day, story-driven AI training journey from the 2017 paper 'Attention Is All You Need' to the June 2026 frontier. Trainer portal with scheduling, email invites, and an auto-advancing presentation engine.",
+    "Surge Software's AI Mastery program trains professionals and students on AI through a guided 20-day journey — from the 2017 paper 'Attention Is All You Need' to today's reasoning models and agents — led live by a Surge trainer with a personal AI coach, ending in a verifiable certificate.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
