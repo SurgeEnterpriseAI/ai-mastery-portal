@@ -143,28 +143,28 @@ export default function Tour({ steps, storageKey, label = "Take a tour" }: { ste
         />
       )}
 
-      {/* step card */}
-      <div key={i} className="animate-fadein fixed z-[62] w-[344px] max-w-[calc(100vw-32px)] rounded-2xl border border-slate-200 bg-white p-5 shadow-cardhover" style={cardStyle}>
+      {/* step card — solid brand coach-mark so it stands out from the light page */}
+      <div key={i} className="animate-fadein fixed z-[62] w-[344px] max-w-[calc(100vw-32px)] rounded-2xl border border-brand-700 bg-brand-600 p-5 text-white shadow-cardhover ring-4 ring-brand-600/20" style={cardStyle}>
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-brand-600">Step {i + 1} of {steps.length}</span>
-          <button onClick={finish} className="text-xs text-slate-400 hover:text-slate-700">Skip</button>
+          <span className="text-xs font-bold uppercase tracking-wider text-brand-100">Step {i + 1} of {steps.length}</span>
+          <button onClick={finish} className="text-xs text-brand-100 hover:text-white">Skip</button>
         </div>
-        <h3 className="mt-2 text-lg font-bold text-slate-900">{step.title}</h3>
-        <p className="mt-1 text-sm leading-relaxed text-slate-600">{step.body}</p>
+        <h3 className="mt-2 text-lg font-bold text-white">{step.title}</h3>
+        <p className="mt-1 text-sm leading-relaxed text-brand-50">{step.body}</p>
 
         <div className="mt-4 flex items-center justify-between">
           <div className="flex gap-1.5">
             {steps.map((_, n) => (
-              <span key={n} className={`h-1.5 w-1.5 rounded-full ${n === i ? "bg-brand-600" : "bg-slate-300"}`} />
+              <span key={n} className={`h-1.5 w-1.5 rounded-full ${n === i ? "bg-white" : "bg-white/40"}`} />
             ))}
           </div>
           <div className="flex gap-2">
             {i > 0 && (
-              <button onClick={back} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+              <button onClick={back} className="rounded-lg border border-white/40 px-3 py-1.5 text-sm font-semibold text-white hover:bg-white/10">
                 Back
               </button>
             )}
-            <button onClick={next} className="rounded-lg bg-brand-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-brand-700">
+            <button onClick={next} className="rounded-lg bg-white px-4 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-50">
               {i < steps.length - 1 ? "Next" : "Got it"}
             </button>
           </div>
