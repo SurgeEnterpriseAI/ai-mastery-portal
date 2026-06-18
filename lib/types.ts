@@ -233,6 +233,7 @@ export interface Opening {
   packageBand: string;
   applyUrl?: string;
   status: string; // open | closed
+  source: string; // manual | scraped | seed
   postedAt: string;
 }
 

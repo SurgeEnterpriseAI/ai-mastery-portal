@@ -20,7 +20,7 @@ function mapOpening(o: any): Opening {
   return {
     id: o.id, roleId: o.roleId ?? undefined, title: o.title, company: o.company,
     location: o.location, mode: o.mode, packageBand: o.packageBand,
-    applyUrl: o.applyUrl ?? undefined, status: o.status, postedAt: o.postedAt,
+    applyUrl: o.applyUrl ?? undefined, status: o.status, source: o.source ?? "manual", postedAt: o.postedAt,
   };
 }
 function mapProfile(p: any): PlacementProfile {
@@ -141,10 +141,10 @@ export async function listOpenings(opts?: { roleId?: string; openOnly?: boolean 
     orderBy: { postedAt: "desc" },
   })).map(mapOpening);
 }
-export async function createOpening(input: Omit<Opening, "id" | "postedAt" | "status"> & { status?: string }): Promise<Opening> {
+export async function createOpening(input: Omit<Opening, "id" | "postedAt" | "status" | "source"> & { status?: string; source?: string }): Promise<Opening> {
   const o = await prisma.opening.create({
     data: {
-      id: newId("open"), postedAt: new Date().toISOString(), status: input.status || "open",
+      id: newId("open"), postedAt: new Date().toISOString(), status: input.status || "open", source: input.source || "manual",
       roleId: input.roleId || null, title: input.title, company: input.company, location: input.location,
       mode: input.mode, packageBand: input.packageBand, applyUrl: input.applyUrl || null,
     },

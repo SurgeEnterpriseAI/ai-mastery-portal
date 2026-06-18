@@ -5,5 +5,8 @@
   "functions": {
     "app/api/coach/chat/route.ts": { "maxDuration": 60 },
     "app/api/coach/recommend/route.ts": { "maxDuration": 60 }
-  }
+  },
+  "crons": [
+    { "path": "/api/cron/openings", "schedule": "0 6 * * *" }
+  ]
 }

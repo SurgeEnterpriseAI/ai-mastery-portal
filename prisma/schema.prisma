@@ -222,10 +222,12 @@ model Opening {
   packageBand String
   applyUrl    String?
   status      String  @default("open") // open | closed
+  source      String  @default("manual") // manual | scraped | seed
   postedAt    String
 
   @@index([roleId])
   @@index([status])
+  @@index([source])
 }
 
 // One per learner — their shareable, hiring-partner-facing one-pager.

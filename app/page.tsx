@@ -114,6 +114,8 @@ export default function Home() {
           <Link href="/ai-track" className="text-brand-600 hover:underline">On a Surge track? Add AI</Link>
           <Link href="/enquiry" className="text-brand-600 hover:underline">Talk to us</Link>
           <Link href="/verify" className="text-brand-600 hover:underline">Verify a credential</Link>
+          <Link href="/privacy" className="text-slate-400 hover:text-slate-700">Privacy</Link>
+          <Link href="/terms" className="text-slate-400 hover:text-slate-700">Terms</Link>
           <Link href="/login" className="text-slate-400 hover:text-slate-700">Trainer sign-in</Link>
         </span>
       </footer>

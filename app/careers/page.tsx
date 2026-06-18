@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listJobRoles, listOpenings, placementStats } from "@/lib/careers";
+import { ensureDemoContent } from "@/lib/seed-demo";
 import { getAllDayMeta } from "@/lib/curriculum";
 import OpeningsBoard from "./OpeningsBoard";
 
@@ -12,6 +13,7 @@ const LEVEL_STYLE: Record<string, string> = {
 };
 
 export default async function CareersPage() {
+  await ensureDemoContent();
   const [roles, openings, stats, dayMetas] = await Promise.all([
     listJobRoles(), listOpenings({ openOnly: true }), placementStats(), Promise.resolve(getAllDayMeta()),
   ]);

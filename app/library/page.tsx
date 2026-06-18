@@ -4,6 +4,7 @@ import { getCurrentLearner } from "@/lib/learner";
 import { getCertificateForLearner } from "@/lib/data";
 import { listMedia } from "@/lib/media";
 import { listJobRoles } from "@/lib/careers";
+import { ensureDemoContent } from "@/lib/seed-demo";
 import MediaGrid from "./MediaGrid";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +16,7 @@ export default async function LibraryPage() {
   const cert = await getCertificateForLearner(learner.id);
   const certified = Boolean(cert && cert.status === "valid");
 
+  await ensureDemoContent();
   const [allMedia, roles] = await Promise.all([listMedia(), listJobRoles()]);
   // access control: certified-only items hidden unless the learner is certified
   const visible = allMedia.filter((m) => m.gatedLevel !== "certified" || certified);

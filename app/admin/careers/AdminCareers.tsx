@@ -29,13 +29,28 @@ export default function AdminCareers({ roles, openings }: { roles: JobRole[]; op
     await fetch(`/api/admin/openings?id=${id}`, { method: "DELETE" });
     router.refresh();
   }
+  const [refreshing, setRefreshing] = useState("");
+  async function refreshScraped() {
+    setRefreshing("…");
+    const res = await fetch("/api/cron/openings", { method: "POST" });
+    const d = await res.json().catch(() => ({}));
+    setRefreshing(res.ok ? `Pulled ${d.ingested ?? 0} live openings` : "Failed");
+    setTimeout(() => setRefreshing(""), 4000);
+    router.refresh();
+  }
 
   return (
     <div className="space-y-10">
       {/* Openings */}
       <section>
-        <h2 className="text-xl font-bold text-slate-900">Opportunities board</h2>
-        <p className="mt-0.5 text-sm text-slate-500">Add live openings — they appear on the public <a href="/careers" className="text-brand-600 hover:underline">/careers</a> hub.</p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-xl font-bold text-slate-900">Opportunities board</h2>
+          <div className="flex items-center gap-2">
+            {refreshing && <span className="text-sm text-slate-500">{refreshing}</span>}
+            <button onClick={refreshScraped} className="rounded-lg border border-brand-200 bg-brand-50 px-3 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-100">🔄 Refresh live AI openings</button>
+          </div>
+        </div>
+        <p className="mt-0.5 text-sm text-slate-500">Auto-refreshed daily from public job feeds; admin-added openings stay put. Public hub: <a href="/careers" className="text-brand-600 hover:underline">/careers</a>.</p>
 
         <form onSubmit={addOpening} className="mt-4 grid gap-3 rounded-2xl border border-slate-200 bg-white p-5 sm:grid-cols-2">
           <input required value={o.title} onChange={(e) => setO({ ...o, title: e.target.value })} placeholder="Role title (e.g. LLM Engineer)" className={inp} />

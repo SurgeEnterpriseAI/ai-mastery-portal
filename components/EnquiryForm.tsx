@@ -84,7 +84,9 @@ export default function EnquiryForm({ source = "", defaultBackground = "" }: { s
       </div>
       <label className="flex items-start gap-2 text-sm text-slate-600">
         <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 h-4 w-4 accent-brand-600" />
-        <span>I agree to be contacted by Tensorpath about AI training. We&rsquo;ll keep your details secure and never share them.</span>
+        <span>I agree to be contacted by Tensorpath about AI training, and accept the{" "}
+          <a href="/privacy" target="_blank" className="text-brand-600 hover:underline">Privacy Policy</a> and{" "}
+          <a href="/terms" target="_blank" className="text-brand-600 hover:underline">Terms</a>.</span>
       </label>
       {err && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{err}</p>}
       <button disabled={busy} className="w-full rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
