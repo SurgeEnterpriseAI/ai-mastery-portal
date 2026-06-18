@@ -60,11 +60,13 @@ model Learner {
   completedDays        String // JSON-encoded number[]
   profileEmbedding     String? // JSON-encoded number[]
   profileEmbeddingText String?
+  cohortId             String? // Module G — assigned cohort
   createdAt            String
   journey              JourneyEvent[]
   coachSessions        CoachSession[]
 
   @@index([email])
+  @@index([cohortId])
 }
 
 model JourneyEvent {
@@ -264,4 +266,27 @@ model Media {
   createdAt   String
 
   @@index([type])
+}
+
+// ---------------------------------------------------------------------------
+// Module G — Cohorts & attendance
+// ---------------------------------------------------------------------------
+model Cohort {
+  id           String  @id
+  name         String
+  startDate    String?
+  sessionDates String // JSON-encoded string[] of YYYY-MM-DD
+  trainerId    String?
+  createdAt    String
+}
+
+model Attendance {
+  id          String  @id
+  cohortId    String
+  learnerId   String
+  sessionDate String
+  present     Boolean @default(true)
+
+  @@unique([cohortId, learnerId, sessionDate])
+  @@index([cohortId])
 }

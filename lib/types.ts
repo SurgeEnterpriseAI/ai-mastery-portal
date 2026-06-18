@@ -273,4 +273,23 @@ export interface MediaItem {
   createdAt: string;
 }
 
+// ---------------------------------------------------------------------------
+// Module G — Cohorts & attendance
+// ---------------------------------------------------------------------------
+export interface Cohort {
+  id: string;
+  name: string;
+  startDate?: string;
+  sessionDates: string[];
+  trainerId?: string;
+  createdAt: string;
+}
+
+export interface AttendanceMark {
+  cohortId: string;
+  learnerId: string;
+  sessionDate: string;
+  present: boolean;
+}
+
 export const FREE_HANDHOLDING_LIMIT = 3;
