@@ -93,71 +93,71 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
 
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-500/20 text-2xl">🎓</div>
+          <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">🎓</div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-brand-400">Your AI journey</div>
-            <div className="text-lg font-bold text-white">Hi {learner.name.split(" ")[0]} 👋</div>
+            <div className="text-xs uppercase tracking-widest text-brand-600">Your AI journey</div>
+            <div className="text-lg font-bold text-slate-900">Hi {learner.name.split(" ")[0]} 👋</div>
           </div>
         </div>
         <div className="flex items-center gap-2">
           {learner.paid ? (
-            <span className="rounded-full bg-emerald-600/20 px-3 py-1 text-xs font-bold text-emerald-300">PRO · unlimited</span>
+            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">PRO · unlimited</span>
           ) : (
-            <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-gray-300">
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
               {gate.remaining ?? 0} free session{gate.remaining === 1 ? "" : "s"} left
             </span>
           )}
-          <button onClick={logout} className="rounded-lg border border-white/10 px-3 py-1.5 text-sm text-gray-300 hover:bg-white/5">Log out</button>
+          <button onClick={logout} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">Log out</button>
         </div>
       </header>
 
       {/* Coach hero */}
-      <section className="mt-8 rounded-2xl border border-brand-500/30 bg-gradient-to-br from-brand-600/20 to-panel/60 p-6">
-        <div className="text-xs uppercase tracking-widest text-brand-300">Your personal AI coach</div>
-        <h1 className="mt-1 text-3xl font-extrabold text-white">Aria is ready to hand-hold your learning.</h1>
-        <p className="mt-2 max-w-2xl text-gray-300">
+      <section className="mt-8 rounded-2xl bg-brand-50 border border-brand-100 p-6">
+        <div className="text-xs uppercase tracking-widest text-brand-700">Your personal AI coach</div>
+        <h1 className="mt-1 text-3xl font-extrabold text-slate-900">Aria is ready to hand-hold your learning.</h1>
+        <p className="mt-2 max-w-2xl text-slate-600">
           Ask anything, get scenarios and materials, and find out exactly what to learn next — personalised to your goal
-          of <strong className="text-white">{learner.goals || "mastering AI"}</strong>. The cohort is on{" "}
-          <strong className="text-white">Day {progress.currentDay}</strong>.
+          of <strong className="text-slate-900">{learner.goals || "mastering AI"}</strong>. The cohort is on{" "}
+          <strong className="text-slate-900">Day {progress.currentDay}</strong>.
         </p>
         {!claudeConfigured && (
-          <p className="mt-3 inline-block rounded-lg bg-amber-600/15 px-3 py-1.5 text-xs text-amber-300">
+          <p className="mt-3 inline-block rounded-lg bg-amber-50 px-3 py-1.5 text-xs text-amber-700">
             Demo coach active — set <code>ANTHROPIC_API_KEY</code> for the full Claude-powered coach.
           </p>
         )}
         <div className="mt-5 flex flex-wrap gap-3">
-          <button onClick={startSession} disabled={busy} className="rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-500 disabled:opacity-60">
+          <button onClick={startSession} disabled={busy} className="rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
             {busy ? "Starting…" : "✨ Start a coaching session"}
           </button>
-          <button onClick={getRecommendation} disabled={recLoading} className="rounded-lg border border-white/15 px-5 py-3 font-semibold text-gray-200 hover:bg-white/5 disabled:opacity-60">
+          <button onClick={getRecommendation} disabled={recLoading} className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60">
             {recLoading ? "Thinking…" : "🧭 What should I learn next?"}
           </button>
         </div>
         {rec && (
-          <div className="mt-5 rounded-xl border border-accent/30 bg-accent/5 p-4">
-            <div className="text-xs font-bold uppercase tracking-wider text-accent">🧭 Your personalised next step</div>
-            <Markdown className="prose-slide prose-compact mt-2 text-sm text-gray-100">{rec}</Markdown>
+          <div className="mt-5 rounded-xl border border-accent-200 bg-accent-50 p-4">
+            <div className="text-xs font-bold uppercase tracking-wider text-accent-700-700">🧭 Your personalised next step</div>
+            <Markdown className="prose-slide prose-compact mt-2 text-sm text-slate-800">{rec}</Markdown>
           </div>
         )}
       </section>
 
       {/* Self-paced curriculum + certificate */}
-      <section className="mt-6 rounded-2xl border border-white/10 bg-panel/60 p-6">
+      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-lg font-bold text-white">📚 Your self-paced curriculum</h3>
-            <p className="mt-0.5 text-sm text-gray-400">Work through the 20 days at your pace. Tick each off as you finish.</p>
+            <h3 className="text-lg font-bold text-slate-900">📚 Your self-paced curriculum</h3>
+            <p className="mt-0.5 text-sm text-slate-500">Work through the 20 days at your pace. Tick each off as you finish.</p>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-extrabold text-white">{completed.length}/{totalDays}</div>
-            <div className="text-xs uppercase tracking-wider text-gray-400">days done</div>
+            <div className="text-2xl font-extrabold text-slate-900">{completed.length}/{totalDays}</div>
+            <div className="text-xs uppercase tracking-wider text-slate-500">days done</div>
           </div>
         </div>
-        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-black/40">
-          <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-accent transition-all" style={{ width: `${myPct}%` }} />
+        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+          <div className="h-full rounded-full bg-brand-600 transition-all" style={{ width: `${myPct}%` }} />
         </div>
         {completed.length >= totalDays && (
-          <Link href="/learn/certificate" className="mt-4 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-500">
+          <Link href="/learn/certificate" className="mt-4 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700">
             🎓 Get your certificate
           </Link>
         )}
@@ -165,11 +165,11 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
           {dayMetas.map((d) => {
             const done = completed.includes(d.day);
             return (
-              <div key={d.day} className={`flex items-start gap-3 rounded-lg border p-3 ${done ? "border-emerald-500/40 bg-emerald-600/5" : "border-white/10 bg-black/20"}`}>
+              <div key={d.day} className={`flex items-start gap-3 rounded-lg border p-3 ${done ? "border-emerald-200 bg-emerald-600/5" : "border-slate-200 bg-slate-50"}`}>
                 <input type="checkbox" checked={done} onChange={(e) => toggleDay(d.day, e.target.checked)} className="mt-1 h-4 w-4 accent-emerald-500" />
                 <div className="min-w-0">
-                  <div className="text-xs font-bold uppercase tracking-wider text-brand-400">Day {d.day}</div>
-                  <Link href={`/present/${d.day}`} className="block truncate text-sm font-semibold text-white hover:text-accent">{d.title}</Link>
+                  <div className="text-xs font-bold uppercase tracking-wider text-brand-600">Day {d.day}</div>
+                  <Link href={`/present/${d.day}`} className="block truncate text-sm font-semibold text-slate-900 hover:text-accent-700">{d.title}</Link>
                 </div>
               </div>
             );
@@ -179,32 +179,32 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Past sessions */}
-        <section className="rounded-2xl border border-white/10 bg-panel/60 p-6">
-          <h3 className="text-lg font-bold text-white">💬 Your coaching sessions</h3>
-          <p className="mt-0.5 text-sm text-gray-400">Pick up any conversation where you left off.</p>
+        <section className="rounded-2xl border border-slate-200 bg-white p-6">
+          <h3 className="text-lg font-bold text-slate-900">💬 Your coaching sessions</h3>
+          <p className="mt-0.5 text-sm text-slate-500">Pick up any conversation where you left off.</p>
           <div className="mt-4 max-h-72 space-y-2 overflow-y-auto">
-            {sessions.length === 0 && <p className="text-sm text-gray-500">No sessions yet — start your first one above.</p>}
+            {sessions.length === 0 && <p className="text-sm text-slate-400">No sessions yet — start your first one above.</p>}
             {sessions.map((s) => (
-              <Link key={s.id} href={`/learn/coach?s=${s.id}`} className="block rounded-lg border border-white/10 bg-black/20 px-3 py-2 hover:border-brand-500/50">
-                <div className="text-sm font-medium text-white">{s.title}</div>
-                <div className="text-xs text-gray-400">{s.count} messages · {new Date(s.updatedAt).toLocaleString()}</div>
+              <Link key={s.id} href={`/learn/coach?s=${s.id}`} className="block rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 hover:border-brand-300">
+                <div className="text-sm font-medium text-slate-900">{s.title}</div>
+                <div className="text-xs text-slate-500">{s.count} messages · {new Date(s.updatedAt).toLocaleString()}</div>
               </Link>
             ))}
           </div>
         </section>
 
         {/* Progress + journey */}
-        <section className="rounded-2xl border border-white/10 bg-panel/60 p-6">
-          <h3 className="text-lg font-bold text-white">📈 Your journey</h3>
-          <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-black/40">
-            <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-accent" style={{ width: `${pct}%` }} />
+        <section className="rounded-2xl border border-slate-200 bg-white p-6">
+          <h3 className="text-lg font-bold text-slate-900">📈 Your journey</h3>
+          <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+            <div className="h-full rounded-full bg-brand-600" style={{ width: `${pct}%` }} />
           </div>
-          <div className="mt-2 text-sm text-gray-400">{progress.completedDays.length} of {totalDays} days completed by the cohort</div>
+          <div className="mt-2 text-sm text-slate-500">{progress.completedDays.length} of {totalDays} days completed by the cohort</div>
           <div className="mt-4 max-h-52 space-y-1.5 overflow-y-auto">
             {learner.journey.map((e) => (
               <div key={e.id} className="flex gap-2 text-sm">
-                <span className="text-brand-400">•</span>
-                <span className="text-gray-300">{e.summary}</span>
+                <span className="text-brand-600">•</span>
+                <span className="text-slate-600">{e.summary}</span>
               </div>
             ))}
           </div>
@@ -213,17 +213,17 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
 
       {/* Tickets + profile */}
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border border-white/10 bg-panel/60 p-6">
-          <h3 className="text-lg font-bold text-white">🙋 Your human-help requests</h3>
+        <section className="rounded-2xl border border-slate-200 bg-white p-6">
+          <h3 className="text-lg font-bold text-slate-900">🙋 Your human-help requests</h3>
           <div className="mt-3 space-y-2">
-            {tickets.length === 0 && <p className="text-sm text-gray-500">None yet. You can raise one from any coaching session.</p>}
+            {tickets.length === 0 && <p className="text-sm text-slate-400">None yet. You can raise one from any coaching session.</p>}
             {tickets.map((t) => (
-              <div key={t.id} className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+              <div key={t.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-white">{t.question.slice(0, 70)}</span>
-                  <span className={`text-xs ${t.status === "resolved" ? "text-emerald-400" : "text-amber-400"}`}>{t.status}</span>
+                  <span className="text-sm text-slate-900">{t.question.slice(0, 70)}</span>
+                  <span className={`text-xs ${t.status === "resolved" ? "text-emerald-700" : "text-amber-700"}`}>{t.status}</span>
                 </div>
-                {t.response && <p className="mt-1 text-xs text-gray-300"><strong className="text-gray-200">Trainer:</strong> {t.response}</p>}
+                {t.response && <p className="mt-1 text-xs text-slate-600"><strong className="text-slate-700">Trainer:</strong> {t.response}</p>}
               </div>
             ))}
           </div>
@@ -233,11 +233,11 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
       </div>
 
       {!learner.paid && (
-        <div className="mt-6 rounded-2xl border border-brand-500/30 bg-panel/60 p-5 text-center">
-          <p className="text-gray-300">
+        <div className="mt-6 rounded-2xl border border-brand-200 bg-white p-5 text-center">
+          <p className="text-slate-600">
             You're on the free plan ({gate.used}/{gate.limit} coaching sessions used). Go Pro any time for unlimited coaching.
           </p>
-          <button onClick={() => { setPaywallReason("Upgrade whenever you're ready."); setPaywall(true); }} className="mt-3 rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-500">
+          <button onClick={() => { setPaywallReason("Upgrade whenever you're ready."); setPaywall(true); }} className="mt-3 rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700">
             See Pro
           </button>
         </div>
@@ -265,11 +265,11 @@ function ProfileEditor({ initial }: { initial: { background: string; goals: stri
     setTimeout(() => setSaved(false), 2500);
   }
 
-  const input = "mt-1 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white outline-none focus:border-brand-500";
+  const input = "mt-1 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900 outline-none focus:border-brand-500";
   return (
-    <section className="rounded-2xl border border-white/10 bg-panel/60 p-6">
-      <h3 className="text-lg font-bold text-white">⚙️ Your profile</h3>
-      <p className="mt-0.5 text-sm text-gray-400">This shapes how your coach personalises everything.</p>
+    <section className="rounded-2xl border border-slate-200 bg-white p-6">
+      <h3 className="text-lg font-bold text-slate-900">⚙️ Your profile</h3>
+      <p className="mt-0.5 text-sm text-slate-500">This shapes how your coach personalises everything.</p>
       <div className="mt-3 space-y-3">
         <textarea value={background} onChange={(e) => setBackground(e.target.value)} rows={2} placeholder="Your background" className={input} />
         <textarea value={goals} onChange={(e) => setGoals(e.target.value)} rows={2} placeholder="Your goal" className={input} />
@@ -278,7 +278,7 @@ function ProfileEditor({ initial }: { initial: { background: string; goals: stri
           <option value="intermediate">Intermediate</option>
           <option value="advanced">Advanced</option>
         </select>
-        <button onClick={save} disabled={busy} className="w-full rounded-lg bg-brand-600 py-2 font-semibold text-white hover:bg-brand-500 disabled:opacity-60">
+        <button onClick={save} disabled={busy} className="w-full rounded-lg bg-brand-600 py-2 font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
           {saved ? "Saved ✓" : busy ? "Saving…" : "Save profile"}
         </button>
       </div>

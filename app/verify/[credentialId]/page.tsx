@@ -16,10 +16,10 @@ export default async function VerifyPage({ params }: { params: { credentialId: s
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <header className="flex items-center gap-3">
-        <div className="grid h-10 w-10 place-items-center rounded-xl bg-brand-500/20 text-xl">🧠</div>
+        <div className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-xl">🧠</div>
         <div>
-          <div className="text-xs uppercase tracking-widest text-brand-400">Surge Software · AI Academy</div>
-          <div className="font-bold text-white">Credential verification</div>
+          <div className="text-xs uppercase tracking-widest text-brand-600">Surge Software · AI Academy</div>
+          <div className="font-bold text-slate-900">Credential verification</div>
         </div>
       </header>
 
@@ -34,7 +34,7 @@ export default async function VerifyPage({ params }: { params: { credentialId: s
           <Result tone="green" icon="✓" title="Verified — genuine credential"
             subtitle={`Issued by Surge Software AI Academy. This certificate is authentic and was issued to the holder named below.`} />
 
-          <div className="mt-6 grid gap-3 rounded-2xl border border-white/10 bg-panel/60 p-6 sm:grid-cols-2">
+          <div className="mt-6 grid gap-3 rounded-2xl border border-slate-200 bg-white p-6 sm:grid-cols-2">
             <Field label="Issued to" value={cert.learnerName} />
             <Field label="Program" value="AI Mastery — 20-Day Program" />
             <Field label="Cohort" value={cert.cohort} />
@@ -43,16 +43,16 @@ export default async function VerifyPage({ params }: { params: { credentialId: s
             <Field label="Credential ID" value={cert.credentialId} mono />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-white/10 bg-panel/60 p-6">
-            <div className="text-xs font-bold uppercase tracking-wider text-brand-300">Capstone project</div>
-            <h2 className="mt-1 text-2xl font-bold text-white">{cert.capstoneTitle}</h2>
-            <Markdown className="prose-slide mt-4 text-gray-200">{cert.capstoneSummary}</Markdown>
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
+            <div className="text-xs font-bold uppercase tracking-wider text-brand-700">Capstone project</div>
+            <h2 className="mt-1 text-2xl font-bold text-slate-900">{cert.capstoneTitle}</h2>
+            <Markdown className="prose-slide mt-4 text-slate-700">{cert.capstoneSummary}</Markdown>
           </div>
         </>
       )}
 
-      <p className="mt-8 text-center text-xs text-gray-500">
-        <Link href="/verify" className="text-accent hover:underline">Verify another credential</Link>
+      <p className="mt-8 text-center text-xs text-slate-400">
+        <Link href="/verify" className="text-accent-700 hover:underline">Verify another credential</Link>
         {" · "}This page reflects the issuer&rsquo;s records in real time.
       </p>
     </main>
@@ -61,16 +61,16 @@ export default async function VerifyPage({ params }: { params: { credentialId: s
 
 function Result({ tone, icon, title, subtitle }: { tone: "green" | "red" | "gray"; icon: string; title: string; subtitle: string }) {
   const map = {
-    green: "border-emerald-500/40 bg-emerald-600/10 text-emerald-300",
-    red: "border-red-500/40 bg-red-600/10 text-red-300",
-    gray: "border-white/15 bg-white/5 text-gray-300",
+    green: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    red: "border-red-200 bg-red-50 text-red-700",
+    gray: "border-slate-200 bg-slate-50 text-slate-600",
   } as const;
   return (
     <div className={`mt-8 rounded-2xl border p-6 ${map[tone]}`}>
       <div className="flex items-center gap-3">
-        <div className="grid h-10 w-10 place-items-center rounded-full bg-black/30 text-xl">{icon}</div>
+        <div className="grid h-10 w-10 place-items-center rounded-full bg-slate-50 text-xl">{icon}</div>
         <div>
-          <div className="text-lg font-extrabold text-white">{title}</div>
+          <div className="text-lg font-extrabold text-slate-900">{title}</div>
           <div className="text-sm">{subtitle}</div>
         </div>
       </div>
@@ -81,8 +81,8 @@ function Result({ tone, icon, title, subtitle }: { tone: "green" | "red" | "gray
 function Field({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div>
-      <div className="text-xs uppercase tracking-wider text-gray-400">{label}</div>
-      <div className={`text-white ${mono ? "font-mono" : ""}`}>{value}</div>
+      <div className="text-xs uppercase tracking-wider text-slate-500">{label}</div>
+      <div className={`text-slate-900 ${mono ? "font-mono" : ""}`}>{value}</div>
     </div>
   );
 }

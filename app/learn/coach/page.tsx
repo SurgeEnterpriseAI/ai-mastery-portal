@@ -15,7 +15,7 @@ export default async function CoachPage({ searchParams }: { searchParams: { s?: 
     return (
       <main className="grid min-h-screen place-items-center px-6 text-center">
         <div>
-          <h1 className="text-2xl font-bold text-white">Session not found</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Session not found</h1>
           <Link href="/learn" className="mt-4 inline-block rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white">← Back to dashboard</Link>
         </div>
       </main>

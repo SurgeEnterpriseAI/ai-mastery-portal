@@ -100,39 +100,39 @@ export default function Paywall({
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-6">
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-panel p-7">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-slate-900/50 p-6">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-7">
         <div className="text-4xl">🚀</div>
-        <h2 className="mt-3 text-2xl font-extrabold text-white">Unlock unlimited coaching</h2>
-        <p className="mt-2 text-gray-300">
+        <h2 className="mt-3 text-2xl font-extrabold text-slate-900">Unlock unlimited coaching</h2>
+        <p className="mt-2 text-slate-600">
           {reason || "You've used your free coaching sessions."} Go Pro for unlimited personalised hand-holding,
           recommendations, and human help whenever you need it.
         </p>
-        <div className="mt-5 rounded-xl border border-brand-500/30 bg-brand-600/10 p-4">
+        <div className="mt-5 rounded-xl border border-brand-200 bg-brand-50 p-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white">{amount}</span>
-            <span className="text-sm text-gray-400">one-time · full access</span>
+            <span className="text-3xl font-extrabold text-slate-900">{amount}</span>
+            <span className="text-sm text-slate-500">one-time · full access</span>
           </div>
-          <ul className="mt-3 space-y-1 text-sm text-gray-300">
+          <ul className="mt-3 space-y-1 text-sm text-slate-600">
             <li>✓ Unlimited AI coaching sessions</li>
             <li>✓ Personalised next-step recommendations</li>
             <li>✓ Priority human help from a trainer</li>
           </ul>
         </div>
         {!payConfigured && (
-          <p className="mt-3 rounded-lg bg-amber-600/15 p-2 text-xs text-amber-300">
+          <p className="mt-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-700">
             Demo mode: no gateway configured, so payment is simulated. Set Razorpay keys for real UPI checkout.
           </p>
         )}
-        {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
         <div className="mt-5 flex gap-2">
-          <button onClick={onClose} className="rounded-lg border border-white/15 px-4 py-2.5 text-gray-300 hover:bg-white/5">
+          <button onClick={onClose} className="rounded-lg border border-slate-200 px-4 py-2.5 text-slate-600 hover:bg-slate-50">
             Maybe later
           </button>
           <button
             onClick={pay}
             disabled={busy}
-            className="flex-1 rounded-lg bg-brand-600 py-2.5 font-semibold text-white hover:bg-brand-500 disabled:opacity-60"
+            className="flex-1 rounded-lg bg-brand-600 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
           >
             {busy ? "Processing…" : `Pay ${amount} with UPI`}
           </button>

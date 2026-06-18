@@ -17,8 +17,8 @@ export default async function PresentPage({ params }: { params: { day: string } 
       <main className="grid min-h-screen place-items-center px-6 text-center">
         <div className="max-w-md">
           <div className="text-5xl">⏳</div>
-          <h1 className="mt-4 text-2xl font-bold text-white">Day {dayNum} isn&rsquo;t ready yet</h1>
-          <p className="mt-2 text-gray-400">
+          <h1 className="mt-4 text-2xl font-bold text-slate-900">Day {dayNum} isn&rsquo;t ready yet</h1>
+          <p className="mt-2 text-slate-500">
             This day&rsquo;s material is still being prepared. Please check back shortly.
           </p>
           <Link href={isTrainer ? "/trainer" : "/"} className="mt-6 inline-block rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white">

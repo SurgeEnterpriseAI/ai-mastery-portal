@@ -112,17 +112,17 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
       {/* Header */}
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-500/20 text-2xl">🧠</div>
+          <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">🧠</div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-brand-400">Trainer Console</div>
-            <div className="text-lg font-bold text-white">{cohortName}</div>
+            <div className="text-xs uppercase tracking-widest text-brand-600">Trainer Console</div>
+            <div className="text-lg font-bold text-slate-900">{cohortName}</div>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/" className="rounded-lg border border-white/10 px-4 py-2 text-sm text-gray-300 hover:bg-white/5">
+          <Link href="/" className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">
             Public view
           </Link>
-          <button onClick={logout} className="rounded-lg border border-white/10 px-4 py-2 text-sm text-gray-300 hover:bg-white/5">
+          <button onClick={logout} className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">
             Log out
           </button>
         </div>
@@ -130,14 +130,14 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
 
       {/* Resume hero */}
       <section className="mt-8 grid gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2 rounded-2xl border border-brand-500/30 bg-gradient-to-br from-brand-600/20 to-panel/60 p-6">
-          <div className="text-xs uppercase tracking-widest text-brand-300">Resume teaching</div>
-          <h2 className="mt-1 text-2xl font-extrabold text-white">
+        <div className="lg:col-span-2 rounded-2xl border border-brand-200 bg-brand-50 border border-brand-100 p-6">
+          <div className="text-xs uppercase tracking-widest text-brand-700">Resume teaching</div>
+          <h2 className="mt-1 text-2xl font-extrabold text-slate-900">
             Day {progress.currentDay}: {currentDayMeta?.title || "—"}
           </h2>
-          <p className="mt-1 text-gray-300">{currentDayMeta?.subtitle}</p>
-          <p className="mt-3 text-sm text-gray-400">
-            The portal saved your place at <strong className="text-white">slide {progress.currentSlide + 1}</strong>
+          <p className="mt-1 text-slate-600">{currentDayMeta?.subtitle}</p>
+          <p className="mt-3 text-sm text-slate-500">
+            The portal saved your place at <strong className="text-slate-900">slide {progress.currentSlide + 1}</strong>
             {progress.lastTaughtAt
               ? ` · last taught ${new Date(progress.lastTaughtAt).toLocaleString()}`
               : " · not started yet"}
@@ -146,27 +146,27 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
               href={`/present/${progress.currentDay}`}
-              className="rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-500"
+              className="rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700"
             >
               ▶ Start / Resume class
             </Link>
             <button
               onClick={() => call("/api/announce", { day: progress.currentDay })}
               disabled={busy}
-              className="rounded-lg border border-white/15 px-5 py-3 font-semibold text-gray-200 hover:bg-white/5 disabled:opacity-50"
+              className="rounded-lg border border-slate-200 px-5 py-3 font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
             >
               📣 Announce &ldquo;what&rsquo;s coming&rdquo; to class
             </button>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-panel/60 p-6">
-          <div className="text-xs uppercase tracking-widest text-gray-400">Cohort progress</div>
-          <div className="mt-2 text-4xl font-extrabold text-white">{pct}%</div>
-          <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-black/40">
-            <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-accent" style={{ width: `${pct}%` }} />
+        <div className="rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="text-xs uppercase tracking-widest text-slate-500">Cohort progress</div>
+          <div className="mt-2 text-4xl font-extrabold text-slate-900">{pct}%</div>
+          <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+            <div className="h-full rounded-full bg-brand-600" style={{ width: `${pct}%` }} />
           </div>
-          <div className="mt-3 text-sm text-gray-400">
+          <div className="mt-3 text-sm text-slate-500">
             {progress.completedDays.length} of {totalDays} days completed
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3 text-center">
@@ -180,11 +180,11 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
         {/* Schedule */}
         <Panel title="📅 Schedule a session" subtitle="Pick a day, date & time. Then send email invites to the class.">
           <div className="grid grid-cols-2 gap-3">
-            <label className="col-span-2 text-xs uppercase tracking-wider text-gray-400">Day</label>
+            <label className="col-span-2 text-xs uppercase tracking-wider text-slate-500">Day</label>
             <select
               value={schedDay}
               onChange={(e) => setSchedDay(Number(e.target.value))}
-              className="col-span-2 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white"
+              className="col-span-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900"
             >
               {dayMetas.map((d) => (
                 <option key={d.day} value={d.day}>
@@ -193,21 +193,21 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
               ))}
             </select>
             <div>
-              <label className="text-xs uppercase tracking-wider text-gray-400">Date</label>
+              <label className="text-xs uppercase tracking-wider text-slate-500">Date</label>
               <input
                 type="date"
                 value={schedDate}
                 onChange={(e) => setSchedDate(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white"
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900"
               />
             </div>
             <div>
-              <label className="text-xs uppercase tracking-wider text-gray-400">Time</label>
+              <label className="text-xs uppercase tracking-wider text-slate-500">Time</label>
               <input
                 type="time"
                 value={schedTime}
                 onChange={(e) => setSchedTime(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white"
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900"
               />
             </div>
           </div>
@@ -217,37 +217,37 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
               await call("/api/sessions", { day: schedDay, date: schedDate, time: schedTime });
             }}
             disabled={busy}
-            className="mt-3 w-full rounded-lg bg-brand-600 py-2.5 font-semibold text-white hover:bg-brand-500 disabled:opacity-50"
+            className="mt-3 w-full rounded-lg bg-brand-600 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
           >
             + Schedule session
           </button>
 
           <div className="mt-4 space-y-2">
-            {sessions.length === 0 && <p className="text-sm text-gray-500">No sessions scheduled yet.</p>}
+            {sessions.length === 0 && <p className="text-sm text-slate-400">No sessions scheduled yet.</p>}
             {sessions.map((s) => (
-              <div key={s.id} className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+              <div key={s.id} className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                 <div>
-                  <div className="text-sm font-semibold text-white">
+                  <div className="text-sm font-semibold text-slate-900">
                     Day {s.day}: {s.title}
                   </div>
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-slate-500">
                     {s.date} @ {s.time} ·{" "}
-                    <span className={s.status === "completed" ? "text-emerald-400" : "text-amber-400"}>{s.status}</span>
-                    {s.invitesSent && <span className="text-brand-300"> · invited</span>}
+                    <span className={s.status === "completed" ? "text-emerald-700" : "text-amber-700"}>{s.status}</span>
+                    {s.invitesSent && <span className="text-brand-700"> · invited</span>}
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => call("/api/sessions/invite", { id: s.id })}
                     disabled={busy}
-                    className="rounded-md bg-brand-600/80 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-500 disabled:opacity-50"
+                    className="rounded-md bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
                   >
                     {s.invitesSent ? "Re-send invites" : "Send invites"}
                   </button>
                   <button
                     onClick={() => call(`/api/sessions?id=${s.id}`, undefined, "DELETE")}
                     disabled={busy}
-                    className="rounded-md border border-white/10 px-2.5 py-1.5 text-xs text-gray-400 hover:bg-white/5"
+                    className="rounded-md border border-slate-200 px-2.5 py-1.5 text-xs text-slate-500 hover:bg-slate-50"
                   >
                     ✕
                   </button>
@@ -264,13 +264,13 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
               placeholder="Name (optional)"
               value={traineeName}
               onChange={(e) => setTraineeName(e.target.value)}
-              className="rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white"
+              className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900"
             />
             <input
               placeholder="email@domain.com"
               value={traineeEmail}
               onChange={(e) => setTraineeEmail(e.target.value)}
-              className="rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white"
+              className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900"
             />
           </div>
           <button
@@ -283,23 +283,23 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
               }
             }}
             disabled={busy}
-            className="mt-3 w-full rounded-lg bg-brand-600 py-2.5 font-semibold text-white hover:bg-brand-500 disabled:opacity-50"
+            className="mt-3 w-full rounded-lg bg-brand-600 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
           >
             + Add trainee(s)
           </button>
 
           <div className="mt-4 max-h-64 space-y-2 overflow-y-auto">
-            {trainees.length === 0 && <p className="text-sm text-gray-500">No trainees yet.</p>}
+            {trainees.length === 0 && <p className="text-sm text-slate-400">No trainees yet.</p>}
             {trainees.map((t) => (
-              <div key={t.id} className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+              <div key={t.id} className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                 <div>
-                  <div className="text-sm font-medium text-white">{t.name}</div>
-                  <div className="text-xs text-gray-400">{t.email}</div>
+                  <div className="text-sm font-medium text-slate-900">{t.name}</div>
+                  <div className="text-xs text-slate-500">{t.email}</div>
                 </div>
                 <button
                   onClick={() => call(`/api/trainees?id=${t.id}`, undefined, "DELETE")}
                   disabled={busy}
-                  className="rounded-md border border-white/10 px-2.5 py-1.5 text-xs text-gray-400 hover:bg-white/5"
+                  className="rounded-md border border-slate-200 px-2.5 py-1.5 text-xs text-slate-500 hover:bg-slate-50"
                 >
                   ✕
                 </button>
@@ -311,7 +311,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
 
       {/* Curriculum browser */}
       <section className="mt-8">
-        <h3 className="text-lg font-bold text-white">📚 Curriculum — 20 days</h3>
+        <h3 className="text-lg font-bold text-slate-900">📚 Curriculum — 20 days</h3>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {dayMetas.map((d) => {
             const done = progress.completedDays.includes(d.day);
@@ -320,24 +320,24 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
               <Link
                 key={d.day}
                 href={`/present/${d.day}`}
-                className={`rounded-xl border p-4 transition hover:border-brand-500/60 ${
-                  current ? "border-brand-500/70 bg-brand-600/10" : "border-white/10 bg-panel/50"
+                className={`rounded-xl border p-4 transition hover:border-brand-300 ${
+                  current ? "border-brand-400 bg-brand-50" : "border-slate-200 bg-white"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-brand-400">Day {d.day}</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-600">Day {d.day}</span>
                   {done ? (
-                    <span className="text-xs text-emerald-400">✓ done</span>
+                    <span className="text-xs text-emerald-700">✓ done</span>
                   ) : current ? (
-                    <span className="text-xs text-amber-400">▶ next</span>
+                    <span className="text-xs text-amber-700">▶ next</span>
                   ) : d.slideCount === 0 ? (
-                    <span className="text-xs text-gray-500">loading…</span>
+                    <span className="text-xs text-slate-400">loading…</span>
                   ) : (
-                    <span className="text-xs text-gray-500">{d.slideCount} slides</span>
+                    <span className="text-xs text-slate-400">{d.slideCount} slides</span>
                   )}
                 </div>
-                <div className="mt-1.5 text-sm font-semibold text-white">{d.title}</div>
-                <div className="mt-0.5 text-xs text-gray-400 line-clamp-2">{d.subtitle}</div>
+                <div className="mt-1.5 text-sm font-semibold text-slate-900">{d.title}</div>
+                <div className="mt-0.5 text-xs text-slate-500 line-clamp-2">{d.subtitle}</div>
               </Link>
             );
           })}
@@ -351,17 +351,17 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
             <input
               value={nameEdit}
               onChange={(e) => setNameEdit(e.target.value)}
-              className="flex-1 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white"
+              className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900"
             />
             <button
               onClick={() => call("/api/cohort", { cohortName: nameEdit })}
               disabled={busy}
-              className="rounded-lg bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-500 disabled:opacity-50"
+              className="rounded-lg bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
             >
               Save
             </button>
           </div>
-          <div className={`mt-4 rounded-lg p-3 text-sm ${smtpConfigured ? "bg-emerald-600/15 text-emerald-300" : "bg-amber-600/15 text-amber-300"}`}>
+          <div className={`mt-4 rounded-lg p-3 text-sm ${smtpConfigured ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
             {smtpConfigured ? (
               <>✓ SMTP configured — invites & announcements are delivered by email.</>
             ) : (
@@ -375,26 +375,26 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
           <button
             onClick={() => call("/api/test-email", {})}
             disabled={busy}
-            className="mt-3 w-full rounded-lg border border-white/10 py-2 text-sm text-gray-200 hover:bg-white/5 disabled:opacity-50"
+            className="mt-3 w-full rounded-lg border border-slate-200 py-2 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
             Send a test email
           </button>
 
-          <div className="mt-5 border-t border-white/10 pt-4">
-            <div className="text-xs font-bold uppercase tracking-wider text-gray-400">Change password</div>
+          <div className="mt-5 border-t border-slate-200 pt-4">
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-500">Change password</div>
             <input
               type="password"
               value={pwCurrent}
               onChange={(e) => setPwCurrent(e.target.value)}
               placeholder="Current password"
-              className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white"
+              className="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900"
             />
             <input
               type="password"
               value={pwNext}
               onChange={(e) => setPwNext(e.target.value)}
               placeholder="New password (min 8 chars)"
-              className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white"
+              className="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900"
             />
             <button
               onClick={async () => {
@@ -403,7 +403,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
                 if (d) { setPwCurrent(""); setPwNext(""); }
               }}
               disabled={busy}
-              className="mt-2 w-full rounded-lg bg-brand-600 py-2 text-sm font-semibold text-white hover:bg-brand-500 disabled:opacity-50"
+              className="mt-2 w-full rounded-lg bg-brand-600 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
             >
               Update password
             </button>
@@ -412,16 +412,16 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
 
         <Panel title="📨 Outbox" subtitle="Every invite, announcement & test — most recent first.">
           <div className="max-h-72 space-y-2 overflow-y-auto">
-            {outbox.length === 0 && <p className="text-sm text-gray-500">Nothing sent yet.</p>}
+            {outbox.length === 0 && <p className="text-sm text-slate-400">Nothing sent yet.</p>}
             {outbox.map((m) => (
-              <div key={m.id} className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+              <div key={m.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-white">{m.subject}</span>
-                  <span className={`text-xs ${m.delivered ? "text-emerald-400" : "text-amber-400"}`}>
+                  <span className="text-sm font-medium text-slate-900">{m.subject}</span>
+                  <span className={`text-xs ${m.delivered ? "text-emerald-700" : "text-amber-700"}`}>
                     {m.delivered ? "delivered" : "outbox"}
                   </span>
                 </div>
-                <div className="text-xs text-gray-400">
+                <div className="text-xs text-slate-500">
                   to {m.to.length} · {new Date(m.sentAt).toLocaleString()} · {m.kind}
                 </div>
               </div>
@@ -433,17 +433,17 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
       {/* Learners + payments */}
       <section className="mt-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h3 className="text-lg font-bold text-white">🎓 Learners (self-service AI coaching)</h3>
+          <h3 className="text-lg font-bold text-slate-900">🎓 Learners (self-service AI coaching)</h3>
           <div className="flex gap-3 text-sm">
-            <span className="rounded-lg bg-black/30 px-3 py-1.5 text-gray-300">{learners.length} learners</span>
-            <span className="rounded-lg bg-black/30 px-3 py-1.5 text-emerald-300">{paidCount} Pro</span>
-            <span className="rounded-lg bg-black/30 px-3 py-1.5 text-accent">₹{(revenue / 100).toLocaleString()} revenue</span>
+            <span className="rounded-lg bg-slate-50 px-3 py-1.5 text-slate-600">{learners.length} learners</span>
+            <span className="rounded-lg bg-slate-50 px-3 py-1.5 text-emerald-700">{paidCount} Pro</span>
+            <span className="rounded-lg bg-slate-50 px-3 py-1.5 text-accent-700">₹{(revenue / 100).toLocaleString()} revenue</span>
           </div>
         </div>
-        <div className="mt-4 overflow-x-auto rounded-2xl border border-white/10 bg-panel/60">
+        <div className="mt-4 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
           <table className="w-full text-left text-sm">
-            <thead className="text-xs uppercase tracking-wider text-gray-400">
-              <tr className="border-b border-white/10">
+            <thead className="text-xs uppercase tracking-wider text-slate-500">
+              <tr className="border-b border-slate-200">
                 <th className="px-4 py-3">Learner</th>
                 <th className="px-4 py-3">Goal</th>
                 <th className="px-4 py-3">Coaching used</th>
@@ -452,15 +452,15 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
             </thead>
             <tbody>
               {learners.length === 0 && (
-                <tr><td colSpan={4} className="px-4 py-4 text-gray-500">No learners yet. Share the <code>/join</code> link.</td></tr>
+                <tr><td colSpan={4} className="px-4 py-4 text-slate-400">No learners yet. Share the <code>/join</code> link.</td></tr>
               )}
               {learners.map((l) => (
-                <tr key={l.id} className="border-b border-white/5">
-                  <td className="px-4 py-3"><div className="font-medium text-white">{l.name}</div><div className="text-xs text-gray-400">{l.email}</div></td>
-                  <td className="px-4 py-3 text-gray-300">{l.goals || "—"}</td>
-                  <td className="px-4 py-3 text-gray-300">{l.handholdingCount}</td>
+                <tr key={l.id} className="border-b border-slate-100">
+                  <td className="px-4 py-3"><div className="font-medium text-slate-900">{l.name}</div><div className="text-xs text-slate-500">{l.email}</div></td>
+                  <td className="px-4 py-3 text-slate-600">{l.goals || "—"}</td>
+                  <td className="px-4 py-3 text-slate-600">{l.handholdingCount}</td>
                   <td className="px-4 py-3">
-                    {l.paid ? <span className="text-emerald-400">Pro</span> : <span className="text-gray-400">Free</span>}
+                    {l.paid ? <span className="text-emerald-700">Pro</span> : <span className="text-slate-500">Free</span>}
                   </td>
                 </tr>
               ))}
@@ -471,37 +471,37 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
 
       {/* Help tickets */}
       <section className="mt-8">
-        <h3 className="text-lg font-bold text-white">
-          🙋 Human-help requests {openTickets.length > 0 && <span className="ml-2 rounded-full bg-amber-600/30 px-2 py-0.5 text-xs text-amber-300">{openTickets.length} open</span>}
+        <h3 className="text-lg font-bold text-slate-900">
+          🙋 Human-help requests {openTickets.length > 0 && <span className="ml-2 rounded-full bg-amber-600/30 px-2 py-0.5 text-xs text-amber-700">{openTickets.length} open</span>}
         </h3>
         <div className="mt-4 space-y-3">
-          {tickets.length === 0 && <p className="text-sm text-gray-500">No help requests yet.</p>}
+          {tickets.length === 0 && <p className="text-sm text-slate-400">No help requests yet.</p>}
           {tickets.map((t) => (
-            <div key={t.id} className="rounded-2xl border border-white/10 bg-panel/60 p-5">
+            <div key={t.id} className="rounded-2xl border border-slate-200 bg-white p-5">
               <div className="flex items-center justify-between">
-                <div className="text-sm font-semibold text-white">{t.learnerName} <span className="font-normal text-gray-400">· {t.learnerEmail}</span></div>
-                <span className={`text-xs ${t.status === "resolved" ? "text-emerald-400" : "text-amber-400"}`}>{t.status}</span>
+                <div className="text-sm font-semibold text-slate-900">{t.learnerName} <span className="font-normal text-slate-500">· {t.learnerEmail}</span></div>
+                <span className={`text-xs ${t.status === "resolved" ? "text-emerald-700" : "text-amber-700"}`}>{t.status}</span>
               </div>
-              <p className="mt-2 text-gray-200">{t.question}</p>
-              {t.context && <pre className="mt-2 max-h-32 overflow-y-auto whitespace-pre-wrap rounded-lg bg-black/30 p-3 text-xs text-gray-400">{t.context}</pre>}
+              <p className="mt-2 text-slate-700">{t.question}</p>
+              {t.context && <pre className="mt-2 max-h-32 overflow-y-auto whitespace-pre-wrap rounded-lg bg-slate-50 p-3 text-xs text-slate-500">{t.context}</pre>}
               {t.status === "open" ? (
                 <div className="mt-3 flex gap-2">
                   <input
                     value={ticketReply[t.id] || ""}
                     onChange={(e) => setTicketReply({ ...ticketReply, [t.id]: e.target.value })}
                     placeholder="Reply (emailed to the learner)…"
-                    className="flex-1 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-brand-500"
+                    className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none focus:border-brand-500"
                   />
                   <button
                     onClick={() => call("/api/tickets", { id: t.id, response: ticketReply[t.id] || "" })}
                     disabled={busy}
-                    className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50"
+                    className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
                   >
                     Resolve & reply
                   </button>
                 </div>
               ) : (
-                t.response && <p className="mt-2 text-sm text-emerald-300">↳ {t.response}</p>
+                t.response && <p className="mt-2 text-sm text-emerald-700">↳ {t.response}</p>
               )}
             </div>
           ))}
@@ -510,12 +510,12 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
 
       {/* Certificates */}
       <section className="mt-8">
-        <h3 className="text-lg font-bold text-white">🎓 Issued certificates ({certificates.length})</h3>
-        <p className="mt-0.5 text-sm text-gray-400">Every credential is publicly verifiable at <code>/verify/&lt;id&gt;</code>. Revoke to invalidate.</p>
-        <div className="mt-4 overflow-x-auto rounded-2xl border border-white/10 bg-panel/60">
+        <h3 className="text-lg font-bold text-slate-900">🎓 Issued certificates ({certificates.length})</h3>
+        <p className="mt-0.5 text-sm text-slate-500">Every credential is publicly verifiable at <code>/verify/&lt;id&gt;</code>. Revoke to invalidate.</p>
+        <div className="mt-4 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
           <table className="w-full text-left text-sm">
-            <thead className="text-xs uppercase tracking-wider text-gray-400">
-              <tr className="border-b border-white/10">
+            <thead className="text-xs uppercase tracking-wider text-slate-500">
+              <tr className="border-b border-slate-200">
                 <th className="px-4 py-3">Credential</th>
                 <th className="px-4 py-3">Holder</th>
                 <th className="px-4 py-3">Capstone</th>
@@ -525,21 +525,21 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
             </thead>
             <tbody>
               {certificates.length === 0 && (
-                <tr><td colSpan={5} className="px-4 py-4 text-gray-500">No certificates issued yet.</td></tr>
+                <tr><td colSpan={5} className="px-4 py-4 text-slate-400">No certificates issued yet.</td></tr>
               )}
               {certificates.map((c) => (
-                <tr key={c.credentialId} className="border-b border-white/5">
-                  <td className="px-4 py-3"><a href={`/verify/${c.credentialId}`} target="_blank" className="font-mono text-xs text-accent hover:underline">{c.credentialId}</a></td>
-                  <td className="px-4 py-3 text-white">{c.learnerName}</td>
-                  <td className="px-4 py-3 text-gray-300">{c.capstoneTitle}</td>
+                <tr key={c.credentialId} className="border-b border-slate-100">
+                  <td className="px-4 py-3"><a href={`/verify/${c.credentialId}`} target="_blank" className="font-mono text-xs text-accent-700 hover:underline">{c.credentialId}</a></td>
+                  <td className="px-4 py-3 text-slate-900">{c.learnerName}</td>
+                  <td className="px-4 py-3 text-slate-600">{c.capstoneTitle}</td>
                   <td className="px-4 py-3">
-                    {c.status === "revoked" ? <span className="text-red-400">revoked</span> : <span className="text-emerald-400">valid</span>}
+                    {c.status === "revoked" ? <span className="text-red-600">revoked</span> : <span className="text-emerald-700">valid</span>}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => call("/api/certificate/revoke", { credentialId: c.credentialId, revoke: c.status !== "revoked" })}
                       disabled={busy}
-                      className="rounded-md border border-white/10 px-3 py-1.5 text-xs text-gray-300 hover:bg-white/5 disabled:opacity-50"
+                      className="rounded-md border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50 disabled:opacity-50"
                     >
                       {c.status === "revoked" ? "Reinstate" : "Revoke"}
                     </button>
@@ -551,7 +551,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
         </div>
       </section>
 
-      <footer className="mt-12 border-t border-white/10 pt-6 text-center text-sm text-gray-500">
+      <footer className="mt-12 border-t border-slate-200 pt-6 text-center text-sm text-slate-400">
         AI Mastery Portal · the room resumes itself, every single day.
       </footer>
     </main>
@@ -560,9 +560,9 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
 
 function Panel({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-panel/60 p-6">
-      <h3 className="text-lg font-bold text-white">{title}</h3>
-      {subtitle && <p className="mt-0.5 text-sm text-gray-400">{subtitle}</p>}
+    <section className="rounded-2xl border border-slate-200 bg-white p-6">
+      <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+      {subtitle && <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p>}
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -570,9 +570,9 @@ function Panel({ title, subtitle, children }: { title: string; subtitle?: string
 
 function Mini({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-black/30 py-3">
-      <div className="text-xl font-extrabold text-white">{value}</div>
-      <div className="text-xs uppercase tracking-wider text-gray-400">{label}</div>
+    <div className="rounded-lg bg-slate-50 py-3">
+      <div className="text-xl font-extrabold text-slate-900">{value}</div>
+      <div className="text-xs uppercase tracking-wider text-slate-500">{label}</div>
     </div>
   );
 }
