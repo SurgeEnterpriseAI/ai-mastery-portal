@@ -2,9 +2,18 @@ import Link from "next/link";
 import { listJobRoles, listOpenings, placementStats } from "@/lib/careers";
 import { ensureDemoContent } from "@/lib/seed-demo";
 import { getAllDayMeta } from "@/lib/curriculum";
+import type { Metadata } from "next";
 import OpeningsBoard from "./OpeningsBoard";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "AI careers & India salary bands — AI/ML Engineer, LLM Developer & more",
+  description:
+    "The AI roles Tensorpath trains you for — AI/ML Engineer, LLM Application Developer, Prompt/RAG Engineer, AI Agent Developer and more — with India salary bands, the skills you'll earn, and live openings.",
+  alternates: { canonical: "/careers" },
+  openGraph: { title: "AI careers & India salaries — Tensorpath", description: "AI roles, India salary bands, the skills that get you there, and live openings.", url: "https://tensorpath.in/careers" },
+};
 
 const LEVEL_STYLE: Record<string, string> = {
   entry: "bg-emerald-50 text-emerald-700",

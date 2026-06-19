@@ -1,7 +1,14 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import EnquiryForm from "@/components/EnquiryForm";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Talk to us about AI training",
+  description: "Leave your details and the Tensorpath team will help you find the right starting point for AI training. Free to begin — learn live with an expert trainer and a personal AI coach.",
+  alternates: { canonical: "/enquiry" },
+};
 
 export default function EnquiryPage({ searchParams }: { searchParams: { src?: string } }) {
   const src = searchParams?.src || "";

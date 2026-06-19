@@ -1,9 +1,16 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSessionLearnerId } from "@/lib/auth";
 import JoinForm from "./JoinForm";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Enroll free — start your 20-day AI journey",
+  description: "Create your free Tensorpath account and start learning AI — guided live by an expert trainer and a personal AI coach. First 3 coaching sessions free.",
+  alternates: { canonical: "/join" },
+};
 
 export default function JoinPage() {
   if (getSessionLearnerId()) redirect("/learn");

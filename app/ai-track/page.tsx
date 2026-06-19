@@ -1,8 +1,17 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { TOTAL_DAYS, availableDayCount } from "@/lib/curriculum";
 import EnquiryForm from "@/components/EnquiryForm";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Add AI to your career — 20-day AI training with placement support",
+  description:
+    "Already exploring Adobe, SAP or Salesforce? Add AI in 20 days. Tensorpath is an instructor-led AI program with a personal AI coach, a verifiable certificate, and placement support. Free to begin.",
+  alternates: { canonical: "/ai-track" },
+  openGraph: { title: "Add AI to your career — Tensorpath", description: "20-day instructor-led AI training with placement support. Free to begin.", url: "https://tensorpath.in/ai-track" },
+};
 
 const ADDS = [
   { icon: "🧠", title: "A skill the market is paying for", body: "AI/LLM skills sit on top of whatever stack you already know — Adobe, SAP, Salesforce or any domain — and make your profile far more hireable." },

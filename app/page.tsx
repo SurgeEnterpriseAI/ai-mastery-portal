@@ -11,12 +11,32 @@ const HOME_STEPS = [
   { title: "3. Earn a verifiable certificate", body: "Finish the 20 days and a hands-on capstone to earn a certificate any employer can verify. Ready? Enroll above to begin." },
 ];
 
+const COURSE_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Course",
+  name: "Tensorpath — 20-Day AI Training",
+  description:
+    "A 20-day, instructor-led AI program from the 2017 Transformer paper to today's reasoning models and AI agents, with a personal AI coach, a capstone project, a verifiable certificate, and placement support.",
+  url: "https://tensorpath.in",
+  provider: { "@type": "EducationalOrganization", name: "Tensorpath", url: "https://tensorpath.in" },
+  educationalLevel: "Beginner to Advanced",
+  teaches: ["Transformers", "Large language models", "Prompt engineering", "RAG", "Fine-tuning & LoRA", "AI agents & tool use", "Multimodal AI", "Shipping AI"],
+  hasCourseInstance: [{
+    "@type": "CourseInstance",
+    courseMode: "Blended",
+    courseWorkload: "P20D",
+    instructor: { "@type": "Person", name: "Tensorpath expert trainer" },
+  }],
+  offers: { "@type": "Offer", price: "0", priceCurrency: "INR", availability: "https://schema.org/InStock", category: "Free to begin" },
+};
+
 export default function Home() {
   const days = getAllDayMeta();
   const ready = availableDayCount();
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-12">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(COURSE_JSONLD) }} />
       <header className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">🧠</div>
