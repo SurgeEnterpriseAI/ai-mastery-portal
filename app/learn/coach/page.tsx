@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentLearner } from "@/lib/learner";
-import { getCoachSession } from "@/lib/data";
+import { getCoachSession, getAppState } from "@/lib/data";
+import { buildCoachWelcome } from "@/lib/coach-welcome";
 import CoachChat from "./CoachChat";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +11,10 @@ export default async function CoachPage({ searchParams }: { searchParams: { s?: 
   const learner = await getCurrentLearner();
   if (!learner) redirect("/signin");
   const sessionId = searchParams.s;
-  const session = sessionId ? await getCoachSession(sessionId, learner.id) : null;
+  const [session, { progress }] = await Promise.all([
+    sessionId ? getCoachSession(sessionId, learner.id) : Promise.resolve(null),
+    getAppState(),
+  ]);
   if (!session) {
     return (
       <main className="grid min-h-screen place-items-center px-6 text-center">
@@ -21,11 +25,13 @@ export default async function CoachPage({ searchParams }: { searchParams: { s?: 
       </main>
     );
   }
+  const welcome = buildCoachWelcome(learner, progress.currentDay);
   return (
     <CoachChat
       sessionId={session.id}
       title={session.title}
       learnerName={learner.name}
+      welcome={welcome}
       initialMessages={session.messages.map((m) => ({ role: m.role, content: m.content }))}
     />
   );

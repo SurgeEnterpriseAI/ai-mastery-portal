@@ -13,11 +13,13 @@ export default function CoachChat({
   sessionId,
   title,
   learnerName,
+  welcome,
   initialMessages,
 }: {
   sessionId: string;
   title: string;
   learnerName: string;
+  welcome?: { greeting: string; chips: string[] };
   initialMessages: Msg[];
 }) {
   const [messages, setMessages] = useState<Msg[]>(initialMessages);
@@ -115,13 +117,17 @@ export default function CoachChat({
         {messages.length === 0 && (
           <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
             <div className="text-3xl">👋</div>
-            <p className="mt-2 text-slate-600">
-              Hi {learnerName.split(" ")[0]}! I'm Aria, your AI coach. Ask me anything about the course, request a
-              scenario to practise, or tell me where you feel stuck.
-            </p>
+            {welcome?.greeting ? (
+              <Markdown className="prose-slide prose-compact mx-auto mt-2 max-w-xl text-slate-600">{welcome.greeting}</Markdown>
+            ) : (
+              <p className="mt-2 text-slate-600">
+                Hi {learnerName.split(" ")[0]}! I'm Aria, your AI coach. Ask me anything about the course, request a
+                scenario to practise, or tell me where you feel stuck.
+              </p>
+            )}
             <div className="mt-4 flex flex-wrap justify-center gap-2">
-              {["Explain attention like I'm five", "Give me a scenario to practise RAG", "What should I learn next?"].map((s) => (
-                <button key={s} onClick={() => setInput(s)} className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50">
+              {(welcome?.chips?.length ? welcome.chips : ["Explain attention like I'm five", "Give me a scenario to practise RAG", "What should I learn next?"]).map((s) => (
+                <button key={s} onClick={() => setInput(s)} className="rounded-full border border-brand-200 bg-brand-50 px-3 py-1.5 text-xs font-medium text-brand-700 hover:bg-brand-100">
                   {s}
                 </button>
               ))}
