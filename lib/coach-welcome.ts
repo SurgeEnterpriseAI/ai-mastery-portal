@@ -6,16 +6,17 @@ export interface CoachWelcome {
   chips: string[]; // suggested first prompts, already personalised
 }
 
-// Turn a day title into a short, chip-sized topic label.
-// e.g. "How Transformers Learn to Speak" -> "Transformers Learn to Speak"
-function topicLabel(title: string): string {
-  const t = (title || "").replace(/^(how|the|inside|why|what|when|a|an)\s+/i, "").trim();
-  return t || title || "this topic";
-}
-
 function short(s: string, n = 42): string {
   const t = (s || "").trim();
   return t.length > n ? `${t.slice(0, n - 1).trim()}…` : t;
+}
+
+// Turn a day title into a short, chip-sized topic label: strip leading filler
+// words and cap the length so chips stay tidy.
+// e.g. "How Transformers Learn to Speak" -> "Transformers Learn to Speak"
+function topicLabel(title: string): string {
+  const t = (title || "").replace(/^(how|the|inside|why|what|when|a|an|from|beyond)\s+/i, "").trim();
+  return short(t || title || "this topic", 34);
 }
 
 /**
