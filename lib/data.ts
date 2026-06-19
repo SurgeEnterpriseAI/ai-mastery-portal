@@ -413,6 +413,15 @@ export async function setSetting(key: string, value: unknown): Promise<void> {
   await prisma.setting.upsert({ where: { key }, update: { value: v }, create: { key, value: v } });
 }
 
+/** Stable, unguessable Jitsi room name for the live class (shared by trainer + students). */
+export async function getLiveRoomName(): Promise<string> {
+  const existing = await getSetting("liveRoom");
+  if (typeof existing === "string" && existing) return existing;
+  const name = `tensorpath-live-${crypto.randomBytes(7).toString("hex")}`;
+  await setSetting("liveRoom", name);
+  return name;
+}
+
 // ---------------------------------------------------------------------------
 // Module A — Leads (capture + Surge cross-sell pipeline)
 // ---------------------------------------------------------------------------
