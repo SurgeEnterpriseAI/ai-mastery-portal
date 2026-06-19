@@ -9,7 +9,29 @@ function mapCohort(c: any): Cohort {
   return { id: c.id, name: c.name, startDate: c.startDate ?? undefined, sessionDates: arr<string>(c.sessionDates), trainerId: c.trainerId ?? undefined, createdAt: c.createdAt };
 }
 
+// First live batch — auto-created once so registrations have a batch to land in.
+// 20 weekday sessions, Mon 22 Jun 2026 → Fri 17 Jul 2026.
+const FIRST_COHORT_NAME = "Tensorpath — Cohort 1";
+const FIRST_COHORT_START = "2026-06-22";
+const FIRST_COHORT_SESSIONS = [
+  "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26",
+  "2026-06-29", "2026-06-30", "2026-07-01", "2026-07-02", "2026-07-03",
+  "2026-07-06", "2026-07-07", "2026-07-08", "2026-07-09", "2026-07-10",
+  "2026-07-13", "2026-07-14", "2026-07-15", "2026-07-16", "2026-07-17",
+];
+let firstCohortSeeded = false;
+export async function ensureFirstCohort(): Promise<void> {
+  if (firstCohortSeeded) return;
+  if ((await prisma.cohort.count()) === 0) {
+    await prisma.cohort.create({
+      data: { id: newId("coh"), name: FIRST_COHORT_NAME, startDate: FIRST_COHORT_START, sessionDates: JSON.stringify(FIRST_COHORT_SESSIONS), createdAt: new Date().toISOString() },
+    });
+  }
+  firstCohortSeeded = true;
+}
+
 export async function listCohorts(): Promise<Cohort[]> {
+  await ensureFirstCohort();
   return (await prisma.cohort.findMany({ orderBy: { createdAt: "desc" } })).map(mapCohort);
 }
 export async function getCohort(id: string): Promise<Cohort | null> {

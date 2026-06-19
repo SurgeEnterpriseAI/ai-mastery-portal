@@ -38,6 +38,10 @@ export default function Home() {
   return (
     <main className="mx-auto max-w-6xl px-6 py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(COURSE_JSONLD) }} />
+      <div className="mb-6 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-xl border border-brand-200 bg-brand-50 px-4 py-2.5 text-center text-sm font-semibold text-brand-700">
+        <span>📅 Our first batch starts <strong>Monday, 22 June 2026</strong> — seats are limited.</span>
+        <Link href="/join" className="underline hover:text-brand-800">Register now →</Link>
+      </div>
       <header className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">🧠</div>
