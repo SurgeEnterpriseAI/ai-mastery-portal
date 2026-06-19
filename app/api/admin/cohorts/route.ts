@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSessionTrainerId } from "@/lib/auth";
-import { createCohort, updateCohort, deleteCohort, assignLearner } from "@/lib/cohorts";
+import { createCohort, updateCohort, deleteCohort, assignLearner, setBatchStatus, getCohort } from "@/lib/cohorts";
+import { getLearnerById } from "@/lib/data";
+import { sendMail, batchInviteEmail } from "@/lib/email";
 
 function parseDates(v: unknown): string[] {
   if (Array.isArray(v)) return v.map(String);
@@ -16,6 +18,22 @@ export async function POST(req: Request) {
     if (!b.learnerId) return NextResponse.json({ error: "learnerId required" }, { status: 400 });
     await assignLearner(String(b.learnerId), b.cohortId ? String(b.cohortId) : null);
     return NextResponse.json({ ok: true });
+  }
+  // send batch invite: emails the learner their batch details + sets status "invited"
+  if (b.action === "invite") {
+    if (!b.learnerId) return NextResponse.json({ error: "learnerId required" }, { status: 400 });
+    const learner = await getLearnerById(String(b.learnerId));
+    if (!learner) return NextResponse.json({ error: "Learner not found" }, { status: 404 });
+    if (!learner.cohortId) return NextResponse.json({ error: "Assign the learner to a cohort first" }, { status: 400 });
+    const cohort = await getCohort(learner.cohortId);
+    await setBatchStatus(learner.id, "invited");
+    const origin = new URL(req.url).origin;
+    const mail = batchInviteEmail({
+      name: learner.name, cohortName: cohort?.name || "your Tensorpath batch",
+      startDate: cohort?.startDate, sessionDates: cohort?.sessionDates || [], portalUrl: `${origin}/learn`,
+    });
+    const { delivered, via } = await sendMail({ to: [learner.email], subject: mail.subject, body: mail.body, kind: "invite" });
+    return NextResponse.json({ ok: true, delivered, via });
   }
   if (!b.name) return NextResponse.json({ error: "Cohort name required" }, { status: 400 });
   const cohort = await createCohort({ name: String(b.name), startDate: b.startDate ? String(b.startDate) : undefined, sessionDates: parseDates(b.sessionDates) });

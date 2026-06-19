@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Cohort } from "@/lib/types";
 
-type LearnerRow = { id: string; name: string; email: string; cohortId: string | null };
+type LearnerRow = { id: string; name: string; email: string; cohortId: string | null; batchStatus: string | null };
 const inp = "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-brand-500";
 
 export default function AdminCohorts({
@@ -39,8 +39,21 @@ export default function AdminCohorts({
     await fetch("/api/admin/attendance", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cohortId, learnerId, sessionDate, present }) });
     router.refresh();
   }
+  const [msg, setMsg] = useState("");
+  async function invite(learnerId: string, name: string) {
+    const res = await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "invite", learnerId }) });
+    const d = await res.json().catch(() => ({}));
+    setMsg(res.ok ? `Batch invite ${d.delivered ? "emailed" : "queued (Outbox)"} to ${name}.` : (d.error || "Failed to invite."));
+    setTimeout(() => setMsg(""), 4000);
+    router.refresh();
+  }
 
   const unassigned = learners.filter((l) => !l.cohortId);
+  const BADGE: Record<string, string> = {
+    invited: "bg-amber-50 text-amber-700 border-amber-200",
+    confirmed: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    declined: "bg-red-50 text-red-600 border-red-200",
+  };
 
   return (
     <div className="space-y-8">
@@ -77,6 +90,34 @@ export default function AdminCohorts({
                 {unassigned.map((l) => <option key={l.id} value={l.id}>{l.name} ({l.email})</option>)}
               </select>
             </div>
+
+            {/* Batch seats — invite + confirmation report */}
+            {roster.length > 0 && (
+              <div className="mt-4">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                  <span className="font-semibold uppercase tracking-wider">Batch seats</span>
+                  <span>· {roster.filter((l) => l.batchStatus === "confirmed").length} confirmed</span>
+                  <span>· {roster.filter((l) => l.batchStatus === "invited").length} invited</span>
+                  <span>· {roster.filter((l) => l.batchStatus === "declined").length} declined</span>
+                </div>
+                {msg && <div className="mt-1 text-xs text-emerald-700">{msg}</div>}
+                <div className="mt-2 divide-y divide-slate-100 rounded-lg border border-slate-200">
+                  {roster.map((l) => (
+                    <div key={l.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
+                      <div className="text-sm">
+                        <span className="font-medium text-slate-800">{l.name}</span>
+                        <span className="ml-2 text-xs text-slate-400">{l.email}</span>
+                        <span className={`ml-2 rounded-full border px-2 py-0.5 text-[11px] font-medium capitalize ${BADGE[l.batchStatus || ""] || "bg-slate-100 text-slate-500 border-slate-200"}`}>{l.batchStatus || "not invited"}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => invite(l.id, l.name)} className="rounded-lg border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 hover:bg-brand-100">{l.batchStatus ? "Re-send invite" : "Send batch invite"}</button>
+                        <button onClick={() => assign(l.id, null)} className="text-xs text-red-500 hover:underline">remove</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Attendance grid */}
             {roster.length > 0 && c.sessionDates.length > 0 ? (

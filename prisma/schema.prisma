@@ -61,6 +61,7 @@ model Learner {
   profileEmbedding     String? // JSON-encoded number[]
   profileEmbeddingText String?
   cohortId             String? // Module G — assigned cohort
+  batchStatus          String? // invited | confirmed | declined (batch seat confirmation)
   createdAt            String
   journey              JourneyEvent[]
   coachSessions        CoachSession[]

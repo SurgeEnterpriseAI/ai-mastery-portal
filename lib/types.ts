@@ -117,6 +117,8 @@ export interface Learner {
   paid: boolean;
   plan: "free" | "pro";
   completedDays: number[]; // this learner's own self-paced completion
+  cohortId?: string; // assigned batch/cohort
+  batchStatus?: string; // invited | confirmed | declined
   journey: JourneyEvent[];
   createdAt: string;
   // per-learner vector embedding of their profile + journey (Voyage); used for RAG retrieval

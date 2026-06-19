@@ -26,6 +26,7 @@ interface Initial {
   progress: { currentDay: number; completedDays: number[] };
   totalDays: number;
   cohortName: string;
+  batch: { status: string | null; cohortName: string | null; startDate: string | null; sessions: number };
   sessions: { id: string; title: string; updatedAt: string; count: number }[];
   tickets: { id: string; question: string; status: string; response?: string; createdAt: string }[];
   claudeConfigured: boolean;
@@ -36,7 +37,14 @@ interface Initial {
 
 export default function LearnDashboard({ initial }: { initial: Initial }) {
   const router = useRouter();
-  const { learner, gate, progress, totalDays, sessions, tickets, claudeConfigured, payConfigured, price, currency, dayMetas } = initial;
+  const { learner, gate, progress, totalDays, sessions, tickets, claudeConfigured, payConfigured, price, currency, dayMetas, batch } = initial;
+
+  const [batchStatus, setBatchStatus] = useState<string | null>(batch.status);
+  async function confirmBatch(action: "confirm" | "decline") {
+    setBatchStatus(action === "confirm" ? "confirmed" : "declined");
+    await fetch("/api/learner/batch", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action }) });
+    router.refresh();
+  }
 
   const [completed, setCompleted] = useState<number[]>(learner.completedDays);
   const myPct = Math.round((completed.length / totalDays) * 100);
@@ -134,6 +142,38 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
           <button onClick={logout} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">Log out</button>
         </div>
       </header>
+
+      {/* Batch seat confirmation (#4) */}
+      {batchStatus === "invited" && (
+        <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+          <div className="text-xs font-bold uppercase tracking-wider text-amber-700">Batch invite — action needed</div>
+          <h2 className="mt-1 text-lg font-bold text-slate-900">You&rsquo;re approved for {batch.cohortName || "your batch"}{batch.startDate ? ` — starts ${batch.startDate}` : ""}</h2>
+          <p className="mt-1 text-sm text-slate-600">{batch.sessions > 0 ? `${batch.sessions} live sessions, taught in-portal` : "Live classes, taught in-portal"} — video, screen-share and chat. Please confirm your seat so your trainer knows you&rsquo;re coming.</p>
+          <div className="mt-3 flex gap-2">
+            <button onClick={() => confirmBatch("confirm")} className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">✓ Confirm my seat</button>
+            <button onClick={() => confirmBatch("decline")} className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">Can&rsquo;t make it</button>
+          </div>
+        </div>
+      )}
+      {batchStatus === "confirmed" && batch.cohortName && (
+        <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm text-emerald-700">
+          ✓ Seat confirmed for <strong>{batch.cohortName}</strong>{batch.startDate ? ` (starts ${batch.startDate})` : ""}. When class starts, tap <strong>🔴 Join live class</strong> above.
+        </div>
+      )}
+
+      {/* Batch complete → get placed (#8) */}
+      {completed.length >= totalDays && (
+        <div className="mt-6 rounded-2xl border border-brand-200 bg-brand-50 p-5">
+          <div className="text-xs font-bold uppercase tracking-wider text-brand-700">You finished all {totalDays} days 🎉</div>
+          <h2 className="mt-1 text-lg font-bold text-slate-900">Now let&rsquo;s get you placed.</h2>
+          <p className="mt-1 text-sm text-slate-600">Claim your certificate, then explore live AI openings and interview prep — your shareable placement profile goes to hiring partners.</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Link href="/learn/certificate" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">🎓 Capstone & certificate</Link>
+            <Link href="/careers" className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">💼 Live openings</Link>
+            <Link href="/library" className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">🎬 Interview prep</Link>
+          </div>
+        </div>
+      )}
 
       {/* Coach hero */}
       <section className="mt-8 rounded-2xl bg-brand-50 border border-brand-100 p-6">

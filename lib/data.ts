@@ -67,6 +67,8 @@ function mapLearner(l: any): Learner {
     background: l.background, goals: l.goals, level: l.level,
     handholdingCount: l.handholdingCount, approved: l.approved, paid: l.paid, plan: l.plan,
     completedDays: parseNums(l.completedDays),
+    cohortId: l.cohortId ?? undefined,
+    batchStatus: l.batchStatus ?? undefined,
     profileEmbedding: l.profileEmbedding ? (parseArr<number>(l.profileEmbedding)) : undefined,
     profileEmbeddingText: l.profileEmbeddingText || undefined,
     createdAt: l.createdAt,

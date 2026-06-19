@@ -52,8 +52,21 @@ export async function cohortRoster(cohortId: string): Promise<Array<{ id: string
   return ls;
 }
 // All learners with their current cohort assignment (for the admin roster UI).
-export async function listLearnersForCohorts(): Promise<Array<{ id: string; name: string; email: string; cohortId: string | null }>> {
-  return prisma.learner.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, email: true, cohortId: true } });
+export async function listLearnersForCohorts(): Promise<Array<{ id: string; name: string; email: string; cohortId: string | null; batchStatus: string | null }>> {
+  return prisma.learner.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, email: true, cohortId: true, batchStatus: true } });
+}
+
+// Set a learner's batch-seat confirmation status (invited | confirmed | declined).
+export async function setBatchStatus(learnerId: string, status: "invited" | "confirmed" | "declined"): Promise<void> {
+  await prisma.learner.update({ where: { id: learnerId }, data: { batchStatus: status } });
+}
+
+// The learner's batch (cohort) details + their confirmation status, for the dashboard.
+export async function getLearnerBatch(learnerId: string): Promise<{ status: string | null; cohort: Cohort | null }> {
+  const l = await prisma.learner.findUnique({ where: { id: learnerId }, select: { batchStatus: true, cohortId: true } });
+  if (!l) return { status: null, cohort: null };
+  const cohort = l.cohortId ? await getCohort(l.cohortId) : null;
+  return { status: l.batchStatus ?? null, cohort };
 }
 
 // ---------------------------------------------------------------------------

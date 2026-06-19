@@ -194,6 +194,23 @@ export function enrollInviteEmail(args: { name: string; joinUrl: string }) {
   return { subject, body };
 }
 
+export function batchInviteEmail(args: { name: string; cohortName: string; startDate?: string; sessionDates: string[]; portalUrl: string }) {
+  const start = args.startDate ? `\n🗓️ Starts: ${args.startDate}` : "";
+  const sessions = args.sessionDates.length
+    ? `\n📅 Sessions:\n${args.sessionDates.slice(0, 24).map((d) => `   • ${d}`).join("\n")}`
+    : "";
+  const subject = `🎓 You're in! Confirm your seat — ${args.cohortName}`;
+  const body =
+    `Hi ${args.name},\n\n` +
+    `Great news — you've been approved and assigned to a Tensorpath batch:\n\n` +
+    `Batch: ${args.cohortName}${start}${sessions}\n\n` +
+    `Please confirm your seat so your trainer knows you're coming. Open your dashboard and click ` +
+    `Confirm (or Can't make it): ${args.portalUrl}\n\n` +
+    `Classes are held live inside the portal — video, screen-share and chat — and every session is recorded.\n\n` +
+    `See you in class! — The Tensorpath team`;
+  return { subject, body };
+}
+
 export function capstoneReviewedEmail(args: { name: string; title: string; approved: boolean; feedback?: string; portalUrl: string }) {
   if (args.approved) {
     const subject = `🎉 Your capstone is approved — certificate issued!`;
