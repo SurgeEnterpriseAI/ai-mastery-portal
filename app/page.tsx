@@ -61,7 +61,7 @@ export default function Home() {
 
       <section className="mt-16 animate-fadein">
         <p className="font-semibold text-brand-600">Tensorpath · upskilling people on AI · 20 days · fundamentals → the 2026 frontier</p>
-        <h1 className="mt-3 max-w-4xl text-5xl font-extrabold leading-tight text-slate-900">
+        <h1 className="mt-3 max-w-4xl text-4xl sm:text-5xl font-extrabold leading-tight text-slate-900">
           From <span className="text-brand-600">&ldquo;Attention Is All You Need&rdquo;</span> to the age of AI agents.
         </h1>
         <p className="mt-5 max-w-3xl text-lg text-slate-600">
