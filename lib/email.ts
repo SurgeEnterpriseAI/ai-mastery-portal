@@ -194,6 +194,16 @@ export function enrollInviteEmail(args: { name: string; joinUrl: string }) {
   return { subject, body };
 }
 
+export function classReminderEmail(args: { name: string; cohortName: string; date: string; joinUrl: string }) {
+  const subject = `⏰ Your Tensorpath class is today — ${args.cohortName}`;
+  const body =
+    `Hi ${args.name},\n\n` +
+    `Reminder: you have a live Tensorpath class today (${args.date}) for ${args.cohortName}.\n\n` +
+    `Join right in the portal — video, screen-share and chat: ${args.joinUrl}\n\n` +
+    `See you in class! — The Tensorpath team`;
+  return { subject, body };
+}
+
 export function batchInviteEmail(args: { name: string; cohortName: string; startDate?: string; sessionDates: string[]; portalUrl: string }) {
   const start = args.startDate ? `\n🗓️ Starts: ${args.startDate}` : "";
   const sessions = args.sessionDates.length

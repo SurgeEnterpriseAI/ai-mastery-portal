@@ -61,6 +61,22 @@ export async function setBatchStatus(learnerId: string, status: "invited" | "con
   await prisma.learner.update({ where: { id: learnerId }, data: { batchStatus: status } });
 }
 
+// Confirmed learners who have a class on `dateStr` (YYYY-MM-DD), grouped by cohort.
+// Used by the pre-class reminder cron.
+export async function dueClassReminders(dateStr: string): Promise<Array<{ cohortName: string; date: string; learners: Array<{ name: string; email: string }> }>> {
+  const cohorts = await prisma.cohort.findMany();
+  const out: Array<{ cohortName: string; date: string; learners: Array<{ name: string; email: string }> }> = [];
+  for (const c of cohorts) {
+    if (!arr<string>(c.sessionDates).includes(dateStr)) continue;
+    const learners = await prisma.learner.findMany({
+      where: { cohortId: c.id, batchStatus: "confirmed" },
+      select: { name: true, email: true },
+    });
+    if (learners.length) out.push({ cohortName: c.name, date: dateStr, learners });
+  }
+  return out;
+}
+
 // The learner's batch (cohort) details + their confirmation status, for the dashboard.
 export async function getLearnerBatch(learnerId: string): Promise<{ status: string | null; cohort: Cohort | null }> {
   const l = await prisma.learner.findUnique({ where: { id: learnerId }, select: { batchStatus: true, cohortId: true } });
