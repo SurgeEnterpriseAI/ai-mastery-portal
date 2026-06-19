@@ -8,11 +8,19 @@ import Paywall from "@/components/Paywall";
 import Tour from "@/components/Tour";
 
 const LEARN_STEPS = [
-  { title: "Welcome to your AI journey 🎓", body: "Your trainer teaches each day live. Between classes, here's how to keep learning. Three quick stops." },
-  { target: '[data-tour="ld-start"]', title: "1. Your AI coach between classes", body: "Tap here to open Aria, your personal coach. She reinforces what your trainer covered — ask anything, request practice scenarios, and get hand-held through each topic." },
-  { target: '[data-tour="ld-recommend"]', title: "2. Not sure what to review?", body: "Get a personalised next step based on your goal and progress — Aria tells you exactly what to focus on next." },
-  { target: '[data-tour="ld-curriculum"]', title: "3. Review each day & earn your certificate", body: "After your trainer teaches a day, open it here to go through the material — that marks it done. Finish all 20 to claim a publicly verifiable certificate. (Inside any coaching session you can also 'Raise human help'.)" },
+  { title: "Welcome to your AI journey 🎓", body: "Your program is live, instructor-led training — with an AI coach to support you between classes. Here's how it works." },
+  { target: '[data-tour="ld-live"]', title: "1. Your live class comes first", body: "Each day your trainer teaches live, right here in the portal — video, screen-share and chat. Tap here to join when class is on. This is the main event." },
+  { target: '[data-tour="ld-start"]', title: "2. Your AI coach, between classes", body: "Between live classes, open Aria to reinforce what your trainer covered — ask anything, request practice scenarios, and get hand-held through each topic." },
+  { target: '[data-tour="ld-recommend"]', title: "3. Not sure what to review?", body: "Get a personalised next step based on your goal and progress — Aria tells you exactly what to focus on next." },
+  { target: '[data-tour="ld-curriculum"]', title: "4. Review each day & earn your certificate", body: "After your trainer teaches a day, open it here to go through the material — that marks it done. Finish all 20 plus your capstone to claim a publicly verifiable certificate. (Inside any coaching session you can also 'Raise human help'.)" },
 ];
+
+function prettyDate(d: string): string {
+  const [y, m, day] = d.split("-").map(Number);
+  if (!y || !m || !day) return d;
+  const date = new Date(y, m - 1, day);
+  return date.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+}
 
 interface Initial {
   learner: {
@@ -26,7 +34,7 @@ interface Initial {
   progress: { currentDay: number; completedDays: number[] };
   totalDays: number;
   cohortName: string;
-  batch: { status: string | null; cohortName: string | null; startDate: string | null; sessions: number };
+  batch: { status: string | null; cohortName: string | null; startDate: string | null; sessions: number; sessionDates: string[] };
   sessions: { id: string; title: string; updatedAt: string; count: number }[];
   tickets: { id: string; question: string; status: string; response?: string; createdAt: string }[];
   claudeConfigured: boolean;
@@ -48,6 +56,14 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
 
   const [completed, setCompleted] = useState<number[]>(learner.completedDays);
   const myPct = Math.round((completed.length / totalDays) * 100);
+
+  // Live-class schedule, derived from the learner's batch (dates are YYYY-MM-DD).
+  const todayStr = new Date().toLocaleDateString("en-CA"); // local YYYY-MM-DD
+  const sortedSessions = [...(batch.sessionDates || [])].sort();
+  const classToday = sortedSessions.includes(todayStr);
+  const nextSession = sortedSessions.find((d) => d >= todayStr) || null;
+  const sessionsLeft = sortedSessions.filter((d) => d >= todayStr).length;
+  const currentDayMeta = dayMetas.find((d) => d.day === progress.currentDay);
 
   async function toggleDay(day: number, done: boolean) {
     setCompleted((c) => (done ? [...c, day].sort((a, b) => a - b) : c.filter((d) => d !== day)));
@@ -175,15 +191,58 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
         </div>
       )}
 
-      {/* Coach hero */}
-      <section className="mt-8 rounded-2xl bg-brand-50 border border-brand-100 p-6">
-        <div className="text-xs uppercase tracking-widest text-brand-700">Your personal AI coach</div>
-        <h1 className="mt-1 text-3xl font-extrabold text-slate-900">Aria is ready to hand-hold your learning.</h1>
+      {/* PRIMARY: Live instructor-led training — the main event */}
+      <section className="mt-8 overflow-hidden rounded-2xl border border-brand-700/20 bg-gradient-to-br from-brand-600 to-brand-700 p-6 text-white shadow-card">
+        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-100">
+          <span className="inline-flex h-2 w-2 rounded-full bg-red-400 animate-pulse" /> Live instructor-led training
+        </div>
+        <h1 className="mt-2 text-3xl font-extrabold leading-tight">Your trainer teaches you live — this is your main class.</h1>
+        <p className="mt-2 max-w-2xl text-brand-50">
+          Every session, your expert trainer teaches live right here in the portal — video, screen-share and chat.
+          {classToday ? (
+            <> <strong className="text-white">There&rsquo;s a live class today.</strong></>
+          ) : nextSession ? (
+            <> Your next live class is <strong className="text-white">{prettyDate(nextSession)}</strong>.</>
+          ) : null}{" "}
+          The cohort is on <strong className="text-white">Day {progress.currentDay}{currentDayMeta ? `: ${currentDayMeta.title}` : ""}</strong>.
+        </p>
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <Link data-tour="ld-live" href="/class/live" className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-bold text-brand-700 transition hover:bg-brand-50">
+            <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" /> Join your live class
+          </Link>
+          <Link href={`/present/${progress.currentDay}`} onClick={() => markReviewed(progress.currentDay)} className="rounded-lg border border-white/40 bg-white/10 px-5 py-3 font-semibold text-white transition hover:bg-white/20">
+            📖 Open today&rsquo;s lesson (Day {progress.currentDay})
+          </Link>
+        </div>
+        {sortedSessions.length > 0 && (
+          <p className="mt-4 text-xs text-brand-100">
+            {batch.cohortName ? `${batch.cohortName} · ` : ""}{sessionsLeft} of {sortedSessions.length} live sessions remaining{nextSession && !classToday ? ` · next on ${prettyDate(nextSession)}` : ""}.
+          </p>
+        )}
+      </section>
+
+      {/* What to do — the daily rhythm of the program */}
+      <section className="mt-6">
+        <h2 className="text-lg font-bold text-slate-900">How to follow your program</h2>
+        <p className="mt-0.5 text-sm text-slate-500">Your live class is the main event each day. Here&rsquo;s the loop that gets you trained, certified and placed.</p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <RhythmCard n="1" tone="red" title="Attend the live class" body="Join in-portal when your trainer goes live — ask questions in chat and follow the screen-share. Don't miss it." href="/class/live" cta="Join live class" />
+          <RhythmCard n="2" tone="brand" title="Review the day's material" body="Open the day your trainer just taught to revisit the slides — that marks the day done." href={`/present/${progress.currentDay}`} cta={`Open Day ${progress.currentDay}`} onClick={() => markReviewed(progress.currentDay)} />
+          <RhythmCard n="3" tone="accent" title="Reinforce with your AI coach" body="Between classes, ask Aria anything, get practice scenarios, and learn exactly what to review next." href="#ai-coach" cta="Meet Aria" />
+          <RhythmCard n="4" tone="emerald" title="Capstone → certified → placed" body="Finish your capstone for a verifiable certificate, then unlock live AI openings and interview prep." href="/learn/certificate" cta="Capstone & certificate" />
+        </div>
+      </section>
+
+      {/* SECONDARY: AI coach — support between classes */}
+      <section id="ai-coach" className="mt-6 scroll-mt-6 rounded-2xl border border-brand-100 bg-brand-50 p-6">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-brand-700">
+          <span>🤖</span> Between classes · your personal AI coach
+        </div>
+        <h2 className="mt-1 text-2xl font-extrabold text-slate-900">Aria reinforces what your trainer taught.</h2>
         <p className="mt-2 max-w-2xl text-slate-600">
-          Your trainer teaches each day live. Between classes, ask Aria anything, get scenarios and materials, and find
-          out exactly what to review next — personalised to your goal of{" "}
-          <strong className="text-slate-900">{learner.goals || "mastering AI"}</strong>. The cohort is on{" "}
-          <strong className="text-slate-900">Day {progress.currentDay}</strong>.
+          Think of Aria as your study buddy between live classes — ask anything, get scenarios and materials, and find
+          out exactly what to review next, personalised to your goal of{" "}
+          <strong className="text-slate-900">{learner.goals || "mastering AI"}</strong>.
         </p>
         {!claudeConfigured && (
           <p className="mt-3 inline-block rounded-lg bg-amber-50 px-3 py-1.5 text-xs text-amber-700">
@@ -308,6 +367,29 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
         </div>
       )}
     </main>
+  );
+}
+
+function RhythmCard({ n, tone, title, body, href, cta, onClick }: { n: string; tone: "red" | "brand" | "accent" | "emerald"; title: string; body: string; href: string; cta: string; onClick?: () => void }) {
+  const badge: Record<string, string> = { red: "bg-red-600", brand: "bg-brand-600", accent: "bg-accent-600", emerald: "bg-emerald-600" };
+  const link: Record<string, string> = {
+    red: "border-red-100 bg-red-50 text-red-700 hover:bg-red-100",
+    brand: "border-brand-100 bg-brand-50 text-brand-700 hover:bg-brand-100",
+    accent: "border-accent-200 bg-accent-50 text-accent-700 hover:bg-accent-200",
+    emerald: "border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100",
+  };
+  const cls = `mt-3 inline-block rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${link[tone]}`;
+  return (
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+      <div className={`grid h-8 w-8 place-items-center rounded-full text-sm font-bold text-white ${badge[tone]}`}>{n}</div>
+      <h3 className="mt-3 font-bold text-slate-900">{title}</h3>
+      <p className="mt-1 flex-1 text-sm text-slate-600">{body}</p>
+      {href.startsWith("#") ? (
+        <a href={href} className={cls}>{cta} →</a>
+      ) : (
+        <Link href={href} onClick={onClick} className={cls}>{cta} →</Link>
+      )}
+    </div>
   );
 }
 
