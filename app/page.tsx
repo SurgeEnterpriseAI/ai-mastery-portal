@@ -5,10 +5,11 @@ import Tour from "@/components/Tour";
 export const dynamic = "force-dynamic";
 
 const HOME_STEPS = [
-  { title: "Welcome to Tensorpath 👋", body: "Tensorpath trains professionals and students on AI — from the fundamentals to the 2026 frontier. Here's how to get started." },
-  { target: '[data-tour="enroll-cta"]', title: "1. Enroll — it's free to start", body: "Join the program here. You'll be guided live by an expert trainer and a personal AI coach that hand-holds you through all 20 days at your own pace." },
-  { target: '[data-tour="arc"]', title: "2. The 20-day journey", body: "Every day is a complete, story-driven lesson — from the first Transformer to reasoning models, multimodal AI, and agents." },
-  { title: "3. Earn a verifiable certificate", body: "Finish the 20 days and a hands-on capstone to earn a certificate any employer can verify. Ready? Enroll above to begin." },
+  { title: "Welcome to Tensorpath 👋", body: "Here's how we get you trained — and placed — in AI, end to end. Takes 20 seconds." },
+  { target: '[data-tour="enroll-cta"]', title: "1. Register — free", body: "Create your account here. We approve you and email your batch dates — you confirm your seat in one click." },
+  { target: '[data-tour="how"]', title: "2. Learn live, inside the portal", body: "Join video classes right here — your trainer screen-shares and teaches live, with chat and who's online. Every session is recorded to revisit." },
+  { target: '[data-tour="arc"]', title: "3. 20 guided days + your AI coach", body: "A complete, story-driven curriculum, with a personal AI coach answering your questions between classes." },
+  { title: "4. Get certified & placed", body: "Finish your capstone for a verifiable certificate — then your dashboard surfaces live AI openings and interview prep. Ready? Register above." },
 ];
 
 const COURSE_JSONLD = {
@@ -67,8 +68,9 @@ export default function Home() {
         <p className="mt-5 max-w-3xl text-lg text-slate-600">
           Tensorpath is the flagship program for training professionals and students on AI — at scale. A guided
           20-day journey from the very first Transformer to today&rsquo;s reasoning models, multimodal systems, and
-          agents. You learn <strong>live with an expert trainer</strong> and a <strong>personal AI coach</strong> that
-          hand-holds you the whole way — then earn a verifiable certificate.
+          agents. You learn <strong>live with an expert trainer</strong> — video classes, screen-share and recordings,
+          right in the portal — plus a <strong>personal AI coach</strong> that hand-holds you the whole way. Finish to
+          earn a <strong>verifiable certificate and placement support</strong>.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -86,12 +88,16 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mt-16">
-        <h2 className="text-2xl font-bold text-slate-900">How the program works</h2>
+      <section className="mt-16" data-tour="how">
+        <h2 className="text-2xl font-bold text-slate-900">How Tensorpath gets you trained &amp; placed</h2>
+        <p className="mt-1 text-slate-500">One platform, end to end — from sign-up to a job-ready profile.</p>
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <Step n="1" title="Enroll & set your goal" body="Tell us your background and what you want from AI. Your learning is personalised from day one." />
-          <Step n="2" title="Learn live + with your AI coach" body="An expert trainer presents each day live; between sessions your AI coach answers questions, gives scenarios, and tells you what to learn next." />
-          <Step n="3" title="Build a capstone & get certified" body="Complete the 20 days and a hands-on project to earn a certificate any organisation can verify." />
+          <Step n="1" title="Register — free" body="Create your account and tell us your goal. Two minutes, no cost." />
+          <Step n="2" title="Get approved & your batch" body="We approve you and email your batch dates. Confirm your seat in one click — your trainer sees who's in." />
+          <Step n="3" title="Learn live, in the portal" body="Join video classes right here: your trainer screen-shares and teaches live, with chat and who's online. Every session is recorded." />
+          <Step n="4" title="Your AI coach, 24/7" body="Between classes, your personal AI coach answers questions, gives practice, and tells you exactly what to learn next." />
+          <Step n="5" title="Recap & what's next" body="After each class your dashboard shows what was covered, what's coming next, and the recording to revisit anytime." />
+          <Step n="6" title="Get certified & placed" body="Finish your capstone for a verifiable certificate — then your dashboard surfaces live AI openings, interview prep, and placement support." />
         </div>
       </section>
 
