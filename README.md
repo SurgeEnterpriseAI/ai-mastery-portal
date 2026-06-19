@@ -20,7 +20,7 @@ A senior trainer logs in, schedules sessions, emails the class, and teaches from
 | **Auto-advance to next topic** — finishing a day rolls the class pointer forward | end-of-day button |
 | **20 days of curriculum** (rich JSON, one file per day) | `content/curriculum/day-XX.json` |
 | **Learner accounts** — self-service signup with a personal profile | `/join`, `/signin` |
-| **AI coach "Aria"** — Claude-powered, journey-RAG personalised hand-holding | `/learn/coach` |
+| **Learning companion "Genie"** — Claude-powered, journey-RAG personalised hand-holding | `/learn/coach` |
 | **Personalised "what to learn next"** recommendations | `/learn` → 🧭 |
 | **Freemium gate** — 3 free coaching sessions, then a paywall | `/api/coach/session` (402) |
 | **UPI payments** (Razorpay) — pay → auto-approve/unlock to Pro | `/api/pay/*` |
@@ -94,7 +94,7 @@ Each day is a JSON file with a cover, 9–14 rich slides (with speaker notes + 2
 Beyond the live classroom, the portal is a self-service AI learning product:
 
 1. A learner **signs up** at `/join` with their background, goal, and level.
-2. They get **Aria**, a Claude-powered coach (`claude-opus-4-8`) that hand-holds them — answering questions, giving scenarios and materials, and recommending the next step. Every answer is **grounded by RAG**: the coach retrieves the most relevant slides from the 230-slide curriculum *and* the learner's own journey (`lib/rag.ts`), so guidance is personal and on-syllabus.
+2. They get **Genie**, a Claude-powered learning companion (`claude-opus-4-8`) that hand-holds them — answering questions, giving scenarios and materials, and recommending the next step. Every answer is **grounded by RAG**: the coach retrieves the most relevant slides from the 230-slide curriculum *and* the learner's own journey (`lib/rag.ts`), so guidance is personal and on-syllabus.
 3. The **first 3 coaching sessions are free**. The 4th triggers a **paywall**.
 4. They **pay via UPI** (Razorpay Checkout). On verified payment the account is **auto-approved and upgraded to Pro** — unlimited coaching.
 5. Any time during coaching they can **"Raise human help"** → a ticket is created and the trainer is emailed; the trainer replies from the console and the learner is emailed back.

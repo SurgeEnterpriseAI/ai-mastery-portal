@@ -101,7 +101,7 @@ export default function CoachChat({
         <div className="flex items-center gap-3">
           <Link href="/learn" className="text-slate-500 hover:text-slate-900">←</Link>
           <div>
-            <div className="text-[11px] uppercase tracking-widest text-brand-600">Coaching with Aria</div>
+            <div className="text-[11px] uppercase tracking-widest text-brand-600">🧞 Genie · your learning companion</div>
             <div className="text-sm font-bold text-slate-900">{title}</div>
           </div>
         </div>
@@ -116,12 +116,12 @@ export default function CoachChat({
       <main className="mx-auto w-full max-w-3xl flex-1 space-y-5 px-5 py-8">
         {messages.length === 0 && (
           <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
-            <div className="text-3xl">👋</div>
+            <div className="text-3xl">🧞</div>
             {welcome?.greeting ? (
               <Markdown className="prose-slide prose-compact mx-auto mt-2 max-w-xl text-slate-600">{welcome.greeting}</Markdown>
             ) : (
               <p className="mt-2 text-slate-600">
-                Hi {learnerName.split(" ")[0]}! I'm Aria, your AI coach. Ask me anything about the course, request a
+                Hi {learnerName.split(" ")[0]}! I'm Genie, your learning companion. Ask me anything about the course, request a
                 scenario to practise, or tell me where you feel stuck.
               </p>
             )}
@@ -155,7 +155,7 @@ export default function CoachChat({
                 <Markdown className="prose-slide prose-compact text-slate-800">{m.content}</Markdown>
               ) : (
                 <span className="inline-flex gap-1 text-slate-500">
-                  <span className="animate-pulse">Aria is thinking</span>
+                  <span className="animate-pulse">Genie is thinking</span>
                 </span>
               )}
             </div>
@@ -176,7 +176,7 @@ export default function CoachChat({
               }
             }}
             rows={1}
-            placeholder="Ask Aria anything… (Enter to send, Shift+Enter for a new line)"
+            placeholder="Ask Genie anything… (Enter to send, Shift+Enter for a new line)"
             className="max-h-40 flex-1 resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-brand-500"
           />
           <button
