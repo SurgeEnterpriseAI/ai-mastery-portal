@@ -228,35 +228,44 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <RhythmCard n="1" tone="red" title="Attend the live class" body="Join in-portal when your trainer goes live — ask questions in chat and follow the screen-share. Don't miss it." href="/class/live" cta="Join live class" />
           <RhythmCard n="2" tone="brand" title="Review the day's material" body="Open the day your trainer just taught to revisit the slides — that marks the day done." href={`/present/${progress.currentDay}`} cta={`Open Day ${progress.currentDay}`} onClick={() => markReviewed(progress.currentDay)} />
-          <RhythmCard n="3" tone="accent" title="Reinforce with your AI coach" body="Between classes, ask Aria anything, get practice scenarios, and learn exactly what to review next." href="#ai-coach" cta="Meet Aria" />
+          <RhythmCard n="3" tone="accent" title="Aria, your companion — anytime" body="Stuck or curious between classes? Reach Aria for help and practice — and she'll bring in a human trainer if needed." href="#ai-coach" cta="Meet Aria" />
           <RhythmCard n="4" tone="emerald" title="Capstone → certified → placed" body="Finish your capstone for a verifiable certificate, then unlock live AI openings and interview prep." href="/learn/certificate" cta="Capstone & certificate" />
         </div>
       </section>
 
-      {/* SECONDARY: AI coach — support between classes */}
-      <section id="ai-coach" className="mt-6 scroll-mt-6 rounded-2xl border border-brand-100 bg-brand-50 p-6">
-        <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-brand-700">
-          <span>🤖</span> Between classes · your personal AI coach
+      {/* SECONDARY: Aria — the student's always-on learning companion */}
+      <section id="ai-coach" className="mt-6 scroll-mt-6 overflow-hidden rounded-2xl border border-brand-100 bg-white p-6 shadow-card">
+        <div className="flex items-start gap-4">
+          <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-3xl shadow-card">🤖</div>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-2xl font-extrabold text-slate-900">Meet Aria, your learning companion</h2>
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> always here
+              </span>
+            </div>
+            <p className="mt-2 max-w-2xl text-slate-600">
+              Hi {learner.name.split(" ")[0]} 👋 I&rsquo;m <strong className="text-slate-900">Aria</strong>, and I&rsquo;m by your side for the
+              whole journey. Stuck on something your trainer covered, curious to go deeper, or want a scenario to
+              practise — just reach me, <strong className="text-slate-900">anytime</strong>. And if I can&rsquo;t crack it for you,
+              I&rsquo;ll bring in your <strong className="text-slate-900">human trainer</strong> to help. You&rsquo;re never on your own.
+            </p>
+          </div>
         </div>
-        <h2 className="mt-1 text-2xl font-extrabold text-slate-900">Aria reinforces what your trainer taught.</h2>
-        <p className="mt-2 max-w-2xl text-slate-600">
-          Think of Aria as your study buddy between live classes — ask anything, get scenarios and materials, and find
-          out exactly what to review next, personalised to your goal of{" "}
-          <strong className="text-slate-900">{learner.goals || "mastering AI"}</strong>.
-        </p>
         {!claudeConfigured && (
           <p className="mt-3 inline-block rounded-lg bg-amber-50 px-3 py-1.5 text-xs text-amber-700">
-            Demo coach active — set <code>ANTHROPIC_API_KEY</code> for the full Claude-powered coach.
+            Demo coach active — set <code>ANTHROPIC_API_KEY</code> for the full Claude-powered companion.
           </p>
         )}
         <div className="mt-5 flex flex-wrap gap-3">
           <button data-tour="ld-start" onClick={startSession} disabled={busy} className="rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
-            {busy ? "Starting…" : "✨ Start a coaching session"}
+            {busy ? "Opening…" : "💬 Reach Aria — ask anything"}
           </button>
           <button data-tour="ld-recommend" onClick={getRecommendation} disabled={recLoading} className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60">
             {recLoading ? "Thinking…" : "🧭 What should I learn next?"}
           </button>
         </div>
+        <p className="mt-3 text-xs text-slate-400">Aria knows your goal of <strong className="text-slate-500">{learner.goals || "mastering AI"}</strong> and exactly where you are — every reply is personalised to you.</p>
         {rec && (
           <div className="mt-5 rounded-xl border border-accent-200 bg-accent-50 p-4">
             <div className="text-xs font-bold uppercase tracking-wider text-accent-700">🧭 Your personalised next step</div>

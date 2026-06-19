@@ -132,6 +132,11 @@ export default function CoachChat({
                 </button>
               ))}
             </div>
+            <p className="mt-4 text-xs text-slate-400">
+              I&rsquo;m here whenever you need me. If I can&rsquo;t help, tap{" "}
+              <button onClick={() => setHelp(true)} className="font-semibold text-amber-700 underline hover:text-amber-800">🙋 Raise human help</button>{" "}
+              and your human trainer will step in.
+            </p>
           </div>
         )}
 
