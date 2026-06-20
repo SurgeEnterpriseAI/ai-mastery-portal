@@ -92,6 +92,8 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
   const [busy, setBusy] = useState(false);
   const [rec, setRec] = useState("");
   const [recLoading, setRecLoading] = useState(false);
+  const [videoDay, setVideoDay] = useState<number | null>(null);
+  const pad2 = (n: number) => String(n).padStart(2, "0");
   const pct = Math.round((progress.completedDays.length / totalDays) * 100);
 
   async function startSession() {
@@ -279,7 +281,7 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="text-lg font-bold text-slate-900">📚 Your course progress</h3>
-            <p className="mt-0.5 text-sm text-slate-500">Your trainer teaches each day live — open a day here to go through the material, which marks it done. You can also tick it yourself.</p>
+            <p className="mt-0.5 text-sm text-slate-500">Your trainer teaches each day live — open a day to go through the material, or tap <strong className="text-slate-700">▶ Explainer</strong> for a full narrated video of that day. Opening a day marks it done.</p>
           </div>
           <div className="text-right">
             <div className="text-2xl font-extrabold text-slate-900">{completed.length}/{totalDays}</div>
@@ -300,9 +302,12 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
             return (
               <div key={d.day} className={`flex items-start gap-3 rounded-lg border p-3 ${done ? "border-emerald-200 bg-emerald-600/5" : "border-slate-200 bg-slate-50"}`}>
                 <input type="checkbox" checked={done} onChange={(e) => toggleDay(d.day, e.target.checked)} className="mt-1 h-4 w-4 accent-emerald-500" />
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="text-xs font-bold uppercase tracking-wider text-brand-600">Day {d.day}</div>
                   <Link href={`/present/${d.day}`} onClick={() => markReviewed(d.day)} className="block truncate text-sm font-semibold text-slate-900 hover:text-accent-700">{d.title}</Link>
+                  <button onClick={() => setVideoDay(d.day)} className="mt-1.5 inline-flex items-center gap-1 rounded-md border border-brand-200 bg-white px-2 py-0.5 text-[11px] font-semibold text-brand-700 hover:bg-brand-50">
+                    ▶ Explainer
+                  </button>
                 </div>
               </div>
             );
@@ -373,6 +378,32 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
           <button onClick={() => { setPaywallReason("Upgrade whenever you're ready."); setPaywall(true); }} className="mt-3 rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700">
             See Pro
           </button>
+        </div>
+      )}
+
+      {videoDay !== null && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-900/70 p-4" onClick={() => setVideoDay(null)}>
+          <div className="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-3">
+              <div className="min-w-0">
+                <div className="text-[11px] font-bold uppercase tracking-widest text-brand-600">Day {videoDay} · explainer</div>
+                <div className="truncate text-sm font-bold text-slate-900">{dayMetas.find((m) => m.day === videoDay)?.title}</div>
+              </div>
+              <button onClick={() => setVideoDay(null)} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">✕ Close</button>
+            </div>
+            <video
+              key={videoDay}
+              className="aspect-video w-full bg-slate-900"
+              controls
+              autoPlay
+              playsInline
+              preload="metadata"
+              poster={`/day-videos/day-${pad2(videoDay)}.png`}
+            >
+              <source src={`/day-videos/day-${pad2(videoDay)}.mp4`} type="video/mp4" />
+            </video>
+            <p className="px-5 py-3 text-xs text-slate-500">A full narrated walkthrough of Day {videoDay}, grounded in the course and today&rsquo;s AI market. Watch any time to reinforce the live class.</p>
+          </div>
         </div>
       )}
     </main>
