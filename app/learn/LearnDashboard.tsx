@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import Markdown from "@/components/Markdown";
 import Paywall from "@/components/Paywall";
 import Tour from "@/components/Tour";
+import InnovationsCarousel from "@/components/InnovationsCarousel";
+import innovations from "@/content/innovations.json";
 
 const LEARN_STEPS = [
   { title: "Welcome to your AI journey 🎓", body: "Your program is live, instructor-led training — with an AI coach to support you between classes. Here's how it works." },
@@ -314,6 +316,8 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
           })}
         </div>
       </section>
+
+      <InnovationsCarousel items={innovations.items} updatedAt={innovations.updatedAt} />
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Past sessions */}
