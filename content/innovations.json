@@ -3,6 +3,14 @@
   "note": "Researched by Gemini (Google Search grounding), then fact-checked and link-corrected by Claude before publishing.",
   "items": [
     {
+      "title": "Anthropic releases Claude Fable 5",
+      "summary": "Anthropic's most powerful publicly-available model yet (its 'Mythos' class) — state-of-the-art at coding, research, vision and long, complex tasks.",
+      "category": "Models",
+      "sourceName": "Anthropic",
+      "sourceUrl": "https://www.anthropic.com/news/claude-fable-5-mythos-5",
+      "date": "2026-06-09"
+    },
+    {
       "title": "Anthropic releases Claude Opus 4.8",
       "summary": "Anthropic's most capable model yet — sharper judgment, catches its own mistakes, and a new 'dynamic workflows' mode for very large tasks.",
       "category": "Models",
