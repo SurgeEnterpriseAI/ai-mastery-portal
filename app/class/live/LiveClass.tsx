@@ -14,6 +14,7 @@ declare global {
 export default function LiveClass({ room, displayName, isHost }: { room: string; displayName: string; isHost: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const [left, setLeft] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     let api: { dispose: () => void; addEventListener: (e: string, cb: () => void) => void } | null = null;
@@ -52,6 +53,7 @@ export default function LiveClass({ room, displayName, isHost }: { room: string;
       s.src = "https://meet.jit.si/external_api.js";
       s.async = true;
       s.onload = init;
+      s.onerror = () => { if (!cancelled) setError(true); };
       document.body.appendChild(s);
     }
     return () => { cancelled = true; try { api?.dispose(); } catch { /* noop */ } };
@@ -65,6 +67,19 @@ export default function LiveClass({ room, displayName, isHost }: { room: string;
           <h2 className="mt-2 text-xl font-bold text-slate-900">You&rsquo;ve left the class</h2>
           <p className="mt-1 text-sm text-slate-500">You can rejoin anytime while the session is live.</p>
           <button onClick={() => location.reload()} className="mt-4 rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700">Rejoin</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="grid h-[78vh] place-items-center rounded-2xl border border-slate-200 bg-white text-center">
+        <div className="max-w-sm px-6">
+          <div className="text-4xl">📡</div>
+          <h2 className="mt-2 text-xl font-bold text-slate-900">Couldn&rsquo;t connect to the live class</h2>
+          <p className="mt-1 text-sm text-slate-500">The video service couldn&rsquo;t load. Check your connection and disable any ad-blocker, then try again.</p>
+          <button onClick={() => location.reload()} className="mt-4 rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700">Try again</button>
         </div>
       </div>
     );

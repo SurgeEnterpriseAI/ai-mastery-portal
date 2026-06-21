@@ -5,9 +5,9 @@ import { getLearnerById } from "@/lib/data";
 import { sendMail, batchInviteEmail } from "@/lib/email";
 
 function parseDates(v: unknown): string[] {
-  if (Array.isArray(v)) return v.map(String);
-  if (typeof v === "string") return v.split(/[\n,]/).map((s) => s.trim()).filter(Boolean);
-  return [];
+  const raw = Array.isArray(v) ? v.map(String) : typeof v === "string" ? v.split(/[\n,]/) : [];
+  // Keep only real YYYY-MM-DD dates — downstream (reminders cron, dashboard schedule) relies on this format.
+  return raw.map((s) => s.trim()).filter((s) => /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(s)));
 }
 
 export async function POST(req: Request) {

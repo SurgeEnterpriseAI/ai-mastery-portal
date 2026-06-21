@@ -29,8 +29,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Please agree to be contacted to continue." }, { status: 400 });
   }
 
+  // Whitelist the source so a malformed/abusive link can't pollute analytics.
   const src = String(b.src || b.source || "").toLowerCase();
-  const source = src === "surge" || src === "surge_crosssell" ? "surge_crosssell" : src || "organic";
+  const ALLOWED_SOURCES = ["organic", "surge_crosssell", "linkedin", "whatsapp", "ad", "referral"];
+  const source = src === "surge" ? "surge_crosssell" : ALLOWED_SOURCES.includes(src) ? src : "organic";
   const background = BACKGROUNDS.includes(b.background) ? b.background : "other";
 
   const lead = await createLead({
