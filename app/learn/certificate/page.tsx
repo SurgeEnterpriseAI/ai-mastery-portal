@@ -13,7 +13,9 @@ export const dynamic = "force-dynamic";
 
 function origin() {
   const h = headers();
-  return `${h.get("x-forwarded-proto") || "http"}://${h.get("host") || "localhost:4321"}`;
+  const host = h.get("host");
+  if (host) return `${h.get("x-forwarded-proto") || "https"}://${host}`;
+  return "https://tensorpath.in"; // canonical fallback for shareable credential URLs
 }
 
 export default async function CertificatePage() {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Lead, LeadStatus } from "@/lib/types";
@@ -21,6 +21,8 @@ export default function AdminLeads({ leads: initial, stats }: { leads: Lead[]; s
   const [leads, setLeads] = useState<Lead[]>(initial);
   const [filter, setFilter] = useState<string>("all");
   const [toast, setToast] = useState("");
+  // Keep local list in sync with fresh server data after router.refresh().
+  useEffect(() => { setLeads(initial); }, [initial]);
 
   const sources = useMemo(() => Array.from(new Set(leads.map((l) => l.source))), [leads]);
   const shown = filter === "all" ? leads : leads.filter((l) => l.source === filter);

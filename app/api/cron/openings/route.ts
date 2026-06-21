@@ -12,9 +12,10 @@ export const maxDuration = 60;
 async function run(req: Request) {
   const secret = process.env.CRON_SECRET;
   const authed =
-    (secret && req.headers.get("authorization") === `Bearer ${secret}`) || // Vercel Cron
+    (secret && req.headers.get("authorization") === `Bearer ${secret}`) || // Vercel Cron w/ secret
+    Boolean(req.headers.get("x-vercel-cron")) || // Vercel Cron internal header (stripped from external requests)
     Boolean(getSessionTrainerId()); // staff triggering manually
-  if (secret && !authed) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!authed) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const india = await reseedIndiaOpenings();
   const result = await ingestOpenings();

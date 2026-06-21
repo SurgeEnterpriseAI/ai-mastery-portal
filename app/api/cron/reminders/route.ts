@@ -11,11 +11,12 @@ export const maxDuration = 60;
 async function run(req: Request) {
   const secret = process.env.CRON_SECRET;
   const authed =
-    (secret && req.headers.get("authorization") === `Bearer ${secret}`) ||
+    (secret && req.headers.get("authorization") === `Bearer ${secret}`) || // Vercel Cron w/ secret
+    Boolean(req.headers.get("x-vercel-cron")) || // Vercel Cron internal header (stripped from external requests)
     Boolean(getSessionTrainerId());
-  if (secret && !authed) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!authed) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD (UTC)
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }); // YYYY-MM-DD in IST (the audience timezone)
   const origin = new URL(req.url).origin;
   const joinUrl = `${origin}/class/live`;
 

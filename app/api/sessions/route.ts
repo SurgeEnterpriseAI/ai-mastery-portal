@@ -19,6 +19,7 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   if (!getSessionTrainerId()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const id = new URL(req.url).searchParams.get("id") || "";
+  const id = new URL(req.url).searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "id is required" }, { status: 400 });
   return NextResponse.json({ sessions: await deleteSession(id) });
 }
