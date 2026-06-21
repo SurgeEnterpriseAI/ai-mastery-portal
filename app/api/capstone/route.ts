@@ -21,13 +21,16 @@ export async function POST(req: Request) {
   if (!title || description.length < 40) {
     return NextResponse.json({ error: "Give your capstone a title and describe what you built (at least a few sentences)." }, { status: 400 });
   }
-  const links = Array.isArray(b.links)
-    ? b.links.map(String).filter(Boolean)
-    : String(b.links || "").split(/[\n,]/).map((s) => s.trim()).filter(Boolean);
+  // Only allow http(s) URLs — these get rendered as clickable links in the admin
+  // review panel, so a `javascript:` URI would be stored XSS.
+  const safeUrl = (u: string) => /^https?:\/\//i.test(u);
+  const rawLinks: string[] = Array.isArray(b.links) ? b.links.map(String) : String(b.links || "").split(/[\n,]/);
+  const links = rawLinks.map((s) => s.trim()).filter(Boolean).filter(safeUrl);
+  const fileUrl = b.fileUrl && safeUrl(String(b.fileUrl)) ? String(b.fileUrl) : undefined;
 
   const cap = await submitCapstone({
     learnerId: learner.id, learnerName: learner.name, title, description, links: links.slice(0, 8),
-    fileUrl: b.fileUrl ? String(b.fileUrl) : undefined,
+    fileUrl,
   });
   await pushJourney(learner.id, { type: "recommendation", summary: `Submitted capstone for review: ${title}` });
   return NextResponse.json({ ok: true, capstone: cap });

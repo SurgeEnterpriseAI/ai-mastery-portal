@@ -7,6 +7,10 @@ export async function POST(req: Request) {
   if (!getSessionTrainerId()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const b = await req.json().catch(() => ({}));
   if (!b.title || !b.company) return NextResponse.json({ error: "Title and company are required" }, { status: 400 });
+  // applyUrl is rendered as a clickable link on the public /careers page — reject non-http(s) (e.g. javascript:) to prevent stored XSS.
+  if (b.applyUrl && !/^https?:\/\//i.test(String(b.applyUrl))) {
+    return NextResponse.json({ error: "Apply URL must start with http:// or https://" }, { status: 400 });
+  }
   const opening = await createOpening({
     roleId: b.roleId || undefined,
     title: String(b.title), company: String(b.company), location: String(b.location || ""),
