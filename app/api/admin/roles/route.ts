@@ -27,7 +27,8 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   if (!getSessionTrainerId()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const slug = new URL(req.url).searchParams.get("slug") || "";
+  const slug = new URL(req.url).searchParams.get("slug");
+  if (!slug) return NextResponse.json({ error: "slug is required" }, { status: 400 });
   await deleteJobRole(slug);
   return NextResponse.json({ ok: true });
 }

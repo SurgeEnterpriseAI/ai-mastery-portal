@@ -129,7 +129,14 @@ export async function upsertJobRole(input: Partial<JobRole> & { slug: string; ti
   return mapRole(r);
 }
 export async function deleteJobRole(slug: string): Promise<void> {
-  await prisma.jobRole.deleteMany({ where: { slug } });
+  const role = await prisma.jobRole.findFirst({ where: { slug } });
+  if (!role) return;
+  // Null out references so openings/media don't dangle on a deleted role.
+  await prisma.$transaction([
+    prisma.opening.updateMany({ where: { roleId: role.id }, data: { roleId: null } }),
+    prisma.media.updateMany({ where: { roleId: role.id }, data: { roleId: null } }),
+    prisma.jobRole.deleteMany({ where: { id: role.id } }),
+  ]);
 }
 
 // ---------------------------------------------------------------------------
@@ -199,7 +206,15 @@ export async function createPlacement(input: Omit<Placement, "id" | "createdAt">
   return mapPlacement(p);
 }
 export async function deletePlacement(id: string): Promise<void> {
+  const p = await prisma.placement.findUnique({ where: { id } });
   await prisma.placement.deleteMany({ where: { id } });
+  // If the learner has no placements left, revert their profile from "placed".
+  if (p) {
+    const remaining = await prisma.placement.count({ where: { learnerId: p.learnerId } });
+    if (remaining === 0) {
+      await prisma.placementProfile.updateMany({ where: { learnerId: p.learnerId }, data: { status: "in_process", updatedAt: new Date().toISOString() } });
+    }
+  }
 }
 
 /** Public, hiring-partner-facing profile (no email/PII beyond name). */

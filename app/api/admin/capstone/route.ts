@@ -36,7 +36,12 @@ export async function PATCH(req: Request) {
       credentialId = existing.credentialId;
     } else {
       const { cohortName } = await getAppState();
-      const summary = learner ? await polishCapstone(learner, cap.title, cap.description) : cap.description;
+      // Never let an LLM hiccup block certificate issuance — fall back to the raw description.
+      let summary = cap.description;
+      if (learner) {
+        try { summary = await polishCapstone(learner, cap.title, cap.description); }
+        catch (e) { console.error("[capstone] polish failed, using raw description:", (e as Error).message); }
+      }
       const cert = await issueCertificate({
         learnerId: cap.learnerId, learnerName: cap.learnerName, learnerEmail: learner?.email || "",
         cohort: cohortName, daysCompleted: learner?.completedDays.length ?? 20,
