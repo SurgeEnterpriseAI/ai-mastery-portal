@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getAllDayMeta, availableDayCount, TOTAL_DAYS } from "@/lib/curriculum";
 import Tour from "@/components/Tour";
+import InnovationsCarousel from "@/components/InnovationsCarousel";
+import innovations from "@/content/innovations.json";
 
 export const dynamic = "force-dynamic";
 
@@ -144,6 +146,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <InnovationsCarousel items={innovations.items} updatedAt={innovations.updatedAt} />
 
       <section className="mt-16 rounded-2xl border border-brand-100 bg-brand-50 p-8 text-center">
         <h2 className="text-2xl font-extrabold text-slate-900">Start your AI journey with Tensorpath</h2>

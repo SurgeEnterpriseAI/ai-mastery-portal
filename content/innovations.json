@@ -1,0 +1,78 @@
+{
+  "updatedAt": "2026-06-21",
+  "note": "Researched by Gemini (Google Search grounding), then fact-checked and link-corrected by Claude before publishing.",
+  "items": [
+    {
+      "title": "Anthropic releases Claude Opus 4.8",
+      "summary": "Anthropic's most capable model yet — sharper judgment, catches its own mistakes, and a new 'dynamic workflows' mode for very large tasks.",
+      "category": "Models",
+      "sourceName": "Anthropic",
+      "sourceUrl": "https://www.anthropic.com/news/claude-opus-4-8",
+      "date": "2026-05-28"
+    },
+    {
+      "title": "Meta adds 'AI Mode' search to Facebook",
+      "summary": "Facebook's search now answers questions in plain language from public posts, Groups and Reels — instead of just showing a list of links.",
+      "category": "Tools",
+      "sourceName": "TechCrunch",
+      "sourceUrl": "https://techcrunch.com/2026/06/15/metas-new-ai-mode-on-facebook-pulls-from-public-info-across-its-platforms/",
+      "date": "2026-06-15"
+    },
+    {
+      "title": "Gemma 4 12B runs real AI on your laptop",
+      "summary": "Google's new open model understands text, images and audio together — and runs offline on a 16GB laptop, no internet needed.",
+      "category": "Multimodal",
+      "sourceName": "MarkTechPost",
+      "sourceUrl": "https://www.marktechpost.com/2026/06/03/google-deepmind-releases-gemma-4-12b-an-encoder-free-multimodal-model-with-native-audio-that-runs-on-a-16-gb-laptop/",
+      "date": "2026-06-03"
+    },
+    {
+      "title": "ChatGPT gets a 'Dreaming' memory",
+      "summary": "OpenAI's new memory learns from your past chats in the background to stay relevant over time — no more manually saving things.",
+      "category": "Research",
+      "sourceName": "OpenAI",
+      "sourceUrl": "https://openai.com/index/chatgpt-memory-dreaming/",
+      "date": "2026-06-04"
+    },
+    {
+      "title": "GLM-5.2: a top open coding model from China",
+      "summary": "Zhipu AI open-sourced (MIT) a 744B-parameter, 1M-token-context model built for coding that rivals leading closed models.",
+      "category": "Open Source",
+      "sourceName": "South China Morning Post",
+      "sourceUrl": "https://www.scmp.com/tech/tech-trends/article/3357115/zhipu-ais-stock-rockets-after-chinese-firm-makes-glm-52-open-source",
+      "date": "2026-06-13"
+    },
+    {
+      "title": "Moonshot AI releases Kimi K2.7 Code",
+      "summary": "A 1-trillion-parameter open-weight model tuned for coding and multi-step agent tasks, with full weights published free on Hugging Face.",
+      "category": "Open Source",
+      "sourceName": "MarkTechPost",
+      "sourceUrl": "https://www.marktechpost.com/2026/06/12/moonshot-ai-releases-kimi-k2-7-code-a-coding-model-reporting-21-8-on-kimi-code-bench-v2-over-k2-6/",
+      "date": "2026-06-12"
+    },
+    {
+      "title": "Microsoft's MAI-Code-1-Flash lands in GitHub Copilot",
+      "summary": "A fast, small coding model now built into Copilot for everyday developer help — available across all Copilot plans, starting in VS Code.",
+      "category": "Tools",
+      "sourceName": "GitHub",
+      "sourceUrl": "https://github.blog/changelog/2026-06-02-mai-code-1-flash-is-now-available-for-github-copilot/",
+      "date": "2026-06-02"
+    },
+    {
+      "title": "DeepMind maps the path from AGI to superintelligence",
+      "summary": "A 57-page paper lays out four possible routes from human-level AI to systems that could outperform whole teams of experts.",
+      "category": "Research",
+      "sourceName": "Google DeepMind",
+      "sourceUrl": "https://deepmind.google/research/publications/239142/",
+      "date": "2026-06-10"
+    },
+    {
+      "title": "OpenAI's LifeSciBench tests AI on real science",
+      "summary": "A 750-task benchmark built with 173 scientists. Even the best AI passes only ~36% — a reality check on how far research AI still has to go.",
+      "category": "Research",
+      "sourceName": "OpenAI",
+      "sourceUrl": "https://openai.com/index/introducing-life-sci-bench/",
+      "date": "2026-06-17"
+    }
+  ]
+}
