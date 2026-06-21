@@ -12,3 +12,6 @@ prisma/dev.db
 *.db
 *.db-journal
 .env
+
+# committed DB dump removed — never track local data store (contains password hashes)
+data/
