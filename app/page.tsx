@@ -67,7 +67,7 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="lg:flex lg:items-start lg:gap-8">
+      <div className="lg:flex lg:gap-8">
         <div className="min-w-0 lg:flex-1">
 
       <section className="mt-16 animate-fadein">
