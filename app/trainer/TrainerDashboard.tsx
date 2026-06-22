@@ -570,6 +570,12 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
         </div>
       </section>
 
+      <div className="mt-8 max-w-md">
+        <Panel title="🔒 Account & security" subtitle="Change your trainer sign-in password.">
+          <TrainerPassword />
+        </Panel>
+      </div>
+
       <footer className="mt-12 border-t border-slate-200 pt-6 text-center text-sm text-slate-400">
         Tensorpath · the room resumes itself, every single day.
       </footer>
@@ -592,6 +598,39 @@ function Mini({ label, value }: { label: string; value: string }) {
     <div className="rounded-lg bg-slate-50 py-3">
       <div className="text-xl font-extrabold text-slate-900">{value}</div>
       <div className="text-xs uppercase tracking-wider text-slate-500">{label}</div>
+    </div>
+  );
+}
+
+function TrainerPassword() {
+  const [cur, setCur] = useState("");
+  const [next, setNext] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
+  const input = "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-brand-500";
+
+  async function change() {
+    setMsg("");
+    if (next.length < 8) { setMsg("New password must be at least 8 characters."); return; }
+    if (next !== confirm) { setMsg("New passwords don't match."); return; }
+    setBusy(true);
+    const res = await fetch("/api/trainer/password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ current: cur, next }) });
+    const d = await res.json().catch(() => ({}));
+    setBusy(false);
+    if (res.ok) { setMsg("✓ Password updated."); setCur(""); setNext(""); setConfirm(""); }
+    else setMsg(d.error || "Could not change password.");
+  }
+
+  return (
+    <div className="space-y-3">
+      <input type="password" value={cur} onChange={(e) => setCur(e.target.value)} placeholder="Current password" className={input} />
+      <input type="password" value={next} onChange={(e) => setNext(e.target.value)} placeholder="New password (min 8 chars)" className={input} />
+      <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Confirm new password" className={input} />
+      {msg && <p className={`text-sm ${msg.startsWith("✓") ? "text-emerald-700" : "text-red-600"}`}>{msg}</p>}
+      <button onClick={change} disabled={busy || !cur || !next} className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
+        {busy ? "Saving…" : "Update password"}
+      </button>
     </div>
   );
 }
