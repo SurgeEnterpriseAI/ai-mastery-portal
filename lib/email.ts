@@ -270,6 +270,23 @@ export function batchInviteEmail(args: { name: string; cohortName: string; start
   return { subject, body };
 }
 
+export function classRecapEmail(args: { name: string; cohortName: string; dayNumber?: number; dayTitle: string; takeaways: string[]; homework?: string; nextTeaser?: string; recordingUrl?: string; portalUrl: string }) {
+  const dayLabel = args.dayNumber ? `Day ${args.dayNumber}: ${args.dayTitle}` : args.dayTitle;
+  const takeaways = args.takeaways.length
+    ? `\nWhat we covered:\n${args.takeaways.map((t) => `  • ${t}`).join("\n")}\n`
+    : "";
+  const homework = args.homework ? `\n📝 Homework: ${args.homework}\n` : "";
+  const next = args.nextTeaser ? `\n👀 Next time: ${args.nextTeaser}\n` : "";
+  const rec = args.recordingUrl ? `\n🎥 Recording: ${args.recordingUrl}\n` : "";
+  const subject = `📒 Class recap — ${dayLabel}`;
+  const body =
+    `Hi ${args.name},\n\n` +
+    `Thanks for joining today's ${args.cohortName} class on ${dayLabel}.\n${takeaways}${homework}${next}${rec}\n` +
+    `Revisit anything in the portal — ask Genie, your AI companion, between classes: ${args.portalUrl}\n\n` +
+    `See you next session! — The Tensorpath team`;
+  return { subject, body };
+}
+
 export function classStartingNowEmail(args: { name: string; cohortName: string; classTime?: string; joinUrl: string }) {
   const subject = `🔴 Your Tensorpath class is starting now`;
   const body =

@@ -3,6 +3,7 @@ import { getSessionTrainerId } from "@/lib/auth";
 import { createCohort, updateCohort, deleteCohort, assignLearner, setBatchStatus, getCohort, assignAllUnassigned, listCohortInviteTargets, cohortRoster, listConfirmedLearners } from "@/lib/cohorts";
 import { getLearnerById } from "@/lib/data";
 import { sendMail, batchInviteEmail, sendBatchEmails, classStartingNowEmail } from "@/lib/email";
+import { sendCohortRecap, istDate } from "@/lib/class-recap";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // bulk invite sends many emails
@@ -43,6 +44,13 @@ export async function POST(req: Request) {
     for (const l of targets) await setBatchStatus(l.id, "invited");
     const { delivered } = await sendBatchEmails(items); // one Resend batch call — no rate-limit burst
     return NextResponse.json({ ok: true, invited: items.length, delivered });
+  }
+  // Email the class recap (curriculum notes + recording link) to everyone who attended.
+  if (b.action === "send_recap") {
+    if (!b.cohortId) return NextResponse.json({ error: "cohortId required" }, { status: 400 });
+    const date = b.date ? String(b.date) : istDate();
+    const r = await sendCohortRecap(String(b.cohortId), date, new URL(req.url).origin, { force: true });
+    return NextResponse.json({ ok: true, ...r, date });
   }
   // Notify confirmed learners that class is starting NOW (on-demand, with the join link)
   if (b.action === "notify_now") {

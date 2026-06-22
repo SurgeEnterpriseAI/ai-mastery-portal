@@ -58,6 +58,16 @@ export default function AdminCohorts({
     setTimeout(() => setMsg(""), 5000);
     router.refresh();
   }
+  async function sendRecap(cohortId: string) {
+    if (!confirm("Email today's class recap (key points, homework + recording link if ready) to everyone who attended?")) return;
+    setBusy(true);
+    const res = await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "send_recap", cohortId }) });
+    const d = await res.json().catch(() => ({}));
+    setBusy(false);
+    setMsg(res.ok ? (d.sent ? `📒 Recap sent to ${d.recipients} attendee(s).` : `No recap sent — ${d.reason || "no attendees recorded yet"}.`) : (d.error || "Failed."));
+    setTimeout(() => setMsg(""), 7000);
+    router.refresh();
+  }
   async function notifyNow(cohortId: string) {
     if (!confirm("Email all CONFIRMED learners that class is starting now, with the join link?")) return;
     setBusy(true);
@@ -160,6 +170,9 @@ export default function AdminCohorts({
                     )}
                     <button onClick={() => inviteAll(c.id, true)} disabled={busy} className="rounded-lg border border-brand-300 bg-white px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50 disabled:opacity-60">
                       ↻ Re-send to all {roster.length} (with time)
+                    </button>
+                    <button onClick={() => sendRecap(c.id)} disabled={busy} className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60">
+                      📒 Send today&rsquo;s recap to attendees
                     </button>
                   </span>
                 </div>

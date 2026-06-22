@@ -299,6 +299,20 @@ model Attendance {
   @@index([cohortId])
 }
 
+// One per cohort+session-date: recording link + recap-email dedup.
+model ClassRecap {
+  id           String  @id
+  cohortId     String
+  date         String // YYYY-MM-DD
+  dayNumber    Int? // curriculum day taught
+  recordingUrl String?
+  notes        String? // generated recap text
+  sentAt       String?
+  recipients   Int     @default(0)
+
+  @@unique([cohortId, date])
+}
+
 // ---------------------------------------------------------------------------
 // Module C — Capstone submission & review (gates certification)
 // ---------------------------------------------------------------------------
