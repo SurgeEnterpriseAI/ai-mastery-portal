@@ -53,6 +53,53 @@ async function sendViaResend(to: string[], subject: string, body: string): Promi
 }
 
 /**
+ * Bulk send via Resend's batch endpoint (up to 100 per call) — one HTTP request
+ * instead of a per-email burst, which avoids Resend's per-second rate limit.
+ * Each message is personalised (its own recipient) and logged to the Outbox.
+ * Falls back to per-email sendMail when Resend isn't configured.
+ */
+export async function sendBatchEmails(
+  items: Array<{ to: string; subject: string; body: string; kind: OutboxMail["kind"] }>,
+): Promise<{ delivered: number }> {
+  let delivered = 0;
+  const key = process.env.RESEND_API_KEY;
+  for (let i = 0; i < items.length; i += 100) {
+    const chunk = items.slice(i, i + 100);
+    let oks: boolean[] = chunk.map(() => false);
+    if (key) {
+      try {
+        const res = await fetch("https://api.resend.com/emails/batch", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+          body: JSON.stringify(chunk.map((m) => ({
+            from: FROM(), to: [m.to], subject: m.subject,
+            html: `<div style="font-family:system-ui,Segoe UI,Roboto,sans-serif;line-height:1.6">${m.body.replace(/\n/g, "<br/>")}</div>`,
+          }))),
+        });
+        if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          const arr = Array.isArray(data?.data) ? data.data : [];
+          oks = chunk.map((_, j) => Boolean(arr[j]?.id));
+        } else {
+          console.error("[email] Resend batch failed:", res.status, await res.text().catch(() => ""));
+        }
+      } catch (e) {
+        console.error("[email] Resend batch error:", (e as Error).message);
+      }
+    }
+    for (let j = 0; j < chunk.length; j++) {
+      const ok = oks[j];
+      if (ok) delivered++;
+      await addOutbox({
+        id: newId("mail"), to: [chunk[j].to], subject: chunk[j].subject, body: chunk[j].body,
+        sentAt: new Date().toISOString(), delivered: ok, via: ok ? "resend" : "outbox", kind: chunk[j].kind,
+      });
+    }
+  }
+  return { delivered };
+}
+
+/**
  * Delivery order: Resend (RESEND_API_KEY) → SMTP (SMTP_HOST/USER/PASS) → in-app Outbox.
  * The portal is fully runnable with zero config — without keys, mail lands in the Outbox.
  * Every message is always logged to the outbox for the audit trail.

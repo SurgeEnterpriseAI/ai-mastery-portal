@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSessionTrainerId } from "@/lib/auth";
 import { createCohort, updateCohort, deleteCohort, assignLearner, setBatchStatus, getCohort, assignAllUnassigned, listCohortInviteTargets, cohortRoster } from "@/lib/cohorts";
 import { getLearnerById } from "@/lib/data";
-import { sendMail, batchInviteEmail } from "@/lib/email";
+import { sendMail, batchInviteEmail, sendBatchEmails } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // bulk invite sends many emails
@@ -36,14 +36,13 @@ export async function POST(req: Request) {
     const pool = b.all ? await cohortRoster(String(b.cohortId)) : await listCohortInviteTargets(String(b.cohortId));
     const targets = pool.slice(0, 200);
     const origin = new URL(req.url).origin;
-    let invited = 0, delivered = 0;
-    for (const l of targets) {
-      await setBatchStatus(l.id, "invited");
+    const items = targets.map((l) => {
       const mail = batchInviteEmail({ name: l.name, cohortName: cohort.name, startDate: cohort.startDate, classTime: cohort.classTime, sessionDates: cohort.sessionDates, portalUrl: `${origin}/learn` });
-      const r = await sendMail({ to: [l.email], subject: mail.subject, body: mail.body, kind: "invite" });
-      invited++; if (r.delivered) delivered++;
-    }
-    return NextResponse.json({ ok: true, invited, delivered });
+      return { to: l.email, subject: mail.subject, body: mail.body, kind: "invite" as const };
+    });
+    for (const l of targets) await setBatchStatus(l.id, "invited");
+    const { delivered } = await sendBatchEmails(items); // one Resend batch call — no rate-limit burst
+    return NextResponse.json({ ok: true, invited: items.length, delivered });
   }
   // send batch invite: emails the learner their batch details + sets status "invited"
   if (b.action === "invite") {
