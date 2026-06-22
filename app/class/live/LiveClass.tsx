@@ -6,25 +6,32 @@ declare global {
   interface Window { JitsiMeetExternalAPI?: new (domain: string, options: Record<string, unknown>) => { dispose: () => void; addEventListener: (e: string, cb: () => void) => void } }
 }
 
+type Jaas = { appId: string; token: string } | null;
+
 /**
- * In-portal live class — embeds Jitsi Meet (video, screen-share, chat,
- * who's-online, raise hand, and recording — all built in). The trainer joins
- * as host; students join the same room. No external account needed.
+ * In-portal live class.
+ * - With Jitsi-as-a-Service configured (jaas), embeds 8x8.vc with a JWT — no time
+ *   limit, cloud recording, moderator = trainer.
+ * - Without it, opens the real meet.jit.si room in a new tab (embedding the free
+ *   meet.jit.si is demo-only and disconnects after 5 minutes, so we don't embed it).
  */
-export default function LiveClass({ room, displayName, isHost }: { room: string; displayName: string; isHost: boolean }) {
+export default function LiveClass({ room, displayName, isHost, jaas }: { room: string; displayName: string; isHost: boolean; jaas?: Jaas }) {
   const ref = useRef<HTMLDivElement>(null);
   const [left, setLeft] = useState(false);
   const [error, setError] = useState(false);
+  const embed = Boolean(jaas?.token);
 
   useEffect(() => {
+    if (!embed || !jaas) return;
     let api: { dispose: () => void; addEventListener: (e: string, cb: () => void) => void } | null = null;
     let cancelled = false;
 
     const init = () => {
       if (cancelled || !window.JitsiMeetExternalAPI || !ref.current) return;
       ref.current.innerHTML = "";
-      api = new window.JitsiMeetExternalAPI("meet.jit.si", {
-        roomName: room,
+      api = new window.JitsiMeetExternalAPI("8x8.vc", {
+        roomName: `${jaas.appId}/${room}`,
+        jwt: jaas.token,
         parentNode: ref.current,
         width: "100%",
         height: "100%",
@@ -33,15 +40,9 @@ export default function LiveClass({ room, displayName, isHost }: { room: string;
           prejoinPageEnabled: true,
           startWithAudioMuted: !isHost,
           startWithVideoMuted: !isHost,
-          disableThirdPartyRequests: true,
-          enableWelcomePage: false,
           subject: "Tensorpath — Live Class",
         },
-        interfaceConfigOverwrite: {
-          MOBILE_APP_PROMO: false,
-          SHOW_JITSI_WATERMARK: false,
-          DISABLE_DEEP_LINKING: true,
-        },
+        interfaceConfigOverwrite: { MOBILE_APP_PROMO: false },
       });
       api.addEventListener("readyToClose", () => setLeft(true));
     };
@@ -50,14 +51,31 @@ export default function LiveClass({ room, displayName, isHost }: { room: string;
       init();
     } else {
       const s = document.createElement("script");
-      s.src = "https://meet.jit.si/external_api.js";
+      s.src = `https://8x8.vc/${jaas.appId}/external_api.js`;
       s.async = true;
       s.onload = init;
       s.onerror = () => { if (!cancelled) setError(true); };
       document.body.appendChild(s);
     }
     return () => { cancelled = true; try { api?.dispose(); } catch { /* noop */ } };
-  }, [room, displayName, isHost]);
+  }, [room, displayName, isHost, embed, jaas]);
+
+  // Fallback (no JaaS): open the real meet.jit.si room in a new tab — full video,
+  // screen-share, chat and recording, with NO 5-minute limit.
+  if (!embed) {
+    const url = `https://meet.jit.si/${encodeURIComponent(room)}#userInfo.displayName=%22${encodeURIComponent(displayName)}%22`;
+    return (
+      <div className="grid h-[70vh] place-items-center rounded-2xl border border-slate-200 bg-white text-center">
+        <div className="max-w-md px-6">
+          <div className="text-4xl">🎥</div>
+          <h2 className="mt-2 text-xl font-bold text-slate-900">Open the live classroom</h2>
+          <p className="mt-1 text-sm text-slate-500">Opens your secure class room in a new tab — full video, screen-share, chat and recording, with no time limit.</p>
+          <a href={url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-red-600 px-6 py-3 font-semibold text-white hover:bg-red-700">🔴 Open live room</a>
+          <p className="mt-3 text-xs text-slate-400">In the meeting toolbar, use <strong>Start recording</strong> to capture the session.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (left) {
     return (

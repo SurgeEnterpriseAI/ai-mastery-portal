@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSessionTrainerId } from "@/lib/auth";
 import { getCurrentLearner } from "@/lib/learner";
 import { getLiveRoomName } from "@/lib/data";
+import { isJaasConfigured, jaasAppId, generateJaasJwt } from "@/lib/jaas";
 import LiveClass from "./LiveClass";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +17,9 @@ export default async function LiveClassPage() {
   const displayName = isHost ? "Tensorpath Trainer" : learner!.name;
   const room = await getLiveRoomName();
   const back = isHost ? "/trainer" : "/learn";
+  const jaas = isJaasConfigured()
+    ? { appId: jaasAppId(), token: generateJaasJwt({ room, name: displayName, email: learner?.email, moderator: isHost }) || "" }
+    : null;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-5">
@@ -36,7 +40,7 @@ export default async function LiveClassPage() {
         </p>
       )}
 
-      <LiveClass room={room} displayName={displayName} isHost={isHost} />
+      <LiveClass room={room} displayName={displayName} isHost={isHost} jaas={jaas} />
     </main>
   );
 }
