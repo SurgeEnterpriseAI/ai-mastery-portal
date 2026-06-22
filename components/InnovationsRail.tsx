@@ -37,7 +37,7 @@ export default function InnovationsRail({ items, updatedAt }: { items: Item[]; u
   const updated = prettyDate(updatedAt);
 
   return (
-    <div className="flex max-h-[calc(100vh-4rem)] flex-col">
+    <div className="flex h-[calc(100vh-4rem)] flex-col">
       <div className="mb-3">
         <h2 className="text-lg font-bold text-slate-900">🚀 Latest in AI</h2>
         <p className="mt-0.5 text-xs text-slate-500">Gemini-researched, Claude-verified{updated ? ` · ${updated}` : ""}</p>
