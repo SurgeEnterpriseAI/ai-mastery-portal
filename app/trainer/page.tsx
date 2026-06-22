@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSessionTrainerId } from "@/lib/auth";
 import { getTrainerSnapshot } from "@/lib/data";
 import { getAllDayMeta, availableDayCount, TOTAL_DAYS } from "@/lib/curriculum";
+import { activeCohort, cohortSessionLog } from "@/lib/class-recap";
 import TrainerDashboard from "./TrainerDashboard";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +10,8 @@ export const dynamic = "force-dynamic";
 export default async function TrainerPage() {
   if (!getSessionTrainerId()) redirect("/login");
   const snap = await getTrainerSnapshot();
+  const cohort = await activeCohort();
+  const sessionLog = cohort ? await cohortSessionLog(cohort.id) : [];
   const emailConfigured = Boolean(
     process.env.RESEND_API_KEY || (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS),
   );
@@ -33,6 +36,7 @@ export default async function TrainerPage() {
         })),
         payments: snap.payments,
         certificates: snap.certificates,
+        sessionLog,
       }}
     />
   );

@@ -1,5 +1,5 @@
 import { prisma, newId, getLearnerByEmail, getAppState } from "./data";
-import { listCohorts, markAttendance } from "./cohorts";
+import { listCohorts, markAttendance, getAttendance } from "./cohorts";
 import { getDay } from "./curriculum";
 import { sendBatchEmails, classRecapEmail } from "./email";
 
@@ -30,6 +30,36 @@ export async function recordJoinByEmail(email: string, tsIso?: string): Promise<
   if (!cohort) return false;
   await markAttendance(cohort.id, learner.id, date, true);
   return true;
+}
+
+export interface SessionLogRow { date: string; attended: number; recordingUrl?: string; recapSentAt?: string; recipients: number }
+
+// Per-session log (past + today) for the trainer dashboard: attendance count, recording link, recap status.
+export async function cohortSessionLog(cohortId: string): Promise<SessionLogRow[]> {
+  const cohorts = await listCohorts();
+  const c = cohorts.find((x) => x.id === cohortId);
+  if (!c) return [];
+  const today = istDate();
+  const att = await getAttendance(cohortId); // "learnerId|date" -> present
+  const countByDate: Record<string, number> = {};
+  for (const [k, present] of Object.entries(att)) {
+    if (!present) continue;
+    const d = k.split("|")[1];
+    countByDate[d] = (countByDate[d] || 0) + 1;
+  }
+  const recaps = await prisma.classRecap.findMany({ where: { cohortId } });
+  const recapByDate: Record<string, { recordingUrl: string | null; sentAt: string | null; recipients: number }> = {};
+  for (const r of recaps) recapByDate[r.date] = { recordingUrl: r.recordingUrl, sentAt: r.sentAt, recipients: r.recipients };
+  return c.sessionDates
+    .filter((d) => d <= today)
+    .sort((a, b) => b.localeCompare(a))
+    .map((d) => ({
+      date: d,
+      attended: countByDate[d] || 0,
+      recordingUrl: recapByDate[d]?.recordingUrl || undefined,
+      recapSentAt: recapByDate[d]?.sentAt || undefined,
+      recipients: recapByDate[d]?.recipients || 0,
+    }));
 }
 
 export async function presentLearners(cohortId: string, date: string): Promise<Array<{ id: string; name: string; email: string }>> {

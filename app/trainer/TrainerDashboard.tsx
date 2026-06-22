@@ -28,6 +28,9 @@ interface PaymentRow {
 interface CertRow {
   credentialId: string; learnerName: string; capstoneTitle: string; status: string; issuedAt: string;
 }
+interface SessionLogRow {
+  date: string; attended: number; recordingUrl?: string; recapSentAt?: string; recipients: number;
+}
 
 interface InitialData {
   cohortName: string;
@@ -44,6 +47,7 @@ interface InitialData {
   tickets: TicketRow[];
   payments: PaymentRow[];
   certificates: CertRow[];
+  sessionLog: SessionLogRow[];
 }
 
 export default function TrainerDashboard({ initial }: { initial: InitialData }) {
@@ -53,7 +57,7 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
 
   const {
     cohortName, trainees, sessions, progress, outbox, dayMetas,
-    daysReady, totalDays, smtpConfigured, learners, tickets, payments, certificates,
+    daysReady, totalDays, smtpConfigured, learners, tickets, payments, certificates, sessionLog,
   } = initial;
 
   const openTickets = tickets.filter((t) => t.status === "open");
@@ -569,6 +573,37 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
           </table>
         </div>
       </section>
+
+      <div className="mt-8">
+        <Panel title="📋 Class log — attendance & recordings" subtitle="Auto-captured from the live class: who joined, the recording, and the recap email.">
+          {sessionLog.length === 0 ? (
+            <p className="text-sm text-slate-400">No past sessions yet. Attendance, recordings and recaps appear here automatically once a class runs (with the JaaS webhook configured) — or mark attendance from the Cohorts admin.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs uppercase tracking-wider text-slate-400">
+                    <th className="py-2 pr-4">Date</th>
+                    <th className="px-2 py-2">Attended</th>
+                    <th className="px-2 py-2">Recording</th>
+                    <th className="px-2 py-2">Recap email</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {sessionLog.map((s) => (
+                    <tr key={s.date}>
+                      <td className="py-2 pr-4 font-medium text-slate-800">{s.date}</td>
+                      <td className="px-2 py-2">{s.attended} {s.attended === 1 ? "learner" : "learners"}</td>
+                      <td className="px-2 py-2">{s.recordingUrl ? <a href={s.recordingUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-600 hover:underline">▶ Watch</a> : <span className="text-slate-400">—</span>}</td>
+                      <td className="px-2 py-2">{s.recapSentAt ? <span className="text-emerald-700">✓ sent to {s.recipients}</span> : <span className="text-slate-400">not sent</span>}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Panel>
+      </div>
 
       <div className="mt-8 max-w-md">
         <Panel title="🔒 Account & security" subtitle="Change your trainer sign-in password.">
