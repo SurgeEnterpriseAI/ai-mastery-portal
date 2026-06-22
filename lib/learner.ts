@@ -18,10 +18,8 @@ export interface GateStatus {
 }
 
 export function gateStatus(learner: Learner): GateStatus {
-  const used = learner.handholdingCount;
-  const limit = FREE_HANDHOLDING_LIMIT;
-  const unlimited = learner.paid || learner.plan === "pro";
-  return { locked: !unlimited && used >= limit, used, limit, remaining: unlimited ? Infinity : Math.max(0, limit - used) };
+  // The whole program — live classes and AI coaching — is free. No session gating.
+  return { locked: false, used: learner.handholdingCount, limit: Infinity, remaining: Infinity };
 }
 
 export async function pushJourney(learnerId: string, event: Omit<JourneyEvent, "id" | "at">): Promise<void> {

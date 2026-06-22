@@ -12,7 +12,7 @@ const HOME_STEPS = [
   { target: '[data-tour="enroll-cta"]', title: "1. Register — free", body: "Create your account here. We approve you and email your batch dates — you confirm your seat in one click." },
   { target: '[data-tour="how"]', title: "2. Learn live, inside the portal", body: "Join video classes right here — your trainer screen-shares and teaches live, with chat and who's online. Every session is recorded to revisit." },
   { target: '[data-tour="arc"]', title: "3. 20 guided days + Genie, your companion", body: "A complete, story-driven curriculum, with Genie — your personal AI learning companion — answering your questions between classes." },
-  { title: "4. Get certified & placed", body: "Finish your capstone for a verifiable certificate — then your dashboard surfaces live AI openings and interview prep. Ready? Register above." },
+  { title: "4. Get certified, then real job help", body: "Finish your capstone for a verifiable certificate — then come to our Surge office in Bengaluru for in-person interview prep, marketing and placement help. Ready? Register above." },
 ];
 
 const COURSE_JSONLD = {
@@ -87,7 +87,7 @@ export default function Home() {
           <Link href="/join" className="rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700">
             Enroll free — start learning →
           </Link>
-          <span className="text-sm text-slate-500">No cost to begin · learn at your pace</span>
+          <span className="text-sm text-slate-500">Completely free · live, instructor-led</span>
         </div>
 
         <div className="mt-8 flex flex-wrap gap-4">
@@ -123,7 +123,7 @@ export default function Home() {
           <Step n="3" title="Learn live, in the portal" body="Join video classes right here: your trainer screen-shares and teaches live, with chat and who's online. Every session is recorded." />
           <Step n="4" title="Genie, your companion, 24/7" body="Between classes, Genie — your personal AI companion — answers questions, gives practice, and tells you exactly what to learn next." />
           <Step n="5" title="Recap & what's next" body="After each class your dashboard shows what was covered, what's coming next, and the recording to revisit anytime." />
-          <Step n="6" title="Get certified & placed" body="Finish your capstone for a verifiable certificate — then your dashboard surfaces live AI openings, interview prep, and placement support." />
+          <Step n="6" title="Get certified, then job help in person" body="Finish your capstone for a verifiable certificate — then visit the Surge office in Bengaluru for one-on-one interview prep, résumé & marketing, and placement support." />
         </div>
       </section>
 

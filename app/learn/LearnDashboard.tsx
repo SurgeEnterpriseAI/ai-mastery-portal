@@ -149,13 +149,7 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {learner.paid ? (
-            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">PRO · unlimited</span>
-          ) : (
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
-              {gate.remaining ?? 0} free session{gate.remaining === 1 ? "" : "s"} left
-            </span>
-          )}
+          <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">🎓 Free program</span>
           <Link href="/class/live" className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700">🔴 Join live class</Link>
           <Link href="/library" className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">🎬 Library</Link>
           <Link href="/careers" className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">💼 Careers</Link>
@@ -181,16 +175,15 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
         </div>
       )}
 
-      {/* Batch complete → get placed (#8) */}
+      {/* Batch complete → in-person job help at the Surge Bengaluru office */}
       {completed.length >= totalDays && (
         <div className="mt-6 rounded-2xl border border-brand-200 bg-brand-50 p-5">
           <div className="text-xs font-bold uppercase tracking-wider text-brand-700">You finished all {totalDays} days 🎉</div>
-          <h2 className="mt-1 text-lg font-bold text-slate-900">Now let&rsquo;s get you placed.</h2>
-          <p className="mt-1 text-sm text-slate-600">Claim your certificate, then explore live AI openings and interview prep — your shareable placement profile goes to hiring partners.</p>
+          <h2 className="mt-1 text-lg font-bold text-slate-900">Next step: come to the Surge office in Bengaluru.</h2>
+          <p className="mt-1 text-sm text-slate-600">First, claim your certificate. Then visit our <strong>Surge Bengaluru office</strong> for hands-on job help — résumé &amp; marketing, mock interviews and interview prep, and placement support, one-on-one with our team.</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <Link href="/learn/certificate" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">🎓 Capstone & certificate</Link>
-            <Link href="/careers" className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">💼 Live openings</Link>
-            <Link href="/library" className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">🎬 Interview prep</Link>
+            <Link href="/learn/certificate" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">🎓 Capstone &amp; certificate</Link>
+            <Link href="/enquiry" className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">📍 Book your office visit</Link>
           </div>
         </div>
       )}
@@ -233,7 +226,7 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
           <RhythmCard n="1" tone="red" title="Attend the live class" body="Join in-portal when your trainer goes live — ask questions in chat and follow the screen-share. Don't miss it." href="/class/live" cta="Join live class" />
           <RhythmCard n="2" tone="brand" title="Review the day's material" body="Open the day your trainer just taught to revisit the slides — that marks the day done." href={`/present/${progress.currentDay}`} cta={`Open Day ${progress.currentDay}`} onClick={() => markReviewed(progress.currentDay)} />
           <RhythmCard n="3" tone="accent" title="Genie, your companion — anytime" body="Stuck or curious between classes? Reach Genie for help and practice — and it brings in a human trainer if needed." href="#ai-coach" cta="Meet Genie" />
-          <RhythmCard n="4" tone="emerald" title="Capstone → certified → placed" body="Finish your capstone for a verifiable certificate, then unlock live AI openings and interview prep." href="/learn/certificate" cta="Capstone & certificate" />
+          <RhythmCard n="4" tone="emerald" title="Capstone → certified → job help" body="Finish your capstone for a verifiable certificate, then visit the Surge Bengaluru office for interview prep, marketing & placement help." href="/learn/certificate" cta="Capstone & certificate" />
         </div>
       </section>
 
@@ -373,17 +366,6 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
 
         <ProfileEditor initial={learner} />
       </div>
-
-      {!learner.paid && (
-        <div className="mt-6 rounded-2xl border border-brand-200 bg-white p-5 text-center">
-          <p className="text-slate-600">
-            You're on the free plan ({gate.used}/{gate.limit} coaching sessions used). Go Pro any time for unlimited coaching.
-          </p>
-          <button onClick={() => { setPaywallReason("Upgrade whenever you're ready."); setPaywall(true); }} className="mt-3 rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700">
-            See Pro
-          </button>
-        </div>
-      )}
 
       {videoDay !== null && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-slate-900/70 p-4" onClick={() => setVideoDay(null)}>

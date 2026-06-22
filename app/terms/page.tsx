@@ -30,9 +30,8 @@ export default function TermsPage() {
           You must be at least 16 years old to enrol.
         </Section>
 
-        <Section title="4. Fees &amp; payments">
-          The program is free to begin. Some features (such as unlimited AI coaching) may require a paid upgrade, shown clearly before purchase.
-          Payments are processed by Razorpay. Refunds, where applicable, follow the terms communicated at the point of sale.
+        <Section title="4. Fees">
+          The Tensorpath program is currently free — live classes and AI coaching included. If any paid offering is introduced in future, it will be shown clearly before any charge.
         </Section>
 
         <Section title="5. Certificates">

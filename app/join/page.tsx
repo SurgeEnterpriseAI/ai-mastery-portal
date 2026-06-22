@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Enroll free — start your 20-day AI journey",
-  description: "Create your free Tensorpath account and start learning AI — guided live by an expert trainer and Genie, your personal AI companion. First 3 coaching sessions free.",
+  description: "Create your free Tensorpath account and start learning AI — guided live by an expert trainer and Genie, your personal AI companion. The whole program is free.",
   alternates: { canonical: "/join" },
 };
 
@@ -22,7 +22,7 @@ export default function JoinPage() {
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">🎓</div>
           <div>
             <div className="font-bold text-slate-900">Join Tensorpath</div>
-            <div className="text-xs text-slate-500">Live training + Genie, your AI companion · first 3 coaching sessions free</div>
+            <div className="text-xs text-slate-500">Live training + Genie, your AI companion · 100% free</div>
           </div>
         </div>
         <div className="mt-5 overflow-hidden rounded-xl border border-slate-200 bg-slate-900">
