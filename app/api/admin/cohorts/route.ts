@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSessionTrainerId } from "@/lib/auth";
-import { createCohort, updateCohort, deleteCohort, assignLearner, setBatchStatus, getCohort, assignAllUnassigned, listCohortInviteTargets, cohortRoster } from "@/lib/cohorts";
+import { createCohort, updateCohort, deleteCohort, assignLearner, setBatchStatus, getCohort, assignAllUnassigned, listCohortInviteTargets, cohortRoster, listConfirmedLearners } from "@/lib/cohorts";
 import { getLearnerById } from "@/lib/data";
-import { sendMail, batchInviteEmail, sendBatchEmails } from "@/lib/email";
+import { sendMail, batchInviteEmail, sendBatchEmails, classStartingNowEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // bulk invite sends many emails
@@ -43,6 +43,21 @@ export async function POST(req: Request) {
     for (const l of targets) await setBatchStatus(l.id, "invited");
     const { delivered } = await sendBatchEmails(items); // one Resend batch call — no rate-limit burst
     return NextResponse.json({ ok: true, invited: items.length, delivered });
+  }
+  // Notify confirmed learners that class is starting NOW (on-demand, with the join link)
+  if (b.action === "notify_now") {
+    if (!b.cohortId) return NextResponse.json({ error: "cohortId required" }, { status: 400 });
+    const cohort = await getCohort(String(b.cohortId));
+    if (!cohort) return NextResponse.json({ error: "Cohort not found" }, { status: 404 });
+    const confirmed = await listConfirmedLearners(String(b.cohortId));
+    if (confirmed.length === 0) return NextResponse.json({ ok: true, notified: 0, delivered: 0 });
+    const joinUrl = `${new URL(req.url).origin}/class/live`;
+    const items = confirmed.map((l) => {
+      const mail = classStartingNowEmail({ name: l.name, cohortName: cohort.name, classTime: cohort.classTime, joinUrl });
+      return { to: l.email, subject: mail.subject, body: mail.body, kind: "announcement" as const };
+    });
+    const { delivered } = await sendBatchEmails(items);
+    return NextResponse.json({ ok: true, notified: items.length, delivered });
   }
   // send batch invite: emails the learner their batch details + sets status "invited"
   if (b.action === "invite") {

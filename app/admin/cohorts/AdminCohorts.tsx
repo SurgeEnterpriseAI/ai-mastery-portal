@@ -58,6 +58,15 @@ export default function AdminCohorts({
     setTimeout(() => setMsg(""), 5000);
     router.refresh();
   }
+  async function notifyNow(cohortId: string) {
+    if (!confirm("Email all CONFIRMED learners that class is starting now, with the join link?")) return;
+    setBusy(true);
+    const res = await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "notify_now", cohortId }) });
+    const d = await res.json().catch(() => ({}));
+    setBusy(false);
+    setMsg(res.ok ? `🔔 Notified ${d.notified} confirmed learner(s) — ${d.delivered} emailed.` : (d.error || "Failed."));
+    setTimeout(() => setMsg(""), 6000);
+  }
   async function inviteAll(cohortId: string, all = false) {
     if (!confirm(all ? "Re-send the batch invite (with the latest class time) to ALL learners in this cohort?" : "Email a batch invite to everyone in this cohort who hasn't been invited yet?")) return;
     setBusy(true);
@@ -136,6 +145,11 @@ export default function AdminCohorts({
                     </button>
                   ))}
                   <span className="ml-auto flex flex-wrap gap-2">
+                    {roster.filter((l) => l.batchStatus === "confirmed").length > 0 && (
+                      <button onClick={() => notifyNow(c.id)} disabled={busy} className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-60">
+                        🔔 Notify confirmed — class starting now
+                      </button>
+                    )}
                     {roster.filter((l) => !l.batchStatus).length > 0 && (
                       <button onClick={() => inviteAll(c.id)} disabled={busy} className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
                         ✉ Invite all {roster.filter((l) => !l.batchStatus).length} not-yet-invited

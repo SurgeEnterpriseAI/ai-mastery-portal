@@ -270,6 +270,16 @@ export function batchInviteEmail(args: { name: string; cohortName: string; start
   return { subject, body };
 }
 
+export function classStartingNowEmail(args: { name: string; cohortName: string; classTime?: string; joinUrl: string }) {
+  const subject = `🔴 Your Tensorpath class is starting now`;
+  const body =
+    `Hi ${args.name},\n\n` +
+    `Your live class for ${args.cohortName} is starting now${args.classTime ? ` (${args.classTime})` : ""}.\n\n` +
+    `Join here — it's live in the portal with video, screen-share and chat:\n${args.joinUrl}\n\n` +
+    `See you in class! — The Tensorpath team`;
+  return { subject, body };
+}
+
 export function passwordResetEmail(args: { name: string; resetUrl: string }) {
   const subject = `Reset your Tensorpath password`;
   const body =

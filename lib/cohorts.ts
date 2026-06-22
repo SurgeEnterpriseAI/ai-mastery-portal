@@ -84,6 +84,15 @@ export async function listCohortInviteTargets(cohortId: string): Promise<Array<{
   });
 }
 
+// Confirmed learners in a cohort (for "class starting now" notify).
+export async function listConfirmedLearners(cohortId: string): Promise<Array<{ id: string; name: string; email: string }>> {
+  return prisma.learner.findMany({
+    where: { cohortId, batchStatus: "confirmed" },
+    orderBy: { name: "asc" },
+    select: { id: true, name: true, email: true },
+  });
+}
+
 // Roster + a roster's learners (basic fields).
 export async function cohortRoster(cohortId: string): Promise<Array<{ id: string; name: string; email: string }>> {
   const ls = await prisma.learner.findMany({ where: { cohortId }, orderBy: { name: "asc" }, select: { id: true, name: true, email: true } });
