@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { getSessionTrainerId } from "@/lib/auth";
-import { createCohort, updateCohort, deleteCohort, assignLearner, setBatchStatus, getCohort } from "@/lib/cohorts";
+import { createCohort, updateCohort, deleteCohort, assignLearner, setBatchStatus, getCohort, assignAllUnassigned, listCohortInviteTargets } from "@/lib/cohorts";
 import { getLearnerById } from "@/lib/data";
 import { sendMail, batchInviteEmail } from "@/lib/email";
+
+export const dynamic = "force-dynamic";
+export const maxDuration = 60; // bulk invite sends many emails
 
 function parseDates(v: unknown): string[] {
   const raw = Array.isArray(v) ? v.map(String) : typeof v === "string" ? v.split(/[\n,]/) : [];
@@ -18,6 +21,28 @@ export async function POST(req: Request) {
     if (!b.learnerId) return NextResponse.json({ error: "learnerId required" }, { status: 400 });
     await assignLearner(String(b.learnerId), b.cohortId ? String(b.cohortId) : null);
     return NextResponse.json({ ok: true });
+  }
+  // Bulk: assign every unassigned learner to this cohort
+  if (b.action === "assign_all") {
+    if (!b.cohortId) return NextResponse.json({ error: "cohortId required" }, { status: 400 });
+    const assigned = await assignAllUnassigned(String(b.cohortId));
+    return NextResponse.json({ ok: true, assigned });
+  }
+  // Bulk: send the batch invite to everyone in this cohort who hasn't been invited yet
+  if (b.action === "invite_all") {
+    if (!b.cohortId) return NextResponse.json({ error: "cohortId required" }, { status: 400 });
+    const cohort = await getCohort(String(b.cohortId));
+    if (!cohort) return NextResponse.json({ error: "Cohort not found" }, { status: 404 });
+    const targets = (await listCohortInviteTargets(String(b.cohortId))).slice(0, 200);
+    const origin = new URL(req.url).origin;
+    let invited = 0, delivered = 0;
+    for (const l of targets) {
+      await setBatchStatus(l.id, "invited");
+      const mail = batchInviteEmail({ name: l.name, cohortName: cohort.name, startDate: cohort.startDate, sessionDates: cohort.sessionDates, portalUrl: `${origin}/learn` });
+      const r = await sendMail({ to: [l.email], subject: mail.subject, body: mail.body, kind: "invite" });
+      invited++; if (r.delivered) delivered++;
+    }
+    return NextResponse.json({ ok: true, invited, delivered });
   }
   // send batch invite: emails the learner their batch details + sets status "invited"
   if (b.action === "invite") {

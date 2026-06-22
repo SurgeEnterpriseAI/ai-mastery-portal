@@ -68,6 +68,21 @@ export async function assignLearner(learnerId: string, cohortId: string | null):
   await prisma.learner.update({ where: { id: learnerId }, data: { cohortId } });
 }
 
+// Bulk: move every unassigned learner into a cohort. Returns how many were moved.
+export async function assignAllUnassigned(cohortId: string): Promise<number> {
+  const res = await prisma.learner.updateMany({ where: { cohortId: null }, data: { cohortId } });
+  return res.count;
+}
+
+// Learners in a cohort who haven't been invited yet (for "Invite all").
+export async function listCohortInviteTargets(cohortId: string): Promise<Array<{ id: string; name: string; email: string }>> {
+  return prisma.learner.findMany({
+    where: { cohortId, batchStatus: null },
+    orderBy: { name: "asc" },
+    select: { id: true, name: true, email: true },
+  });
+}
+
 // Roster + a roster's learners (basic fields).
 export async function cohortRoster(cohortId: string): Promise<Array<{ id: string; name: string; email: string }>> {
   const ls = await prisma.learner.findMany({ where: { cohortId }, orderBy: { name: "asc" }, select: { id: true, name: true, email: true } });

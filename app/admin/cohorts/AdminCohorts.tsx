@@ -47,6 +47,25 @@ export default function AdminCohorts({
     setTimeout(() => setMsg(""), 4000);
     router.refresh();
   }
+  async function assignAll(cohortId: string) {
+    setBusy(true);
+    const res = await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "assign_all", cohortId }) });
+    const d = await res.json().catch(() => ({}));
+    setBusy(false);
+    setMsg(res.ok ? `Assigned ${d.assigned} learner(s) to this cohort.` : (d.error || "Failed."));
+    setTimeout(() => setMsg(""), 5000);
+    router.refresh();
+  }
+  async function inviteAll(cohortId: string) {
+    if (!confirm("Email a batch invite to everyone in this cohort who hasn't been invited yet?")) return;
+    setBusy(true);
+    const res = await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "invite_all", cohortId }) });
+    const d = await res.json().catch(() => ({}));
+    setBusy(false);
+    setMsg(res.ok ? `Invited ${d.invited} learner(s) — ${d.delivered} emailed.` : (d.error || "Failed."));
+    setTimeout(() => setMsg(""), 6000);
+    router.refresh();
+  }
 
   const unassigned = learners.filter((l) => !l.cohortId);
   const BADGE: Record<string, string> = {
@@ -89,6 +108,11 @@ export default function AdminCohorts({
                 <option value="">Select…</option>
                 {unassigned.map((l) => <option key={l.id} value={l.id}>{l.name} ({l.email})</option>)}
               </select>
+              {unassigned.length > 0 && (
+                <button onClick={() => assignAll(c.id)} disabled={busy} className="rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
+                  + Assign all {unassigned.length} unassigned
+                </button>
+              )}
             </div>
 
             {/* Batch seats — invite + confirmation report */}
@@ -99,6 +123,11 @@ export default function AdminCohorts({
                   <span>· {roster.filter((l) => l.batchStatus === "confirmed").length} confirmed</span>
                   <span>· {roster.filter((l) => l.batchStatus === "invited").length} invited</span>
                   <span>· {roster.filter((l) => l.batchStatus === "declined").length} declined</span>
+                  {roster.filter((l) => !l.batchStatus).length > 0 && (
+                    <button onClick={() => inviteAll(c.id)} disabled={busy} className="ml-auto rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
+                      ✉ Invite all {roster.filter((l) => !l.batchStatus).length} not-yet-invited
+                    </button>
+                  )}
                 </div>
                 {msg && <div className="mt-1 text-xs text-emerald-700">{msg}</div>}
                 <div className="mt-2 divide-y divide-slate-100 rounded-lg border border-slate-200">
