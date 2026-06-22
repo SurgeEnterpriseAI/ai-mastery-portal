@@ -38,9 +38,11 @@ const config: Config = {
       },
       keyframes: {
         fadein: { "0%": { opacity: "0", transform: "translateY(8px)" }, "100%": { opacity: "1", transform: "translateY(0)" } },
+        vscroll: { "0%": { transform: "translateY(0)" }, "100%": { transform: "translateY(-50%)" } },
       },
       animation: {
         fadein: "fadein 0.35s ease-out",
+        vscroll: "vscroll 45s linear infinite",
       },
     },
   },

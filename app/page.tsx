@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getAllDayMeta, availableDayCount, TOTAL_DAYS } from "@/lib/curriculum";
 import Tour from "@/components/Tour";
 import InnovationsCarousel from "@/components/InnovationsCarousel";
+import InnovationsRail from "@/components/InnovationsRail";
 import innovations from "@/content/innovations.json";
 
 export const dynamic = "force-dynamic";
@@ -65,6 +66,9 @@ export default function Home() {
           </Link>
         </div>
       </header>
+
+      <div className="lg:flex lg:items-start lg:gap-8">
+        <div className="min-w-0 lg:flex-1">
 
       <section className="mt-16 animate-fadein">
         <p className="font-semibold text-brand-600">Tensorpath · upskilling people on AI · 20 days · fundamentals → the 2026 frontier</p>
@@ -147,7 +151,9 @@ export default function Home() {
         </div>
       </section>
 
-      <InnovationsCarousel items={innovations.items} updatedAt={innovations.updatedAt} />
+      <div className="lg:hidden">
+        <InnovationsCarousel items={innovations.items} updatedAt={innovations.updatedAt} />
+      </div>
 
       <section className="mt-16 rounded-2xl border border-brand-100 bg-brand-50 p-8 text-center">
         <h2 className="text-2xl font-extrabold text-slate-900">Start your AI journey with Tensorpath</h2>
@@ -156,6 +162,14 @@ export default function Home() {
           Enroll free →
         </Link>
       </section>
+
+        </div>
+        <aside className="hidden lg:block lg:w-[330px] lg:shrink-0">
+          <div className="sticky top-8 mt-16">
+            <InnovationsRail items={innovations.items} updatedAt={innovations.updatedAt} />
+          </div>
+        </aside>
+      </div>
 
       <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-6 text-sm text-slate-400">
         <span>Tensorpath — upskilling professionals &amp; students on AI, end to end.</span>
