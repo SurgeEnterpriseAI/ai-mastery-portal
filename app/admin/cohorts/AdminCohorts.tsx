@@ -41,6 +41,7 @@ export default function AdminCohorts({
     router.refresh();
   }
   const [msg, setMsg] = useState("");
+  const [seatFilter, setSeatFilter] = useState<string>("all");
   async function invite(learnerId: string, name: string) {
     const res = await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "invite", learnerId }) });
     const d = await res.json().catch(() => ({}));
@@ -124,9 +125,16 @@ export default function AdminCohorts({
               <div className="mt-4">
                 <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
                   <span className="font-semibold uppercase tracking-wider">Batch seats</span>
-                  <span>· {roster.filter((l) => l.batchStatus === "confirmed").length} confirmed</span>
-                  <span>· {roster.filter((l) => l.batchStatus === "invited").length} invited</span>
-                  <span>· {roster.filter((l) => l.batchStatus === "declined").length} declined</span>
+                  {([
+                    ["all", "All", roster.length],
+                    ["confirmed", "confirmed", roster.filter((l) => l.batchStatus === "confirmed").length],
+                    ["invited", "invited", roster.filter((l) => l.batchStatus === "invited").length],
+                    ["declined", "declined", roster.filter((l) => l.batchStatus === "declined").length],
+                  ] as const).map(([key, label, count]) => (
+                    <button key={key} onClick={() => setSeatFilter(key)} className={`rounded-full border px-2 py-0.5 ${seatFilter === key ? "border-brand-300 bg-brand-50 font-semibold text-brand-700" : "border-slate-200 hover:bg-slate-50"}`}>
+                      {count} {label}
+                    </button>
+                  ))}
                   <span className="ml-auto flex flex-wrap gap-2">
                     {roster.filter((l) => !l.batchStatus).length > 0 && (
                       <button onClick={() => inviteAll(c.id)} disabled={busy} className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
@@ -139,8 +147,17 @@ export default function AdminCohorts({
                   </span>
                 </div>
                 {msg && <div className="mt-1 text-xs text-emerald-700">{msg}</div>}
+                {(() => {
+                  const shown = roster.filter((l) => seatFilter === "all" || l.batchStatus === seatFilter);
+                  return (
+                    <div className="mt-1 text-xs text-slate-400">
+                      Showing {shown.length} {seatFilter === "all" ? "" : seatFilter}{" "}
+                      <button onClick={() => { navigator.clipboard?.writeText(shown.map((l) => l.email).join(", ")); setMsg(`Copied ${shown.length} email(s) to clipboard.`); setTimeout(() => setMsg(""), 3000); }} className="font-semibold text-brand-600 hover:underline">— copy emails</button>
+                    </div>
+                  );
+                })()}
                 <div className="mt-2 divide-y divide-slate-100 rounded-lg border border-slate-200">
-                  {roster.map((l) => (
+                  {roster.filter((l) => seatFilter === "all" || l.batchStatus === seatFilter).map((l) => (
                     <div key={l.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
                       <div className="text-sm">
                         <span className="font-medium text-slate-800">{l.name}</span>
