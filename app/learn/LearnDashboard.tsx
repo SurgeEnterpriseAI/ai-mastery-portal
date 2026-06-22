@@ -473,6 +473,49 @@ function ProfileEditor({ initial }: { initial: { background: string; goals: stri
           {saved ? "Saved ✓" : busy ? "Saving…" : "Save profile"}
         </button>
       </div>
+      <ChangePassword />
     </section>
+  );
+}
+
+function ChangePassword() {
+  const [open, setOpen] = useState(false);
+  const [cur, setCur] = useState("");
+  const [next, setNext] = useState("");
+  const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
+  const input = "mt-1 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900 outline-none focus:border-brand-500";
+
+  async function change() {
+    setMsg("");
+    if (next.length < 8) { setMsg("New password must be at least 8 characters."); return; }
+    setBusy(true);
+    const res = await fetch("/api/learner/password", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ currentPassword: cur, newPassword: next }),
+    });
+    setBusy(false);
+    const d = await res.json().catch(() => ({}));
+    if (res.ok) { setMsg("✓ Password updated."); setCur(""); setNext(""); }
+    else setMsg(d.error || "Could not change password.");
+  }
+
+  return (
+    <div className="mt-4 border-t border-slate-100 pt-4">
+      {!open ? (
+        <button onClick={() => setOpen(true)} className="text-sm font-semibold text-brand-600 hover:underline">🔒 Change password</button>
+      ) : (
+        <div className="space-y-3">
+          <div className="text-sm font-semibold text-slate-700">Change password</div>
+          <input type="password" value={cur} onChange={(e) => setCur(e.target.value)} placeholder="Current password" className={input} />
+          <input type="password" value={next} onChange={(e) => setNext(e.target.value)} placeholder="New password (min 8 chars)" className={input} />
+          {msg && <p className={`text-sm ${msg.startsWith("✓") ? "text-emerald-700" : "text-red-600"}`}>{msg}</p>}
+          <div className="flex gap-2">
+            <button onClick={change} disabled={busy || !cur || !next} className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">{busy ? "Saving…" : "Update password"}</button>
+            <button onClick={() => { setOpen(false); setMsg(""); }} className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">Cancel</button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

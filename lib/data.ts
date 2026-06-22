@@ -228,6 +228,23 @@ export async function updateLearnerProfile(id: string, data: { background?: stri
 export async function setLearnerEmbedding(id: string, vec: number[], text: string): Promise<void> {
   await prisma.learner.update({ where: { id }, data: { profileEmbedding: JSON.stringify(vec), profileEmbeddingText: text } });
 }
+
+// --- Password reset ---
+export async function setLearnerResetToken(email: string, token: string, expIso: string): Promise<Learner | null> {
+  const l = await getLearnerByEmail(email);
+  if (!l) return null;
+  await prisma.learner.update({ where: { id: l.id }, data: { resetToken: token, resetTokenExp: expIso } });
+  return getLearnerById(l.id);
+}
+export async function getLearnerByResetToken(token: string): Promise<Learner | null> {
+  const row = await prisma.learner.findFirst({ where: { resetToken: token } });
+  if (!row) return null;
+  if (!row.resetTokenExp || new Date(row.resetTokenExp).getTime() < Date.now()) return null; // expired
+  return getLearnerById(row.id);
+}
+export async function setLearnerPassword(id: string, passwordHash: string): Promise<void> {
+  await prisma.learner.update({ where: { id }, data: { passwordHash, resetToken: null, resetTokenExp: null } });
+}
 export async function pushJourney(learnerId: string, event: Omit<JourneyEvent, "id" | "at">): Promise<void> {
   await prisma.journeyEvent.create({
     data: { id: newId("jrn"), learnerId, type: event.type, day: event.day ?? null, summary: event.summary, detail: event.detail ?? null, at: new Date().toISOString() },

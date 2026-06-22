@@ -270,6 +270,17 @@ export function batchInviteEmail(args: { name: string; cohortName: string; start
   return { subject, body };
 }
 
+export function passwordResetEmail(args: { name: string; resetUrl: string }) {
+  const subject = `Reset your Tensorpath password`;
+  const body =
+    `Hi ${args.name},\n\n` +
+    `We received a request to reset your Tensorpath password. Click the link below to set a new one (valid for 1 hour):\n\n` +
+    `${args.resetUrl}\n\n` +
+    `If you didn't request this, you can safely ignore this email — your password won't change.\n\n` +
+    `— The Tensorpath team`;
+  return { subject, body };
+}
+
 export function capstoneReviewedEmail(args: { name: string; title: string; approved: boolean; feedback?: string; portalUrl: string }) {
   if (args.approved) {
     const subject = `🎉 Your capstone is approved — certificate issued!`;

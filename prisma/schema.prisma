@@ -62,6 +62,8 @@ model Learner {
   profileEmbeddingText String?
   cohortId             String? // Module G — assigned cohort
   batchStatus          String? // invited | confirmed | declined (batch seat confirmation)
+  resetToken           String? // password-reset token
+  resetTokenExp        String? // reset token expiry (ISO)
   createdAt            String
   journey              JourneyEvent[]
   coachSessions        CoachSession[]
