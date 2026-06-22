@@ -27,7 +27,9 @@ export function generateJaasJwt(opts: { room: string; name: string; email?: stri
   key = key.replace(/\\n/g, "\n"); // un-escape newlines if the PEM was stored single-line
 
   const now = Math.floor(Date.now() / 1000);
-  const header = { alg: "RS256", kid, typ: "JWT" };
+  // JaaS kid must be "<appId>/<keyId>". Accept either the full kid or just the Key ID.
+  const fullKid = kid.includes("/") ? kid : `${appId}/${kid}`;
+  const header = { alg: "RS256", kid: fullKid, typ: "JWT" };
   const payload = {
     aud: "jitsi",
     iss: "chat",
