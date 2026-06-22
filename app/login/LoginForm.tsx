@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -47,10 +48,13 @@ export default function LoginForm() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="teachai2026"
+          placeholder="••••••••"
           className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder-slate-400 outline-none focus:border-brand-500"
           required
         />
+        <div className="mt-1.5 text-right">
+          <Link href="/login/forgot" className="text-xs font-medium text-brand-600 hover:underline">Forgot password?</Link>
+        </div>
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <button

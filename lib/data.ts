@@ -88,7 +88,16 @@ export async function getTrainer(): Promise<Trainer> {
   return { id: t.id, name: t.name, email: t.email, passwordHash: t.passwordHash };
 }
 export async function updateTrainerPassword(hash: string): Promise<void> {
-  await prisma.trainer.update({ where: { id: "trainer-1" }, data: { passwordHash: hash } });
+  await prisma.trainer.update({ where: { id: "trainer-1" }, data: { passwordHash: hash, resetToken: null, resetTokenExp: null } });
+}
+export async function setTrainerResetToken(token: string, expIso: string): Promise<void> {
+  await prisma.trainer.update({ where: { id: "trainer-1" }, data: { resetToken: token, resetTokenExp: expIso } });
+}
+export async function isValidTrainerResetToken(token: string): Promise<boolean> {
+  const t = await prisma.trainer.findUnique({ where: { id: "trainer-1" } });
+  if (!t || !t.resetToken || t.resetToken !== token) return false;
+  if (!t.resetTokenExp || new Date(t.resetTokenExp).getTime() < Date.now()) return false;
+  return true;
 }
 export async function getAppState(): Promise<{ cohortName: string; startDate: string | null; progress: Progress }> {
   await ensureSeed();

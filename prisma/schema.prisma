@@ -10,10 +10,12 @@ datasource db {
 }
 
 model Trainer {
-  id           String @id
-  name         String
-  email        String
-  passwordHash String
+  id            String  @id
+  name          String
+  email         String
+  passwordHash  String
+  resetToken    String?
+  resetTokenExp String?
 }
 
 // Singleton (id = "app"): cohort settings + the class's live teaching cursor.
