@@ -17,14 +17,15 @@ export default function AdminCohorts({
   const router = useRouter();
   const [name, setName] = useState("");
   const [startDate, setStart] = useState("");
+  const [classTime, setClassTime] = useState("");
   const [dates, setDates] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function createCohort(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, startDate, sessionDates: dates }) });
-    setBusy(false); setName(""); setStart(""); setDates("");
+    await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, startDate, classTime, sessionDates: dates }) });
+    setBusy(false); setName(""); setStart(""); setClassTime(""); setDates("");
     router.refresh();
   }
   async function assign(learnerId: string, cohortId: string | null) {
@@ -56,10 +57,10 @@ export default function AdminCohorts({
     setTimeout(() => setMsg(""), 5000);
     router.refresh();
   }
-  async function inviteAll(cohortId: string) {
-    if (!confirm("Email a batch invite to everyone in this cohort who hasn't been invited yet?")) return;
+  async function inviteAll(cohortId: string, all = false) {
+    if (!confirm(all ? "Re-send the batch invite (with the latest class time) to ALL learners in this cohort?" : "Email a batch invite to everyone in this cohort who hasn't been invited yet?")) return;
     setBusy(true);
-    const res = await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "invite_all", cohortId }) });
+    const res = await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "invite_all", cohortId, all }) });
     const d = await res.json().catch(() => ({}));
     setBusy(false);
     setMsg(res.ok ? `Invited ${d.invited} learner(s) — ${d.delivered} emailed.` : (d.error || "Failed."));
@@ -81,6 +82,7 @@ export default function AdminCohorts({
         <form onSubmit={createCohort} className="mt-3 grid gap-3 rounded-2xl border border-slate-200 bg-white p-5 sm:grid-cols-2">
           <input required value={name} onChange={(e) => setName(e.target.value)} placeholder="Cohort name (e.g. Tensorpath — Cohort 2)" className={inp} />
           <input type="date" value={startDate} onChange={(e) => setStart(e.target.value)} className={inp} />
+          <input value={classTime} onChange={(e) => setClassTime(e.target.value)} placeholder="Class time (e.g. 7:00–8:30 PM IST)" className={`${inp} sm:col-span-2`} />
           <textarea value={dates} onChange={(e) => setDates(e.target.value)} rows={2} placeholder="Session dates — one YYYY-MM-DD per line (or comma-separated)" className={`${inp} sm:col-span-2`} />
           <button disabled={busy} className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60 sm:col-span-2">{busy ? "Creating…" : "Create cohort"}</button>
         </form>
@@ -100,6 +102,8 @@ export default function AdminCohorts({
               </div>
               <button onClick={() => delCohort(c.id)} className="rounded-lg border border-red-200 px-3 py-1 text-sm text-red-600 hover:bg-red-50">Delete</button>
             </div>
+
+            <CohortTime cohort={c} onSaved={() => router.refresh()} />
 
             {/* Add learner */}
             <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -123,11 +127,16 @@ export default function AdminCohorts({
                   <span>· {roster.filter((l) => l.batchStatus === "confirmed").length} confirmed</span>
                   <span>· {roster.filter((l) => l.batchStatus === "invited").length} invited</span>
                   <span>· {roster.filter((l) => l.batchStatus === "declined").length} declined</span>
-                  {roster.filter((l) => !l.batchStatus).length > 0 && (
-                    <button onClick={() => inviteAll(c.id)} disabled={busy} className="ml-auto rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
-                      ✉ Invite all {roster.filter((l) => !l.batchStatus).length} not-yet-invited
+                  <span className="ml-auto flex flex-wrap gap-2">
+                    {roster.filter((l) => !l.batchStatus).length > 0 && (
+                      <button onClick={() => inviteAll(c.id)} disabled={busy} className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
+                        ✉ Invite all {roster.filter((l) => !l.batchStatus).length} not-yet-invited
+                      </button>
+                    )}
+                    <button onClick={() => inviteAll(c.id, true)} disabled={busy} className="rounded-lg border border-brand-300 bg-white px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50 disabled:opacity-60">
+                      ↻ Re-send to all {roster.length} (with time)
                     </button>
-                  )}
+                  </span>
                 </div>
                 {msg && <div className="mt-1 text-xs text-emerald-700">{msg}</div>}
                 <div className="mt-2 divide-y divide-slate-100 rounded-lg border border-slate-200">
@@ -185,6 +194,27 @@ export default function AdminCohorts({
           </section>
         );
       })}
+    </div>
+  );
+}
+
+function CohortTime({ cohort, onSaved }: { cohort: Cohort; onSaved: () => void }) {
+  const [t, setT] = useState(cohort.classTime || "");
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+  async function save() {
+    setSaving(true);
+    await fetch("/api/admin/cohorts", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: cohort.id, classTime: t }) });
+    setSaving(false); setDone(true); setTimeout(() => setDone(false), 2500); onSaved();
+  }
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-2">
+      <span className="text-sm text-slate-500">🕖 Class time:</span>
+      <input value={t} onChange={(e) => setT(e.target.value)} placeholder="e.g. 7:00–8:30 PM IST" className={inp} />
+      <button onClick={save} disabled={saving} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60">
+        {done ? "Saved ✓" : saving ? "Saving…" : "Save time"}
+      </button>
+      {!cohort.classTime && !done && <span className="text-xs text-amber-600">not set — invites won&rsquo;t show a time</span>}
     </div>
   );
 }

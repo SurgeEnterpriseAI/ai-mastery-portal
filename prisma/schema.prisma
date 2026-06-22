@@ -278,6 +278,7 @@ model Cohort {
   id           String  @id
   name         String
   startDate    String?
+  classTime    String? // free-text class time, e.g. "7:00-8:30 PM IST"
   sessionDates String // JSON-encoded string[] of YYYY-MM-DD
   trainerId    String?
   createdAt    String

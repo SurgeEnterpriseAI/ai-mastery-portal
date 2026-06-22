@@ -194,18 +194,20 @@ export function enrollInviteEmail(args: { name: string; joinUrl: string }) {
   return { subject, body };
 }
 
-export function classReminderEmail(args: { name: string; cohortName: string; date: string; joinUrl: string }) {
+export function classReminderEmail(args: { name: string; cohortName: string; date: string; classTime?: string; joinUrl: string }) {
+  const when = args.classTime ? `today (${args.date}) at ${args.classTime}` : `today (${args.date})`;
   const subject = `⏰ Your Tensorpath class is today — ${args.cohortName}`;
   const body =
     `Hi ${args.name},\n\n` +
-    `Reminder: you have a live Tensorpath class today (${args.date}) for ${args.cohortName}.\n\n` +
+    `Reminder: you have a live Tensorpath class ${when} for ${args.cohortName}.\n\n` +
     `Join right in the portal — video, screen-share and chat: ${args.joinUrl}\n\n` +
     `See you in class! — The Tensorpath team`;
   return { subject, body };
 }
 
-export function batchInviteEmail(args: { name: string; cohortName: string; startDate?: string; sessionDates: string[]; portalUrl: string }) {
+export function batchInviteEmail(args: { name: string; cohortName: string; startDate?: string; classTime?: string; sessionDates: string[]; portalUrl: string }) {
   const start = args.startDate ? `\n🗓️ Starts: ${args.startDate}` : "";
+  const time = args.classTime ? `\n🕖 Class time: ${args.classTime}` : "";
   const sessions = args.sessionDates.length
     ? `\n📅 Sessions:\n${args.sessionDates.slice(0, 24).map((d) => `   • ${d}`).join("\n")}`
     : "";
@@ -213,7 +215,7 @@ export function batchInviteEmail(args: { name: string; cohortName: string; start
   const body =
     `Hi ${args.name},\n\n` +
     `Great news — you've been approved and assigned to a Tensorpath batch:\n\n` +
-    `Batch: ${args.cohortName}${start}${sessions}\n\n` +
+    `Batch: ${args.cohortName}${start}${time}${sessions}\n\n` +
     `Please confirm your seat so your trainer knows you're coming. Open your dashboard and click ` +
     `Confirm (or Can't make it): ${args.portalUrl}\n\n` +
     `Classes are held live inside the portal — video, screen-share and chat — and every session is recorded.\n\n` +

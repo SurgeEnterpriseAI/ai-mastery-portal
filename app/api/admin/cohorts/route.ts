@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSessionTrainerId } from "@/lib/auth";
-import { createCohort, updateCohort, deleteCohort, assignLearner, setBatchStatus, getCohort, assignAllUnassigned, listCohortInviteTargets } from "@/lib/cohorts";
+import { createCohort, updateCohort, deleteCohort, assignLearner, setBatchStatus, getCohort, assignAllUnassigned, listCohortInviteTargets, cohortRoster } from "@/lib/cohorts";
 import { getLearnerById } from "@/lib/data";
 import { sendMail, batchInviteEmail } from "@/lib/email";
 
@@ -28,17 +28,18 @@ export async function POST(req: Request) {
     const assigned = await assignAllUnassigned(String(b.cohortId));
     return NextResponse.json({ ok: true, assigned });
   }
-  // Bulk: send the batch invite to everyone in this cohort who hasn't been invited yet
+  // Bulk: send the batch invite. By default only those not yet invited; with all:true, re-send to the whole roster (e.g. after setting the class time).
   if (b.action === "invite_all") {
     if (!b.cohortId) return NextResponse.json({ error: "cohortId required" }, { status: 400 });
     const cohort = await getCohort(String(b.cohortId));
     if (!cohort) return NextResponse.json({ error: "Cohort not found" }, { status: 404 });
-    const targets = (await listCohortInviteTargets(String(b.cohortId))).slice(0, 200);
+    const pool = b.all ? await cohortRoster(String(b.cohortId)) : await listCohortInviteTargets(String(b.cohortId));
+    const targets = pool.slice(0, 200);
     const origin = new URL(req.url).origin;
     let invited = 0, delivered = 0;
     for (const l of targets) {
       await setBatchStatus(l.id, "invited");
-      const mail = batchInviteEmail({ name: l.name, cohortName: cohort.name, startDate: cohort.startDate, sessionDates: cohort.sessionDates, portalUrl: `${origin}/learn` });
+      const mail = batchInviteEmail({ name: l.name, cohortName: cohort.name, startDate: cohort.startDate, classTime: cohort.classTime, sessionDates: cohort.sessionDates, portalUrl: `${origin}/learn` });
       const r = await sendMail({ to: [l.email], subject: mail.subject, body: mail.body, kind: "invite" });
       invited++; if (r.delivered) delivered++;
     }
@@ -55,13 +56,13 @@ export async function POST(req: Request) {
     const origin = new URL(req.url).origin;
     const mail = batchInviteEmail({
       name: learner.name, cohortName: cohort?.name || "your Tensorpath batch",
-      startDate: cohort?.startDate, sessionDates: cohort?.sessionDates || [], portalUrl: `${origin}/learn`,
+      startDate: cohort?.startDate, classTime: cohort?.classTime, sessionDates: cohort?.sessionDates || [], portalUrl: `${origin}/learn`,
     });
     const { delivered, via } = await sendMail({ to: [learner.email], subject: mail.subject, body: mail.body, kind: "invite" });
     return NextResponse.json({ ok: true, delivered, via });
   }
   if (!b.name) return NextResponse.json({ error: "Cohort name required" }, { status: 400 });
-  const cohort = await createCohort({ name: String(b.name), startDate: b.startDate ? String(b.startDate) : undefined, sessionDates: parseDates(b.sessionDates) });
+  const cohort = await createCohort({ name: String(b.name), startDate: b.startDate ? String(b.startDate) : undefined, classTime: b.classTime ? String(b.classTime) : undefined, sessionDates: parseDates(b.sessionDates) });
   return NextResponse.json({ ok: true, cohort });
 }
 
@@ -70,7 +71,7 @@ export async function PATCH(req: Request) {
   const b = await req.json().catch(() => ({}));
   if (!b.id) return NextResponse.json({ error: "id required" }, { status: 400 });
   const cohort = await updateCohort(String(b.id), {
-    name: b.name, startDate: b.startDate,
+    name: b.name, startDate: b.startDate, classTime: b.classTime,
     sessionDates: b.sessionDates !== undefined ? parseDates(b.sessionDates) : undefined,
   });
   return NextResponse.json({ ok: true, cohort });

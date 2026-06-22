@@ -40,7 +40,7 @@ export default async function LearnPage() {
         progress: { currentDay: progress.currentDay, completedDays: progress.completedDays },
         totalDays: TOTAL_DAYS,
         cohortName,
-        batch: { status: batch.status, cohortName: batch.cohort?.name || null, startDate: batch.cohort?.startDate || null, sessions: batch.cohort?.sessionDates.length || 0, sessionDates: batch.cohort?.sessionDates || [] },
+        batch: { status: batch.status, cohortName: batch.cohort?.name || null, startDate: batch.cohort?.startDate || null, classTime: batch.cohort?.classTime || null, sessions: batch.cohort?.sessionDates.length || 0, sessionDates: batch.cohort?.sessionDates || [] },
         sessions: mySessions,
         tickets: myTickets,
         claudeConfigured: hasClaudeKey(),

@@ -24,7 +24,7 @@ async function run(req: Request) {
   let sent = 0;
   for (const g of groups) {
     for (const l of g.learners) {
-      const m = classReminderEmail({ name: l.name, cohortName: g.cohortName, date: g.date, joinUrl });
+      const m = classReminderEmail({ name: l.name, cohortName: g.cohortName, date: g.date, classTime: g.classTime, joinUrl });
       await sendMail({ to: [l.email], subject: m.subject, body: m.body, kind: "invite" });
       sent++;
     }

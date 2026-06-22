@@ -6,7 +6,7 @@ function arr<T>(v: string | null | undefined): T[] {
   try { const x = JSON.parse(v || "[]"); return Array.isArray(x) ? x : []; } catch { return []; }
 }
 function mapCohort(c: any): Cohort {
-  return { id: c.id, name: c.name, startDate: c.startDate ?? undefined, sessionDates: arr<string>(c.sessionDates), trainerId: c.trainerId ?? undefined, createdAt: c.createdAt };
+  return { id: c.id, name: c.name, startDate: c.startDate ?? undefined, classTime: c.classTime ?? undefined, sessionDates: arr<string>(c.sessionDates), trainerId: c.trainerId ?? undefined, createdAt: c.createdAt };
 }
 
 // First live batch — auto-created once so registrations have a batch to land in.
@@ -38,19 +38,20 @@ export async function getCohort(id: string): Promise<Cohort | null> {
   const c = await prisma.cohort.findUnique({ where: { id } });
   return c ? mapCohort(c) : null;
 }
-export async function createCohort(input: { name: string; startDate?: string; sessionDates?: string[] }): Promise<Cohort> {
+export async function createCohort(input: { name: string; startDate?: string; classTime?: string; sessionDates?: string[] }): Promise<Cohort> {
   const c = await prisma.cohort.create({
-    data: { id: newId("coh"), name: input.name, startDate: input.startDate || null, sessionDates: JSON.stringify(input.sessionDates || []), createdAt: new Date().toISOString() },
+    data: { id: newId("coh"), name: input.name, startDate: input.startDate || null, classTime: input.classTime || null, sessionDates: JSON.stringify(input.sessionDates || []), createdAt: new Date().toISOString() },
   });
   return mapCohort(c);
 }
-export async function updateCohort(id: string, input: { name?: string; startDate?: string; sessionDates?: string[] }): Promise<Cohort | null> {
+export async function updateCohort(id: string, input: { name?: string; startDate?: string; classTime?: string; sessionDates?: string[] }): Promise<Cohort | null> {
   try {
     const c = await prisma.cohort.update({
       where: { id },
       data: {
         ...(input.name !== undefined ? { name: input.name } : {}),
         ...(input.startDate !== undefined ? { startDate: input.startDate } : {}),
+        ...(input.classTime !== undefined ? { classTime: input.classTime || null } : {}),
         ...(input.sessionDates !== undefined ? { sessionDates: JSON.stringify(input.sessionDates) } : {}),
       },
     });
@@ -100,16 +101,16 @@ export async function setBatchStatus(learnerId: string, status: "invited" | "con
 
 // Confirmed learners who have a class on `dateStr` (YYYY-MM-DD), grouped by cohort.
 // Used by the pre-class reminder cron.
-export async function dueClassReminders(dateStr: string): Promise<Array<{ cohortName: string; date: string; learners: Array<{ name: string; email: string }> }>> {
+export async function dueClassReminders(dateStr: string): Promise<Array<{ cohortName: string; date: string; classTime?: string; learners: Array<{ name: string; email: string }> }>> {
   const cohorts = await prisma.cohort.findMany();
-  const out: Array<{ cohortName: string; date: string; learners: Array<{ name: string; email: string }> }> = [];
+  const out: Array<{ cohortName: string; date: string; classTime?: string; learners: Array<{ name: string; email: string }> }> = [];
   for (const c of cohorts) {
     if (!arr<string>(c.sessionDates).includes(dateStr)) continue;
     const learners = await prisma.learner.findMany({
       where: { cohortId: c.id, batchStatus: "confirmed" },
       select: { name: true, email: true },
     });
-    if (learners.length) out.push({ cohortName: c.name, date: dateStr, learners });
+    if (learners.length) out.push({ cohortName: c.name, date: dateStr, classTime: c.classTime ?? undefined, learners });
   }
   return out;
 }

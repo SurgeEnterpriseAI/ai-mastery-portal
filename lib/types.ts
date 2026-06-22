@@ -283,6 +283,7 @@ export interface Cohort {
   id: string;
   name: string;
   startDate?: string;
+  classTime?: string;
   sessionDates: string[];
   trainerId?: string;
   createdAt: string;

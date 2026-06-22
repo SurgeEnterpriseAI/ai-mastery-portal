@@ -36,7 +36,7 @@ interface Initial {
   progress: { currentDay: number; completedDays: number[] };
   totalDays: number;
   cohortName: string;
-  batch: { status: string | null; cohortName: string | null; startDate: string | null; sessions: number; sessionDates: string[] };
+  batch: { status: string | null; cohortName: string | null; startDate: string | null; classTime: string | null; sessions: number; sessionDates: string[] };
   sessions: { id: string; title: string; updatedAt: string; count: number }[];
   tickets: { id: string; question: string; status: string; response?: string; createdAt: string }[];
   claudeConfigured: boolean;
@@ -167,7 +167,7 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
       {batchStatus === "invited" && (
         <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
           <div className="text-xs font-bold uppercase tracking-wider text-amber-700">Batch invite — action needed</div>
-          <h2 className="mt-1 text-lg font-bold text-slate-900">You&rsquo;re approved for {batch.cohortName || "your batch"}{batch.startDate ? ` — starts ${batch.startDate}` : ""}</h2>
+          <h2 className="mt-1 text-lg font-bold text-slate-900">You&rsquo;re approved for {batch.cohortName || "your batch"}{batch.startDate ? ` — starts ${batch.startDate}` : ""}{batch.classTime ? ` at ${batch.classTime}` : ""}</h2>
           <p className="mt-1 text-sm text-slate-600">{batch.sessions > 0 ? `${batch.sessions} live sessions, taught in-portal` : "Live classes, taught in-portal"} — video, screen-share and chat. Please confirm your seat so your trainer knows you&rsquo;re coming.</p>
           <div className="mt-3 flex gap-2">
             <button onClick={() => confirmBatch("confirm")} className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">✓ Confirm my seat</button>
@@ -177,7 +177,7 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
       )}
       {batchStatus === "confirmed" && batch.cohortName && (
         <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm text-emerald-700">
-          ✓ Seat confirmed for <strong>{batch.cohortName}</strong>{batch.startDate ? ` (starts ${batch.startDate})` : ""}. When class starts, tap <strong>🔴 Join live class</strong> above.
+          ✓ Seat confirmed for <strong>{batch.cohortName}</strong>{batch.startDate ? ` (starts ${batch.startDate})` : ""}{batch.classTime ? ` · ${batch.classTime}` : ""}. When class starts, tap <strong>🔴 Join live class</strong> above.
         </div>
       )}
 
@@ -204,9 +204,9 @@ export default function LearnDashboard({ initial }: { initial: Initial }) {
         <p className="mt-2 max-w-2xl text-brand-50">
           Every session, your expert trainer teaches live right here in the portal — video, screen-share and chat.
           {classToday ? (
-            <> <strong className="text-white">There&rsquo;s a live class today.</strong></>
+            <> <strong className="text-white">There&rsquo;s a live class today{batch.classTime ? ` at ${batch.classTime}` : ""}.</strong></>
           ) : nextSession ? (
-            <> Your next live class is <strong className="text-white">{prettyDate(nextSession)}</strong>.</>
+            <> Your next live class is <strong className="text-white">{prettyDate(nextSession)}{batch.classTime ? ` at ${batch.classTime}` : ""}</strong>.</>
           ) : null}{" "}
           The cohort is on <strong className="text-white">Day {progress.currentDay}{currentDayMeta ? `: ${currentDayMeta.title}` : ""}</strong>.
         </p>
