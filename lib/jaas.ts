@@ -20,7 +20,7 @@ const b64url = (s: string | Buffer) => Buffer.from(s).toString("base64url");
 
 /** Mints a short-lived JaaS JWT for one user. Returns null if JaaS isn't configured. */
 export function generateJaasJwt(opts: { room: string; name: string; email?: string; moderator: boolean; id?: string }): string | null {
-  const appId = process.env.JAAS_APP_ID;
+  const appId = jaasAppId(); // uses the baked-in default when JAAS_APP_ID env isn't set
   const kid = process.env.JAAS_KID;
   let key = process.env.JAAS_PRIVATE_KEY;
   if (!appId || !kid || !key) return null;
