@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 import { isJaasConfigured, generateJaasJwt } from "@/lib/jaas";
 
 export const dynamic = "force-dynamic";
@@ -18,14 +19,20 @@ export async function GET(req: Request) {
     pk ? "no PEM header ✗ (mangled/partial)" : "empty";
   let tokenOk = false;
   try { tokenOk = Boolean(generateJaasJwt({ room: "diag", name: "diag", moderator: true })); } catch { /* logged in lib */ }
+  // capture the exact OpenSSL error (not secret)
+  let signError: string | null = null;
+  try { crypto.sign("RSA-SHA256", Buffer.from("test"), pk.replace(/\\n/g, "\n")); }
+  catch (e) { signError = (e as Error).message; }
   return NextResponse.json({
     jaasConfigured: isJaasConfigured(),
     hasKid: Boolean(process.env.JAAS_KID),
     kidHasSlash: (process.env.JAAS_KID || "").includes("/"),
     privateKeyType: keyType,
     privateKeyLength: pk.length,
+    privateKeyFirstLine: pk.split("\n")[0] || "",
+    privateKeyLastLine: (pk.trim().split("\n").pop()) || "",
     privateKeyHasEscapedNewlines: pk.includes("\\n"),
-    privateKeyHasRealNewlines: pk.includes("\n"),
     jwtGenerates: tokenOk,
+    signError,
   });
 }
