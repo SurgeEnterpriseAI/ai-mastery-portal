@@ -4,11 +4,16 @@ import crypto from "crypto";
 //   JAAS_APP_ID       e.g. vpaas-magic-cookie-xxxxxxxx   (from jaas.8x8.vc → API Keys)
 //   JAAS_KID          the Key ID shown when you add an API key (looks like <appId>/<keyName>)
 //   JAAS_PRIVATE_KEY  the RSA private key PEM for that API key (paste the whole -----BEGIN...----- block)
-export function isJaasConfigured(): boolean {
-  return Boolean(process.env.JAAS_APP_ID && process.env.JAAS_KID && process.env.JAAS_PRIVATE_KEY);
-}
+// Tensorpath's JaaS App ID (a public identifier — it's embedded client-side in every
+// meeting URL). Override with the JAAS_APP_ID env var if it ever changes.
+const DEFAULT_APP_ID = "vpaas-magic-cookie-1d487efbd528479891699b0e1c9df68e";
+
 export function jaasAppId(): string {
-  return process.env.JAAS_APP_ID || "";
+  return process.env.JAAS_APP_ID || DEFAULT_APP_ID;
+}
+export function isJaasConfigured(): boolean {
+  // App ID has a default, so only the Key ID + private key (the signing material) are needed.
+  return Boolean(jaasAppId() && process.env.JAAS_KID && process.env.JAAS_PRIVATE_KEY);
 }
 
 const b64url = (s: string | Buffer) => Buffer.from(s).toString("base64url");
