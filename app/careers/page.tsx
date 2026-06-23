@@ -58,27 +58,29 @@ export default async function CareersPage() {
       </section>
 
       {/* Visit us */}
-      <section className="mt-12 overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-600 to-brand-700 p-8 text-white shadow-card">
-        <div className="flex flex-wrap items-start justify-between gap-6">
-          <div className="max-w-xl">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-100">📍 Visit us</div>
-            <h2 className="mt-2 text-2xl font-extrabold">The Surge office — Bengaluru</h2>
-            <p className="mt-2 text-brand-50">
-              Career help is in person, by appointment, and free for Tensorpath learners. Book a visit and we&rsquo;ll
-              share the exact address and a time that works — then come in and we&rsquo;ll get to work on your job search together.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Link href="/enquiry" className="rounded-lg bg-white px-6 py-3 font-bold text-brand-700 hover:bg-brand-50">📅 Book your office visit</Link>
-              <a href="mailto:corp@surgesoftware.co.in" className="rounded-lg border border-white/40 bg-white/10 px-5 py-3 font-semibold text-white hover:bg-white/20">✉ corp@surgesoftware.co.in</a>
-            </div>
+      <section className="mt-12">
+        <div className="grid overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card lg:grid-cols-2">
+          <div className="p-8">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-600">📍 Visit us</div>
+            <h2 className="mt-2 text-2xl font-extrabold text-slate-900">The Surge office — Bengaluru</h2>
+            <p className="mt-2 text-slate-600">Career help is in person and free for Tensorpath learners. Walk in during visiting hours, or book ahead so we set aside time for you.</p>
+            <dl className="mt-5 space-y-3 text-sm">
+              <div className="flex gap-3"><dt className="w-20 shrink-0 font-semibold text-slate-500">Address</dt><dd className="text-slate-800">Surge Software Solutions Pvt. Ltd., Bengaluru · <a href="https://www.google.com/maps/place/Surge+Software+Solutions+Private+Limited/@12.9606894,77.7214194,734m/data=!3m2!1e3!4b1!4m6!3m5!1s0x3bae139df9cf6713:0xbb76b6833b5cdf62!8m2!3d12.9606894!4d77.7214194" target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-600 hover:underline">Get directions →</a></dd></div>
+              <div className="flex gap-3"><dt className="w-20 shrink-0 font-semibold text-slate-500">Hours</dt><dd className="text-slate-800">10:00 AM – 7:00 PM</dd></div>
+              <div className="flex gap-3"><dt className="w-20 shrink-0 font-semibold text-slate-500">Phone</dt><dd className="text-slate-800"><a href="tel:+917624967999" className="font-semibold text-brand-600 hover:underline">+91 76249 67999</a> · <a href="https://wa.me/917624967999" target="_blank" rel="noopener noreferrer" className="font-semibold text-emerald-600 hover:underline">WhatsApp</a></dd></div>
+              <div className="flex gap-3"><dt className="w-20 shrink-0 font-semibold text-slate-500">Email</dt><dd><a href="mailto:corp@surgesoftware.co.in" className="font-semibold text-brand-600 hover:underline">corp@surgesoftware.co.in</a></dd></div>
+            </dl>
+            <Link href="/enquiry" className="mt-5 inline-block rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700">📅 Book your office visit</Link>
+            <p className="mt-4 text-xs text-slate-400"><span className="font-semibold text-slate-500">Bring:</span> your Tensorpath certificate, your capstone, and a current résumé.</p>
           </div>
-          <div className="rounded-xl bg-white/10 p-4 text-sm text-brand-50">
-            <div className="font-semibold text-white">What to bring</div>
-            <ul className="mt-2 space-y-1">
-              <li>• Your Tensorpath certificate (once earned)</li>
-              <li>• Your capstone project</li>
-              <li>• A current résumé (we&rsquo;ll improve it)</li>
-            </ul>
+          <div className="min-h-[320px] bg-slate-100">
+            <iframe
+              title="Surge Software Solutions — Bengaluru"
+              src="https://maps.google.com/maps?q=12.9606894,77.7214194&z=16&output=embed"
+              className="h-full min-h-[320px] w-full border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </div>
         </div>
       </section>
