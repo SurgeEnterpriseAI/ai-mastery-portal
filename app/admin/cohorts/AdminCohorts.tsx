@@ -7,12 +7,15 @@ import type { Cohort } from "@/lib/types";
 type LearnerRow = { id: string; name: string; email: string; cohortId: string | null; batchStatus: string | null };
 const inp = "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-brand-500";
 
+type RsvpCounts = { invited: number; confirmed: number; declined: number };
+
 export default function AdminCohorts({
-  cohorts, learners, attendance,
+  cohorts, learners, attendance, rsvps,
 }: {
   cohorts: Cohort[];
   learners: LearnerRow[];
   attendance: Record<string, Record<string, boolean>>; // cohortId -> "learnerId|date" -> present
+  rsvps: Record<string, Record<string, RsvpCounts>>; // cohortId -> date -> counts
 }) {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -66,6 +69,26 @@ export default function AdminCohorts({
     setBusy(false);
     setMsg(res.ok ? (d.sent ? `📒 Recap sent to ${d.recipients} attendee(s).` : `No recap sent — ${d.reason || "no attendees recorded yet"}.`) : (d.error || "Failed."));
     setTimeout(() => setMsg(""), 7000);
+    router.refresh();
+  }
+  async function classInvite(cohortId: string, date: string) {
+    if (!confirm(`Email a per-class invite (confirm / can't-make-it) for the ${date} class to everyone in this cohort?`)) return;
+    setBusy(true);
+    const res = await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "class_invite", cohortId, date }) });
+    const d = await res.json().catch(() => ({}));
+    setBusy(false);
+    setMsg(res.ok ? `📅 Invited ${d.invited} for ${date} — ${d.delivered} emailed.` : (d.error || "Failed."));
+    setTimeout(() => setMsg(""), 6000);
+    router.refresh();
+  }
+  async function classNotify(cohortId: string, date: string) {
+    if (!confirm(`Notify everyone who confirmed for the ${date} class to join now?`)) return;
+    setBusy(true);
+    const res = await fetch("/api/admin/cohorts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "class_notify", cohortId, date }) });
+    const d = await res.json().catch(() => ({}));
+    setBusy(false);
+    setMsg(res.ok ? `🔔 Notified ${d.notified} confirmed for ${date} — ${d.delivered} emailed.` : (d.error || "Failed."));
+    setTimeout(() => setMsg(""), 6000);
     router.refresh();
   }
   async function notifyNow(cohortId: string) {
@@ -200,6 +223,38 @@ export default function AdminCohorts({
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Per-class invites & RSVP */}
+            {roster.length > 0 && c.sessionDates.length > 0 && (
+              <div className="mt-5">
+                <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">Per-class invites &amp; RSVP</div>
+                <p className="mt-0.5 text-xs text-slate-400">Invite per session → learners confirm/decline by email → notify the ones who confirmed to join.</p>
+                <div className="mt-2 max-h-72 space-y-1 overflow-y-auto rounded-lg border border-slate-200 p-2">
+                  {c.sessionDates.map((d, i) => {
+                    const rc = rsvps[c.id]?.[d] || { invited: 0, confirmed: 0, declined: 0 };
+                    return (
+                      <div key={d} className="flex flex-wrap items-center justify-between gap-2 rounded-md px-2 py-1.5 hover:bg-slate-50">
+                        <div className="text-sm">
+                          <span className="font-medium text-slate-800">Day {i + 1}</span>
+                          <span className="ml-2 text-xs text-slate-400">{d}</span>
+                          <span className="ml-2 text-xs font-semibold text-emerald-700">✓ {rc.confirmed} confirmed</span>
+                          {rc.invited > 0 && <span className="ml-1 text-xs text-amber-600">· {rc.invited} invited</span>}
+                          {rc.declined > 0 && <span className="ml-1 text-xs text-red-500">· {rc.declined} declined</span>}
+                        </div>
+                        <div className="flex gap-2">
+                          <button onClick={() => classInvite(c.id, d)} disabled={busy} className="rounded-md border border-brand-200 bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-700 hover:bg-brand-100 disabled:opacity-60">
+                            {rc.invited + rc.confirmed + rc.declined > 0 ? "Re-send invite" : "Send invite"}
+                          </button>
+                          {rc.confirmed > 0 && (
+                            <button onClick={() => classNotify(c.id, d)} disabled={busy} className="rounded-md bg-red-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-60">🔔 Notify {rc.confirmed} to join</button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

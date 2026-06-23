@@ -299,6 +299,20 @@ model Attendance {
   @@index([cohortId])
 }
 
+// Per-class RSVP: a learner's confirm/decline for one session date.
+model SessionRsvp {
+  id          String  @id
+  cohortId    String
+  learnerId   String
+  sessionDate String // YYYY-MM-DD
+  status      String  @default("invited") // invited | confirmed | declined
+  token       String  @unique // one-click email confirm/decline
+  updatedAt   String
+
+  @@unique([cohortId, learnerId, sessionDate])
+  @@index([cohortId, sessionDate])
+}
+
 // One per cohort+session-date: recording link + recap-email dedup.
 model ClassRecap {
   id           String  @id

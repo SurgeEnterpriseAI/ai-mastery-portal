@@ -4,6 +4,7 @@ import { createCohort, updateCohort, deleteCohort, assignLearner, setBatchStatus
 import { getLearnerById } from "@/lib/data";
 import { sendMail, batchInviteEmail, sendBatchEmails, classStartingNowEmail } from "@/lib/email";
 import { sendCohortRecap, istDate } from "@/lib/class-recap";
+import { inviteClass, notifyClassConfirmed } from "@/lib/session-rsvp";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // bulk invite sends many emails
@@ -44,6 +45,18 @@ export async function POST(req: Request) {
     for (const l of targets) await setBatchStatus(l.id, "invited");
     const { delivered } = await sendBatchEmails(items); // one Resend batch call — no rate-limit burst
     return NextResponse.json({ ok: true, invited: items.length, delivered });
+  }
+  // Per-class RSVP: invite everyone to a specific session (confirm/decline links).
+  if (b.action === "class_invite") {
+    if (!b.cohortId || !b.date) return NextResponse.json({ error: "cohortId + date required" }, { status: 400 });
+    const r = await inviteClass(String(b.cohortId), String(b.date), new URL(req.url).origin);
+    return NextResponse.json({ ok: true, ...r });
+  }
+  // Per-class: notify everyone who confirmed for this session with the join link.
+  if (b.action === "class_notify") {
+    if (!b.cohortId || !b.date) return NextResponse.json({ error: "cohortId + date required" }, { status: 400 });
+    const r = await notifyClassConfirmed(String(b.cohortId), String(b.date), new URL(req.url).origin);
+    return NextResponse.json({ ok: true, ...r });
   }
   // Email the class recap (curriculum notes + recording link) to everyone who attended.
   if (b.action === "send_recap") {

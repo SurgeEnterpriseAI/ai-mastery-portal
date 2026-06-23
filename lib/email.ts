@@ -270,6 +270,21 @@ export function batchInviteEmail(args: { name: string; cohortName: string; start
   return { subject, body };
 }
 
+export function classInviteEmail(args: { name: string; cohortName: string; dayNumber?: number; dayTitle?: string; date: string; classTime?: string; confirmUrl: string; declineUrl: string }) {
+  const dayLabel = args.dayNumber ? `Day ${args.dayNumber}${args.dayTitle ? `: ${args.dayTitle}` : ""}` : "your next class";
+  const when = `${args.date}${args.classTime ? ` at ${args.classTime}` : ""}`;
+  const subject = `📅 ${args.cohortName} — ${dayLabel} on ${args.date}: are you coming?`;
+  const body =
+    `Hi ${args.name},\n\n` +
+    `Your next live class is coming up:\n\n` +
+    `${dayLabel}\n🗓️ ${when}\n\n` +
+    `Please let your trainer know if you'll attend:\n\n` +
+    `✅ Yes, I'll be there: ${args.confirmUrl}\n` +
+    `❌ Can't make it: ${args.declineUrl}\n\n` +
+    `See you in class! — The Tensorpath team`;
+  return { subject, body };
+}
+
 export function classRecapEmail(args: { name: string; cohortName: string; dayNumber?: number; dayTitle: string; takeaways: string[]; homework?: string; nextTeaser?: string; recordingUrl?: string; portalUrl: string }) {
   const dayLabel = args.dayNumber ? `Day ${args.dayNumber}: ${args.dayTitle}` : args.dayTitle;
   const takeaways = args.takeaways.length
