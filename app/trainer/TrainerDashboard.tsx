@@ -139,9 +139,9 @@ export default function TrainerDashboard({ initial }: { initial: InitialData }) 
           <Link href="/admin" className="rounded-lg border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-100">
             ⚙️ Leads & Admin
           </Link>
-          <Link href="/" className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">
-            Public view
-          </Link>
+          <a href="/" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">
+            Public view ↗
+          </a>
           <button onClick={logout} className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">
             Log out
           </button>

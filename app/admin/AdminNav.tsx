@@ -23,7 +23,7 @@ export default function AdminNav({ active }: { active: "dashboard" | "leads" | "
         </Link>
         <nav className="flex items-center gap-2 text-sm">
           <Link href="/trainer" className="rounded-lg border border-slate-200 px-3 py-1.5 text-slate-600 hover:bg-slate-50">Trainer console</Link>
-          <Link href="/" className="rounded-lg border border-slate-200 px-3 py-1.5 text-slate-600 hover:bg-slate-50">Public ↗</Link>
+          <a href="/" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-slate-200 px-3 py-1.5 text-slate-600 hover:bg-slate-50">Public ↗</a>
         </nav>
       </div>
       <div className="mt-4 flex flex-wrap gap-1.5 border-b border-slate-200 pb-px">
