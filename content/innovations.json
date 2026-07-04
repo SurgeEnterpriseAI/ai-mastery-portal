@@ -1,22 +1,54 @@
 {
-  "updatedAt": "2026-06-21",
+  "updatedAt": "2026-07-04",
   "note": "Researched by Gemini (Google Search grounding), then fact-checked and link-corrected by Claude before publishing.",
   "items": [
     {
-      "title": "Anthropic releases Claude Fable 5",
-      "summary": "Anthropic's most powerful publicly-available model yet (its 'Mythos' class) — state-of-the-art at coding, research, vision and long, complex tasks.",
+      "title": "OpenAI previews GPT-5.6 'Sol' with stronger cyber skills",
+      "summary": "OpenAI's new GPT-5.6 'Sol' is its most capable model yet, especially at finding and fixing security flaws. Early access is limited at the US government's request.",
       "category": "Models",
-      "sourceName": "Anthropic",
-      "sourceUrl": "https://www.anthropic.com/news/claude-fable-5-mythos-5",
-      "date": "2026-06-09"
+      "sourceName": "OpenAI",
+      "sourceUrl": "https://openai.com/index/previewing-gpt-5-6-sol/",
+      "date": "2026-06-26"
     },
     {
-      "title": "Anthropic releases Claude Opus 4.8",
-      "summary": "Anthropic's most capable model yet — sharper judgment, catches its own mistakes, and a new 'dynamic workflows' mode for very large tasks.",
+      "title": "Microsoft launches 7 in-house MAI models at Build 2026",
+      "summary": "Microsoft unveiled seven of its own AI models — including MAI-Thinking-1 for reasoning and MAI-Code-1 for coding — as it reduces its reliance on OpenAI.",
       "category": "Models",
+      "sourceName": "Microsoft AI",
+      "sourceUrl": "https://microsoft.ai/news/building-a-hillclimbing-machine-launching-seven-new-mai-models/",
+      "date": "2026-06-02"
+    },
+    {
+      "title": "Claude joins Slack as a shared AI teammate",
+      "summary": "Anthropic's new 'Claude Tag' puts one @Claude in a Slack channel the whole team can direct. It remembers past chats and can follow up on tasks on its own.",
+      "category": "Agents",
       "sourceName": "Anthropic",
-      "sourceUrl": "https://www.anthropic.com/news/claude-opus-4-8",
-      "date": "2026-05-28"
+      "sourceUrl": "https://www.anthropic.com/news/introducing-claude-tag",
+      "date": "2026-06-23"
+    },
+    {
+      "title": "NVIDIA releases Nemotron 3 Ultra open model",
+      "summary": "A 550B-parameter open model (55B active) built for AI agents. NVIDIA says it runs long, multi-step tasks up to 5x faster and cheaper than similar open models.",
+      "category": "Open Source",
+      "sourceName": "NVIDIA",
+      "sourceUrl": "https://developer.nvidia.com/blog/nvidia-nemotron-3-ultra-powers-faster-more-efficient-reasoning-for-long-running-agents/",
+      "date": "2026-06-04"
+    },
+    {
+      "title": "Apple unveils 'Siri AI', its biggest assistant upgrade yet",
+      "summary": "At WWDC, Apple revealed a far smarter Siri with better conversation, memory and app control. Reports say a custom Google Gemini model powers it behind the scenes.",
+      "category": "Industry",
+      "sourceName": "Apple",
+      "sourceUrl": "https://www.apple.com/newsroom/2026/06/apple-introduces-siri-ai-a-profoundly-more-capable-and-personal-assistant/",
+      "date": "2026-06-08"
+    },
+    {
+      "title": "Gemma 4 12B runs real multimodal AI on a laptop",
+      "summary": "Google's new open model understands text, images and audio together and runs offline on a 16GB laptop — no internet needed. Released under a free Apache 2.0 license.",
+      "category": "Multimodal",
+      "sourceName": "MarkTechPost",
+      "sourceUrl": "https://www.marktechpost.com/2026/06/03/google-deepmind-releases-gemma-4-12b-an-encoder-free-multimodal-model-with-native-audio-that-runs-on-a-16-gb-laptop/",
+      "date": "2026-06-03"
     },
     {
       "title": "Meta adds 'AI Mode' search to Facebook",
@@ -27,60 +59,12 @@
       "date": "2026-06-15"
     },
     {
-      "title": "Gemma 4 12B runs real AI on your laptop",
-      "summary": "Google's new open model understands text, images and audio together — and runs offline on a 16GB laptop, no internet needed.",
-      "category": "Multimodal",
-      "sourceName": "MarkTechPost",
-      "sourceUrl": "https://www.marktechpost.com/2026/06/03/google-deepmind-releases-gemma-4-12b-an-encoder-free-multimodal-model-with-native-audio-that-runs-on-a-16-gb-laptop/",
-      "date": "2026-06-03"
-    },
-    {
-      "title": "ChatGPT gets a 'Dreaming' memory",
-      "summary": "OpenAI's new memory learns from your past chats in the background to stay relevant over time — no more manually saving things.",
-      "category": "Research",
-      "sourceName": "OpenAI",
-      "sourceUrl": "https://openai.com/index/chatgpt-memory-dreaming/",
-      "date": "2026-06-04"
-    },
-    {
-      "title": "GLM-5.2: a top open coding model from China",
-      "summary": "Zhipu AI open-sourced (MIT) a 744B-parameter, 1M-token-context model built for coding that rivals leading closed models.",
-      "category": "Open Source",
-      "sourceName": "South China Morning Post",
-      "sourceUrl": "https://www.scmp.com/tech/tech-trends/article/3357115/zhipu-ais-stock-rockets-after-chinese-firm-makes-glm-52-open-source",
-      "date": "2026-06-13"
-    },
-    {
-      "title": "Moonshot AI releases Kimi K2.7 Code",
-      "summary": "A 1-trillion-parameter open-weight model tuned for coding and multi-step agent tasks, with full weights published free on Hugging Face.",
-      "category": "Open Source",
-      "sourceName": "MarkTechPost",
-      "sourceUrl": "https://www.marktechpost.com/2026/06/12/moonshot-ai-releases-kimi-k2-7-code-a-coding-model-reporting-21-8-on-kimi-code-bench-v2-over-k2-6/",
-      "date": "2026-06-12"
-    },
-    {
-      "title": "Microsoft's MAI-Code-1-Flash lands in GitHub Copilot",
-      "summary": "A fast, small coding model now built into Copilot for everyday developer help — available across all Copilot plans, starting in VS Code.",
-      "category": "Tools",
-      "sourceName": "GitHub",
-      "sourceUrl": "https://github.blog/changelog/2026-06-02-mai-code-1-flash-is-now-available-for-github-copilot/",
-      "date": "2026-06-02"
-    },
-    {
       "title": "DeepMind maps the path from AGI to superintelligence",
       "summary": "A 57-page paper lays out four possible routes from human-level AI to systems that could outperform whole teams of experts.",
       "category": "Research",
       "sourceName": "Google DeepMind",
       "sourceUrl": "https://deepmind.google/research/publications/239142/",
       "date": "2026-06-10"
-    },
-    {
-      "title": "OpenAI's LifeSciBench tests AI on real science",
-      "summary": "A 750-task benchmark built with 173 scientists. Even the best AI passes only ~36% — a reality check on how far research AI still has to go.",
-      "category": "Research",
-      "sourceName": "OpenAI",
-      "sourceUrl": "https://openai.com/index/introducing-life-sci-bench/",
-      "date": "2026-06-17"
     }
   ]
 }
