@@ -67,6 +67,9 @@ model Learner {
   resetToken           String? // password-reset token
   resetTokenExp        String? // reset token expiry (ISO)
   createdAt            String
+  // Real timestamp + first-touch source for Surge HQ sign-up counts (7 Nov 2026). Rows from before get the time of the column add.
+  signedUpAt           DateTime       @default(now()) @db.Timestamptz(6)
+  firstTouch           String?
   journey              JourneyEvent[]
   coachSessions        CoachSession[]
 
@@ -194,6 +197,8 @@ model Lead {
   learnerId  String? // set once converted to a Student account
   createdAt  String
   updatedAt  String
+  signedUpAt DateTime @default(now()) @db.Timestamptz(6) // Surge HQ counts enquiries as sign-ups
+  firstTouch String?
 
   @@index([source])
   @@index([status])
@@ -349,4 +354,20 @@ model Capstone {
   reviewedAt          String?
 
   @@index([status])
+}
+
+/// First-party, cookieless pageviews for Surge HQ (site-kit `site_events` contract, 7 Nov 2026).
+/// visitor = HMAC(IST day + IP + user agent): counts a person once a day, can't be followed across days.
+model SiteEvent {
+  id      String   @id
+  at      DateTime @default(now()) @db.Timestamptz(6)
+  day     DateTime @db.Date
+  kind    String
+  path    String   @default("")
+  visitor String
+  country String   @default("")
+  source  String   @default("direct")
+
+  @@index([day, kind])
+  @@map("site_events")
 }

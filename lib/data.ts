@@ -212,7 +212,7 @@ export async function learnerEmailExists(email: string): Promise<boolean> {
   return Boolean(await prisma.learner.findFirst({ where: { email: email.trim().toLowerCase() }, select: { id: true } }));
 }
 export async function createLearner(input: {
-  id: string; name: string; email: string; passwordHash: string; background: string; goals: string; level: string;
+  id: string; name: string; email: string; passwordHash: string; background: string; goals: string; level: string; firstTouch?: string | null;
 }, journey: Omit<JourneyEvent, "day" | "detail">[]): Promise<Learner> {
   const l = await prisma.learner.create({
     data: {
@@ -463,7 +463,7 @@ function mapLead(l: any): Lead {
 }
 export async function createLead(input: {
   name: string; email: string; phone: string; background: string;
-  interest: string; heardFrom: string; source: string; consent: boolean;
+  interest: string; heardFrom: string; source: string; consent: boolean; firstTouch?: string | null;
 }): Promise<Lead> {
   const now = new Date().toISOString();
   const l = await prisma.lead.create({

@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import SiteTracker from "@/components/SiteTracker";
 
 const SITE = "https://tensorpath.in";
 const DESCRIPTION =
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className="font-sans antialiased">
         {children}
+        <SiteTracker />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }} />
       </body>
     </html>

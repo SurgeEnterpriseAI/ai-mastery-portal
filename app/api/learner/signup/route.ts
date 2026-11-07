@@ -4,6 +4,8 @@ import { hashPassword, setLearnerCookie } from "@/lib/auth";
 import { sendMail, welcomeEmail } from "@/lib/email";
 import { FREE_HANDHOLDING_LIMIT, type JourneyEvent } from "@/lib/types";
 import { rateLimit, clientIp } from "@/lib/ratelimit";
+import { cookies } from "next/headers";
+import { FIRST_TOUCH_COOKIE } from "@/lib/events";
 
 export async function POST(req: Request) {
   const rl = await rateLimit(`signup:${clientIp(req)}`, 5, 60);
@@ -34,6 +36,7 @@ export async function POST(req: Request) {
       background: String(background || "").trim(),
       goals: goalsStr,
       level: ["beginner", "intermediate", "advanced"].includes(level) ? level : "",
+      firstTouch: cookies().get(FIRST_TOUCH_COOKIE)?.value?.slice(0, 120) || null,
     },
     journey,
   );

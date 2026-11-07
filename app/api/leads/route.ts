@@ -3,6 +3,8 @@ import { createLead, listLeads } from "@/lib/data";
 import { getSessionTrainerId } from "@/lib/auth";
 import { sendMail, leadAckEmail, leadNotifyEmail } from "@/lib/email";
 import { rateLimit, clientIp } from "@/lib/ratelimit";
+import { cookies } from "next/headers";
+import { FIRST_TOUCH_COOKIE } from "@/lib/events";
 
 const BACKGROUNDS = ["student", "working_professional", "surge_track", "other"];
 
@@ -41,6 +43,7 @@ export async function POST(req: Request) {
     heardFrom: String(b.heardFrom || "").trim().slice(0, 200),
     source,
     consent: true,
+    firstTouch: cookies().get(FIRST_TOUCH_COOKIE)?.value?.slice(0, 120) || null,
   });
 
   const origin = new URL(req.url).origin;
