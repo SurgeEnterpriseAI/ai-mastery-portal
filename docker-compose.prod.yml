@@ -1,18 +1,59 @@
 # TensorPath on Surge's own server (7 Nov 2026, off Vercel). Server: /srv/apps/tensorpath.
 # Public traffic: Cloudflare tunnel (/etc/cloudflared/config.yml) tensorpath.in, www.tensorpath.in -> 127.0.0.1:6570.
-# Deploy: deploy/server-deploy.sh. Database stays on Neon (DATABASE_URL in .env.production).
+# Deploy: deploy/server-deploy.sh. Database: its own Postgres (tensorpath-db), started fresh on 7 Nov 2026;
+# the old Neon data was not recoverable. Nightly dumps to the backups volume, kept 14 days.
+# Service names carry the product name: on the shared network a plain "db" would be ambiguous.
 services:
   app:
     image: tensorpath:latest
     build: .
     restart: unless-stopped
     env_file: .env.production
+    depends_on:
+      tensorpath-db:
+        condition: service_healthy
     ports:
       - "127.0.0.1:6570:3000"
     mem_limit: 2g
     networks:
       default:
         aliases: [tensorpath-app]
+
+  tensorpath-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    mem_limit: 512m
+    env_file: .env.production
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  tensorpath-backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file: .env.production
+    depends_on:
+      tensorpath-db:
+        condition: service_healthy
+    volumes:
+      - backups:/backups
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        export PGHOST=tensorpath-db PGUSER=$$POSTGRES_USER PGDATABASE=$$POSTGRES_DB PGPASSWORD=$$POSTGRES_PASSWORD
+        while true; do
+          if [ "$$(date +%H%M)" = "0340" ]; then
+            f=/backups/tensorpath-$$(date +%F).sql.gz
+            pg_dump --no-owner --format=plain | gzip > "$$f.tmp" && mv "$$f.tmp" "$$f" && echo "backup ok $$f"
+            find /backups -name 'tensorpath-*.sql.gz' -mtime +14 -delete
+            sleep 61
+          fi
+          sleep 30
+        done
 
   # The two jobs that were Vercel crons (vercel.json "crons", UTC).
   cron:
@@ -26,6 +67,10 @@ services:
       - sh
       - -c
       - apk add --no-cache curl >/dev/null && sed "s|__CRON_SECRET__|$$CRON_SECRET|g" /crontab.tpl > /etc/crontabs/root && exec crond -f -l 8
+
+volumes:
+  pgdata:
+  backups:
 
 networks:
   default:
