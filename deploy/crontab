@@ -1,0 +1,3 @@
+# The Vercel crons from vercel.json, UTC. Keep in step with vercel.json.
+0 6 */3 * * curl -fsS -m 300 -o /dev/null -H "Authorization: Bearer __CRON_SECRET__" http://tensorpath-app:3000/api/cron/openings && echo "ok /api/cron/openings" >> /proc/1/fd/1 || echo "FAIL /api/cron/openings" >> /proc/1/fd/1
+0 3 * * * curl -fsS -m 300 -o /dev/null -H "Authorization: Bearer __CRON_SECRET__" http://tensorpath-app:3000/api/cron/reminders && echo "ok /api/cron/reminders" >> /proc/1/fd/1 || echo "FAIL /api/cron/reminders" >> /proc/1/fd/1

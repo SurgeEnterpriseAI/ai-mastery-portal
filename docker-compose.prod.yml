@@ -1,0 +1,33 @@
+# TensorPath on Surge's own server (7 Nov 2026, off Vercel). Server: /srv/apps/tensorpath.
+# Public traffic: Cloudflare tunnel (/etc/cloudflared/config.yml) tensorpath.in, www.tensorpath.in -> 127.0.0.1:6570.
+# Deploy: deploy/server-deploy.sh. Database stays on Neon (DATABASE_URL in .env.production).
+services:
+  app:
+    image: tensorpath:latest
+    build: .
+    restart: unless-stopped
+    env_file: .env.production
+    ports:
+      - "127.0.0.1:6570:3000"
+    mem_limit: 2g
+    networks:
+      default:
+        aliases: [tensorpath-app]
+
+  # The two jobs that were Vercel crons (vercel.json "crons", UTC).
+  cron:
+    image: alpine:3.20
+    restart: unless-stopped
+    env_file: .env.production
+    depends_on: [app]
+    volumes:
+      - ./deploy/crontab:/crontab.tpl:ro
+    command:
+      - sh
+      - -c
+      - apk add --no-cache curl >/dev/null && sed "s|__CRON_SECRET__|$$CRON_SECRET|g" /crontab.tpl > /etc/crontabs/root && exec crond -f -l 8
+
+networks:
+  default:
+    name: surge-products-net
+    external: true
