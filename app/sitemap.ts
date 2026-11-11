@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { publishedDays } from "@/lib/seo";
 
 const SITE = "https://tensorpath.in";
 
@@ -14,6 +15,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/privacy", priority: 0.3, freq: "yearly" },
     { path: "/terms", priority: 0.3, freq: "yearly" },
   ];
+  // Day-by-day lessons: public slide pages (render without login), one per published day.
+  for (const d of publishedDays()) pages.push({ path: `/present/${d.day}`, priority: 0.6, freq: "monthly" });
   return pages.map((p) => ({
     url: `${SITE}${p.path}`,
     lastModified: now,

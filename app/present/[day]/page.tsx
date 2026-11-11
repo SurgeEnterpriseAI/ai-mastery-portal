@@ -3,8 +3,22 @@ import { getDay, TOTAL_DAYS } from "@/lib/curriculum";
 import { getAppState } from "@/lib/data";
 import { getSessionTrainerId } from "@/lib/auth";
 import Presenter from "./Presenter";
+import type { Metadata } from "next";
+import { lessonJsonLd, ldJson } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export function generateMetadata({ params }: { params: { day: string } }): Metadata {
+  const day = getDay(Number(params.day));
+  if (!day) return { title: "Lesson not ready yet", robots: { index: false } };
+  const title = `Day ${day.day}: ${day.title}`;
+  return {
+    title,
+    description: day.subtitle,
+    alternates: { canonical: `/present/${day.day}` },
+    openGraph: { title: `${title} — Tensorpath`, description: day.subtitle, url: `https://tensorpath.in/present/${day.day}` },
+  };
+}
 
 export default async function PresentPage({ params }: { params: { day: string } }) {
   const dayNum = Number(params.day);
@@ -31,7 +45,11 @@ export default async function PresentPage({ params }: { params: { day: string } 
 
   const resumeAt = dayNum === progress.currentDay ? progress.currentSlide : 0;
 
+  const jsonLd = lessonJsonLd(dayNum);
+
   return (
+    <>
+    {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(jsonLd) }} />}
     <Presenter
       day={day}
       isTrainer={isTrainer}
@@ -40,5 +58,6 @@ export default async function PresentPage({ params }: { params: { day: string } 
       totalDays={TOTAL_DAYS}
       hasNextDay={dayNum < TOTAL_DAYS && Boolean(getDay(dayNum + 1))}
     />
+    </>
   );
 }

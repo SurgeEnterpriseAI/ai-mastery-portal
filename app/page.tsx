@@ -4,6 +4,7 @@ import Tour from "@/components/Tour";
 import InnovationsCarousel from "@/components/InnovationsCarousel";
 import InnovationsRail from "@/components/InnovationsRail";
 import innovations from "@/content/innovations.json";
+import { courseJsonLd, lessonListJsonLd, ldJson } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -15,24 +16,6 @@ const HOME_STEPS = [
   { title: "4. Get certified, then real job help", body: "Finish your capstone for a verifiable certificate — then come to our Surge office in Bengaluru for in-person interview prep, marketing and placement help. Ready? Register above." },
 ];
 
-const COURSE_JSONLD = {
-  "@context": "https://schema.org",
-  "@type": "Course",
-  name: "Tensorpath — 20-Day AI Training",
-  description:
-    "A 20-day, instructor-led AI program from the 2017 Transformer paper to today's reasoning models and AI agents, with Genie — your personal AI learning companion — a capstone project, a verifiable certificate, and placement support.",
-  url: "https://tensorpath.in",
-  provider: { "@type": "EducationalOrganization", name: "Tensorpath", url: "https://tensorpath.in" },
-  educationalLevel: "Beginner to Advanced",
-  teaches: ["Transformers", "Large language models", "Prompt engineering", "RAG", "Fine-tuning & LoRA", "AI agents & tool use", "Multimodal AI", "Shipping AI"],
-  hasCourseInstance: [{
-    "@type": "CourseInstance",
-    courseMode: "Blended",
-    courseWorkload: "P20D",
-    instructor: { "@type": "Person", name: "Tensorpath expert trainer" },
-  }],
-  offers: { "@type": "Offer", price: "0", priceCurrency: "INR", availability: "https://schema.org/InStock", category: "Free to begin" },
-};
 
 export default function Home() {
   const days = getAllDayMeta();
@@ -40,7 +23,8 @@ export default function Home() {
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-12">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(COURSE_JSONLD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(courseJsonLd()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(lessonListJsonLd()) }} />
       <div className="mb-6 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-xl border border-brand-200 bg-brand-50 px-4 py-2.5 text-center text-sm font-semibold text-brand-700">
         <span>📅 Our first batch starts <strong>Monday, 22 June 2026</strong> — seats are limited.</span>
         <Link href="/join" className="underline hover:text-brand-800">Register now →</Link>

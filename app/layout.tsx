@@ -48,6 +48,7 @@ export const metadata: Metadata = {
 const ORG_JSONLD = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
+  "@id": `${SITE}/#organization`,
   name: "Tensorpath",
   url: SITE,
   description: DESCRIPTION,

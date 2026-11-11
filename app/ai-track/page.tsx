@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { TOTAL_DAYS, availableDayCount } from "@/lib/curriculum";
 import EnquiryForm from "@/components/EnquiryForm";
+import { courseJsonLd, ldJson } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,7 @@ export default function AiTrackPage() {
   const ready = availableDayCount();
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(courseJsonLd()) }} />
       <header className="flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3">
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-2xl">🧠</div>
