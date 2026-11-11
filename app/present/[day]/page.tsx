@@ -47,11 +47,17 @@ export default async function PresentPage({ params }: { params: { day: string } 
 
   const jsonLd = lessonJsonLd(dayNum);
 
+  // Speaker notes are trainer-only. Strip them on the server so they never reach
+  // a visitor's browser (hiding them in the client still ships them in the page data).
+  const clientDay = isTrainer
+    ? day
+    : { ...day, slides: day.slides.map(({ speakerNotes: _omit, ...slide }) => slide) };
+
   return (
     <>
     {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(jsonLd) }} />}
     <Presenter
-      day={day}
+      day={clientDay}
       isTrainer={isTrainer}
       resumeAt={resumeAt}
       cohortName={cohortName}
