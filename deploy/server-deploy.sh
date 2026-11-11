@@ -8,8 +8,10 @@ cd "$(dirname "$0")/.."
 HOST=${HOST:-surgeai-ts}
 DIR=/srv/apps/tensorpath
 SHA=$(git rev-parse --short=8 HEAD)
+# Commit date of HEAD: the build reads REVISION_DATE (no .git on the server) for sitemap lastmod.
+COMMIT_DATE=$(git log -1 --format=%cI HEAD)
 echo "shipping $SHA to $HOST:$DIR"
-git archive --format=tar HEAD | ssh "$HOST" "sudo mkdir -p $DIR && sudo chown \$(id -u):\$(id -g) $DIR && cd $DIR && find . -mindepth 1 -maxdepth 1 ! -name .env.production -exec rm -rf {} + && tar -xf - && echo $SHA > REVISION"
+git archive --format=tar HEAD | ssh "$HOST" "sudo mkdir -p $DIR && sudo chown \$(id -u):\$(id -g) $DIR && cd $DIR && find . -mindepth 1 -maxdepth 1 ! -name .env.production -exec rm -rf {} + && tar -xf - && echo $SHA > REVISION && echo $COMMIT_DATE > REVISION_DATE"
 ssh "$HOST" "cd $DIR && test -f .env.production && docker compose -f docker-compose.prod.yml build app && docker compose -f docker-compose.prod.yml up -d && docker image prune -f >/dev/null"
 for i in $(seq 1 30); do
   code=$(ssh "$HOST" "curl -s -o /dev/null -w '%{http_code}' -m 10 http://127.0.0.1:6570/" || true)

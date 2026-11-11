@@ -113,7 +113,7 @@ export default function Home() {
 
       <section className="mt-16" data-tour="arc">
         <h2 className="text-2xl font-bold text-slate-900">The 20-day journey</h2>
-        <p className="mt-1 text-slate-500">Every day is a complete, story-driven lesson your trainer delivers live — and you can revisit any time.</p>
+        <p className="mt-1 text-slate-500">Every day is a complete, story-driven lesson your trainer delivers live — and you can revisit any time. <Link href="/syllabus" className="font-semibold text-brand-600 hover:underline">Read the full syllabus →</Link></p>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {days.map((d) => (
             <div
@@ -158,6 +158,8 @@ export default function Home() {
       <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-6 text-sm text-slate-400">
         <span>Tensorpath — upskilling professionals &amp; students on AI, end to end.</span>
         <span className="flex flex-wrap gap-4">
+          <Link href="/syllabus" className="text-brand-600 hover:underline">Syllabus</Link>
+          <Link href="/faq" className="text-brand-600 hover:underline">FAQ</Link>
           <Link href="/careers" className="text-brand-600 hover:underline">Career help & salaries</Link>
           <Link href="/ai-track" className="text-brand-600 hover:underline">On a Surge track? Add AI</Link>
           <Link href="/enquiry" className="text-brand-600 hover:underline">Talk to us</Link>

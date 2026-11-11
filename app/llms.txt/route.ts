@@ -28,6 +28,8 @@ ${days}
 
 ## Links
 - Home: ${SITE}/
+- Syllabus (all 20 days as text): ${SITE}/syllabus
+- FAQ (price, duration, format, certificate): ${SITE}/faq
 - Start free (create an account): ${SITE}/join
 - Enquire about a batch or team training: ${SITE}/enquiry
 - AI career tracks: ${SITE}/ai-track

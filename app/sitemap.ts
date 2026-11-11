@@ -1,13 +1,17 @@
 import type { MetadataRoute } from "next";
-import { publishedDays } from "@/lib/seo";
 
 const SITE = "https://tensorpath.in";
 
+/** Commit date baked in at build (next.config.js), so lastmod only moves when the site changes; omitted if unknown. */
+const COMMIT_DATE = process.env.SITE_COMMIT_DATE || "";
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const lastModified = COMMIT_DATE && !Number.isNaN(Date.parse(COMMIT_DATE)) ? new Date(COMMIT_DATE) : undefined;
   const pages: Array<{ path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }> = [
     { path: "/", priority: 1.0, freq: "weekly" },
     { path: "/careers", priority: 0.9, freq: "daily" },
+    { path: "/syllabus", priority: 0.9, freq: "monthly" },
+    { path: "/faq", priority: 0.8, freq: "monthly" },
     { path: "/ai-track", priority: 0.8, freq: "weekly" },
     { path: "/enquiry", priority: 0.7, freq: "monthly" },
     { path: "/join", priority: 0.7, freq: "monthly" },
@@ -15,11 +19,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/privacy", priority: 0.3, freq: "yearly" },
     { path: "/terms", priority: 0.3, freq: "yearly" },
   ];
-  // Day-by-day lessons: public slide pages (render without login), one per published day.
-  for (const d of publishedDays()) pages.push({ path: `/present/${d.day}`, priority: 0.6, freq: "monthly" });
+  // The /present/N slide pages stay public but are not listed: they are thin slide decks. /syllabus has the
+  // same 20 days as text.
   return pages.map((p) => ({
     url: `${SITE}${p.path}`,
-    lastModified: now,
+    ...(lastModified ? { lastModified } : {}),
     changeFrequency: p.freq,
     priority: p.priority,
   }));

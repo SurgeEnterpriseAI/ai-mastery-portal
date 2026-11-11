@@ -53,7 +53,7 @@ const ORG_JSONLD = {
   url: SITE,
   description: DESCRIPTION,
   logo: `${SITE}/icon.png`,
-  sameAs: [] as string[],
+  sameAs: ["https://www.youtube.com/@itv-tech"],
   parentOrganization: { "@type": "Organization", name: "Surge Software Solutions Pvt. Ltd." },
 };
 
