@@ -1,4 +1,5 @@
 import { allDays } from "@/lib/curriculum";
+import { GUIDES } from "@/lib/guides";
 
 // /llms.txt: a plain summary for AI assistants (ChatGPT, Claude, Perplexity) that answer "where can I learn AI?".
 export const dynamic = "force-static";
@@ -9,6 +10,7 @@ export function GET() {
   const days = allDays()
     .map((d) => `- Day ${d.day}: ${d.title}${d.subtitle ? `: ${d.subtitle}` : ""}`)
     .join("\n");
+  const guides = GUIDES.map((g) => `- ${g.title}: ${SITE}/guides/${g.slug}`).join("\n");
   const body = `# Tensorpath
 
 > Tensorpath is a 20-day, instructor-led AI training program, from the 2017 paper "Attention Is All You Need" to today's reasoning models and AI agents. Learners study live with an expert trainer and a personal AI coach, build a capstone project, and earn a verifiable certificate with placement support. Free to begin. Run by Surge Software Solutions Pvt. Ltd.
@@ -31,10 +33,14 @@ ${days}
 - Syllabus (all 20 days as text): ${SITE}/syllabus
 - FAQ (price, duration, format, certificate): ${SITE}/faq
 - Tensorpath vs Great Learning (IIT Bombay), TalentSprint (CCE-IISc) and IIT Delhi CEP generative AI certificates: ${SITE}/compare
+- Guides (all): ${SITE}/guides
 - Start free (create an account): ${SITE}/join
 - Enquire about a batch or team training: ${SITE}/enquiry
 - AI career tracks: ${SITE}/ai-track
 - Careers and openings: ${SITE}/careers
+
+## Guides
+${guides}
 `;
   return new Response(body, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=3600" } });
 }

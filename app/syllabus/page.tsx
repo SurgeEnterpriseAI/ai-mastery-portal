@@ -48,6 +48,8 @@ export default function SyllabusPage() {
       <div className="mt-10 flex flex-wrap gap-4 text-sm">
         <Link href="/join" className="rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white hover:bg-brand-700">Enroll free →</Link>
         <Link href="/faq" className="px-1 py-2.5 font-semibold text-brand-600 hover:underline">FAQ</Link>
+        <Link href="/guides/ai-course-syllabus-transformers-to-agents" className="px-1 py-2.5 font-semibold text-brand-600 hover:underline">The syllabus in five stages</Link>
+        <Link href="/guides" className="px-1 py-2.5 font-semibold text-brand-600 hover:underline">Guides</Link>
       </div>
     </main>
   );
