@@ -22,7 +22,8 @@ export default function FaqPage() {
       <h1 className="mt-4 text-3xl font-extrabold text-slate-900">Frequently asked questions</h1>
       <p className="mt-2 text-slate-600">
         About the 20-day Tensorpath AI course. The full day-by-day list is on the{" "}
-        <Link href="/syllabus" className="text-brand-600 hover:underline">syllabus</Link> page.
+        <Link href="/syllabus" className="text-brand-600 hover:underline">syllabus</Link> page; how it compares with
+        IIT and IISc certificate programmes is on the <Link href="/compare" className="text-brand-600 hover:underline">compare</Link> page.
       </p>
       <div className="mt-8 space-y-6 text-slate-700">
         {items.map((f) => (

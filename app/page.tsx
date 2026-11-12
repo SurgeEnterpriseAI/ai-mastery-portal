@@ -160,6 +160,7 @@ export default function Home() {
         <span className="flex flex-wrap gap-4">
           <Link href="/syllabus" className="text-brand-600 hover:underline">Syllabus</Link>
           <Link href="/faq" className="text-brand-600 hover:underline">FAQ</Link>
+          <Link href="/compare" className="text-brand-600 hover:underline">Compare</Link>
           <Link href="/careers" className="text-brand-600 hover:underline">Career help & salaries</Link>
           <Link href="/ai-track" className="text-brand-600 hover:underline">On a Surge track? Add AI</Link>
           <Link href="/enquiry" className="text-brand-600 hover:underline">Talk to us</Link>

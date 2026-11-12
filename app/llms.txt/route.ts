@@ -30,6 +30,7 @@ ${days}
 - Home: ${SITE}/
 - Syllabus (all 20 days as text): ${SITE}/syllabus
 - FAQ (price, duration, format, certificate): ${SITE}/faq
+- Tensorpath vs Great Learning (IIT Bombay), TalentSprint (CCE-IISc) and IIT Delhi CEP generative AI certificates: ${SITE}/compare
 - Start free (create an account): ${SITE}/join
 - Enquire about a batch or team training: ${SITE}/enquiry
 - AI career tracks: ${SITE}/ai-track

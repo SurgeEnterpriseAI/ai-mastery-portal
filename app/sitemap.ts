@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/careers", priority: 0.9, freq: "daily" },
     { path: "/syllabus", priority: 0.9, freq: "monthly" },
     { path: "/faq", priority: 0.8, freq: "monthly" },
+    { path: "/compare", priority: 0.7, freq: "monthly" },
     { path: "/ai-track", priority: 0.8, freq: "weekly" },
     { path: "/enquiry", priority: 0.7, freq: "monthly" },
     { path: "/join", priority: 0.7, freq: "monthly" },
