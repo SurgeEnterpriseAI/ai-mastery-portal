@@ -53,8 +53,20 @@ const ORG_JSONLD = {
   url: SITE,
   description: DESCRIPTION,
   logo: `${SITE}/icon.png`,
-  sameAs: ["https://www.youtube.com/@itv-tech"],
+  sameAs: [
+    "https://www.youtube.com/@itv-tech",
+    "https://www.linkedin.com/company/surge-software-solutions",
+    "https://github.com/SurgeEnterpriseAI",
+  ],
   parentOrganization: { "@type": "Organization", name: "Surge Software Solutions Pvt. Ltd." },
+};
+
+const WEBSITE_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE}/#website`,
+  name: "Tensorpath",
+  url: SITE,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -64,6 +76,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
         <SiteTracker />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSONLD) }} />
       </body>
     </html>
   );
