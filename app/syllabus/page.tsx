@@ -15,13 +15,16 @@ export const metadata: Metadata = {
 /** The 20 course days as plain text, from content/curriculum (the same files the live class and /llms.txt use). */
 export default function SyllabusPage() {
   const days = [...allDays()].sort((a, b) => a.day - b.day);
+  // Total course length from each day's "duration" ("60 minutes"); shown only when every day states one.
+  const minutes = days.map((d) => Number(/^(\d+)\s*min/i.exec(d.duration ?? "")?.[1] ?? NaN));
+  const totalHours = minutes.length > 0 && minutes.every((m) => m > 0) ? minutes.reduce((t, m) => t + m, 0) / 60 : null;
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <Link href="/" className="text-sm text-slate-500 hover:text-slate-900">← Back to Tensorpath</Link>
       <h1 className="mt-4 text-3xl font-extrabold text-slate-900">Syllabus: {TOTAL_DAYS} days of AI</h1>
       <p className="mt-2 text-slate-600">
         One topic a day, taught live by a trainer, from the 2017 paper &ldquo;Attention Is All You Need&rdquo; to today&rsquo;s
-        reasoning models and AI agents. Questions about price, format or the certificate are answered in the{" "}
+        reasoning models and AI agents.{totalHours !== null && <> About {Math.round(totalHours)} hours of live lessons in total.</>} Questions about price, format or the certificate are answered in the{" "}
         <Link href="/faq" className="text-brand-600 hover:underline">FAQ</Link>.
       </p>
       <ol className="mt-8 space-y-8">

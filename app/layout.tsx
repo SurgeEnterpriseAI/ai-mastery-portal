@@ -1,5 +1,5 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import SiteTracker from "@/components/SiteTracker";
 
@@ -43,6 +43,12 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
   category: "education",
+  // The manifest itself is linked automatically from app/manifest.ts; the iOS icon from app/apple-icon.png.
+  appleWebApp: { capable: true, title: "Tensorpath", statusBarStyle: "default" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2563eb",
 };
 
 const ORG_JSONLD = {

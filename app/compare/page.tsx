@@ -5,11 +5,14 @@ import { ldJson } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
-// One comparison page for "Tensorpath vs Great Learning / TalentSprint / IIT certificate". Every rival fact was read
-// on that programme's own page on 12 Nov 2026 (SOURCES below). Tensorpath facts restate /faq and /syllabus. No
+// One comparison page for "Tensorpath vs Great Learning / TalentSprint / IIT certificate", plus the short self-paced
+// courses (Google AI Essentials, IndiaAI YUVA AI for ALL). Every rival fact was read on that programme's own page
+// (SOURCES below): the CCE-IISc, Google and YUVA facts on 18 Nov 2026, the IIT Bombay and IIT Delhi facts on
+// 12 Nov 2026 (their pages could not be re-read on 18 Nov). Tensorpath facts restate /faq and /syllabus. No
 // Tensorpath price is stated here on purpose: see /faq.
 
-const CHECKED = "12 November 2026";
+const CHECKED = "18 November 2026";
+const IIT_CHECKED = "12 November 2026";
 
 const SOURCES = [
   { label: "Great Learning: Certificate in Generative AI, IIT Bombay", url: "https://www.mygreatlearning.com/iit-bombay-certificate-generative-ai" },
@@ -17,19 +20,34 @@ const SOURCES = [
   { label: "TalentSprint: the same programme's fee page", url: "https://iisc.talentsprint.com/agentic-and-generative-ai/fee.html" },
   { label: "TalentSprint: the same programme's course page (eligibility)", url: "https://talentsprint.com/course/agentic-and-generative-ai-iisc/" },
   { label: "IIT Delhi CEP: Certificate Programme in Generative AI, Batch 03 brochure (PDF)", url: "https://home.iitd.ac.in/public/storage/uploads/IITD-CPinGenAI-03%20Brochure_1774611935.pdf" },
+  { label: "Google: AI Essentials (India page, price and trial)", url: "https://grow.google/intl/en_in/ai-essentials/" },
+  { label: "Coursera: Google AI Essentials", url: "https://www.coursera.org/learn/google-ai-essentials" },
+  { label: "GUVI: YUVA AI for ALL (IndiaAI), Gujarati edition", url: "https://www.guvi.in/courses/gujarati/machine-learning-and-ai/yuva-ai-for-all/" },
 ];
 
 const COLS = ["Tensorpath", "IIT Bombay Certificate in Generative AI (via Great Learning)", "CCE-IISc Agentic and Generative AI (via TalentSprint)", "IIT Delhi CEP Certificate Programme in Generative AI"];
 
 const ROWS: [string, string, string, string, string][] = [
   ["Length", `${TOTAL_DAYS} days, one live lesson of about 60 minutes a day`, "5 months, online", "6 months, 105 hours of learning", "6 months"],
-  ["Format", "Live classes with a trainer in the Tensorpath portal, recorded; an AI learning companion (Genie) between classes", "Weekly live online sessions by IIT Bombay faculty; optional one-day campus immersion", "Faculty-led live online sessions on TalentSprint's iPearl.ai, recorded; a campus visit at IISc", "Live online lectures; a campus immersion (travel and stay at the learner's cost)"],
+  ["Format", "Live classes with a trainer in the Tensorpath portal, recorded; an AI learning companion (Genie) between classes", "Weekly live online sessions by IIT Bombay faculty; optional one-day campus immersion", "Faculty-led live online sessions on TalentSprint's iPearl.ai, recorded; a 4-day campus visit to IISc", "Live online lectures; a campus immersion (travel and stay at the learner's cost)"],
   ["Who teaches", "A Tensorpath trainer", "IIT Bombay faculty", "IISc faculty members", "An IIT Delhi programme coordinator; the brochure lists faculty from IIT Patna, DA-IICT and IIIT Hyderabad"],
-  ["Who can join", "Anyone 16 or older; no heavy math", "A bachelor's degree with at least 50%, or 5+ years of work experience (as the page states it)", "B.E/B.Tech/M.E/M.Tech/M.Sc/MBA with 50%+ and 1 year of work experience, or BSc/BA/LLB/CA/BBA with 65%+ and 2 years", "CS, ECE, EE or IT graduates, or other graduates with 2+ years of coding experience"],
+  ["Who can join", "Anyone 16 or older; no heavy math", "A bachelor's degree with at least 50%, or 5+ years of work experience (as the page states it)", "B.E/B.Tech/M.E/M.Tech/M.Sc/MBA with 50%+ and 1 year of work experience, or BSc/BA/LLB/CA/BBA with 65%+ and 2 years; programming knowledge required, preferably Python", "CS, ECE, EE or IT graduates, or other graduates with 2+ years of coding experience"],
   ["Certificate", "Tensorpath's own certificate after the 20 days and a trainer-approved capstone; anyone can check it at tensorpath.in/verify", "Certificate of Completion from IIT Bombay", "Certificate from CCE-IISc; examinations and evaluations by CCE-IISc", "E-certificate from CEP, IIT Delhi: Successful Completion with 60%+ marks and 80%+ attendance, otherwise Participation"],
   ["Fee", "See the FAQ", "₹1,80,000 + GST", "₹3,20,000 (₹2,40,000 with waiver) + 18% GST, plus a ₹2,000 application fee; non-refundable", "₹1,95,000 + 18% GST (₹2,30,100 in total), plus a ₹1,000 application fee"],
   ["Admission", "Register, we approve the account and email batch dates", "Application, then selection and an offer letter", "Application, then selection", "Application, then an offer; fee paid in instalments to the IIT Delhi CEP account"],
   ["Career help", "Interview prep, résumé help and placement support at the Surge office in Bengaluru after certification", "Not stated on the programme page", "TalentSprint Career Accelerator Program", "Not stated in the brochure"],
+];
+
+// Short, self-paced courses: a different kind of rival from the institute programmes above.
+const SHORT_COLS = ["Tensorpath", "Google AI Essentials (on Coursera)", "YUVA AI for ALL (IndiaAI, on GUVI)"];
+
+const SHORT_ROWS: [string, string, string, string][] = [
+  ["Length", `${TOTAL_DAYS} days, one live lesson of about 60 minutes a day`, "Under 10 hours, in 5 short courses", "About 5 hours"],
+  ["Format", "Live classes with a trainer, recorded; an AI learning companion (Genie) between classes", "Self-paced online course", "Online course on GUVI, offered in regional languages"],
+  ["Who can join", "Anyone 16 or older; no heavy math", "No experience required", "Not stated on the course page"],
+  ["Certificate", "Tensorpath's own certificate after the 20 days and a trainer-approved capstone; anyone can check it at tensorpath.in/verify", "Certificate from Google", "Free certificate"],
+  ["Fee", "See the FAQ", "$20 a month in India after a 7-day free trial (Coursera subscription)", "Free"],
+  ["Start", "Register, we approve the account and email batch dates", "Any day", "Any day"],
 ];
 
 const FAQS = [
@@ -43,17 +61,21 @@ const FAQS = [
   },
   {
     q: "Do I need a degree or coding experience?",
-    a: "Not for Tensorpath: you must be at least 16. IIT Delhi CEP asks for a graduate degree in CS, ECE, EE or IT, or other graduates with 2+ years of coding experience. The IIT Bombay certificate asks for a bachelor's degree with at least 50% or 5+ years of work experience, and the CCE-IISc programme for a degree with set marks plus 1 to 2 years of work experience.",
+    a: "Not for Tensorpath: you must be at least 16. IIT Delhi CEP asks for a graduate degree in CS, ECE, EE or IT, or other graduates with 2+ years of coding experience. The IIT Bombay certificate asks for a bachelor's degree with at least 50% or 5+ years of work experience, and the CCE-IISc programme for a degree with set marks plus 1 to 2 years of work experience, and programming knowledge, preferably Python. Google AI Essentials asks for no experience.",
+  },
+  {
+    q: "How is Tensorpath different from Google AI Essentials or YUVA AI for ALL?",
+    a: `Google AI Essentials (on Coursera) is self-paced, under 10 hours in 5 short courses, with a certificate from Google, at $20 a month in India after a 7-day free trial. IndiaAI's YUVA AI for ALL on GUVI is free, about 5 hours, in regional languages, with a free certificate. Tensorpath is a ${TOTAL_DAYS}-day live course with a trainer, about an hour a day, that goes deeper into how modern AI works, with a capstone and Tensorpath's own certificate. If you want the quickest start or a big-brand certificate, the short courses are a good choice.`,
   },
 ];
 
 export const metadata: Metadata = {
-  title: "Tensorpath vs Great Learning, TalentSprint and IIT AI certificates",
+  title: "Tensorpath vs Great Learning, TalentSprint, IIT AI certificates and Google AI Essentials",
   description:
-    "Tensorpath's 20-day live AI course next to the IIT Bombay (Great Learning), CCE-IISc (TalentSprint) and IIT Delhi CEP generative AI certificates: length, format, certificate, eligibility and fees.",
+    "Tensorpath's 20-day live AI course next to the IIT Bombay (Great Learning), CCE-IISc (TalentSprint) and IIT Delhi CEP generative AI certificates, and the short self-paced Google AI Essentials and IndiaAI YUVA AI for ALL courses: length, format, certificate, eligibility and fees.",
   alternates: { canonical: "/compare" },
   openGraph: {
-    title: "Tensorpath vs Great Learning, TalentSprint and IIT certificates",
+    title: "Tensorpath vs Great Learning, TalentSprint, IIT certificates and Google AI Essentials",
     description: "Length, format, certificate, eligibility and fees, checked on each programme's own page.",
     url: "https://tensorpath.in/compare",
   },
@@ -69,48 +91,29 @@ export default function ComparePage() {
     <main className="mx-auto max-w-5xl px-6 py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(faqLd) }} />
       <Link href="/" className="text-sm text-slate-500 hover:text-slate-900">← Back to Tensorpath</Link>
-      <h1 className="mt-4 text-3xl font-extrabold text-slate-900">Tensorpath compared with Great Learning, TalentSprint and IIT certificates</h1>
+      <h1 className="mt-4 text-3xl font-extrabold text-slate-900">Tensorpath compared with Great Learning, TalentSprint, IIT certificates and short online courses</h1>
       <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
         These are different kinds of programme. The IIT Bombay, CCE-IISc and IIT Delhi certificates are 5 to 6 month programmes
         taught by institute faculty, with an institute certificate, selection and a fee in lakhs. Tensorpath is a {TOTAL_DAYS}-day live
         course from the Transformer paper to AI agents, taught by a Tensorpath trainer, with Tensorpath&rsquo;s own verifiable
         certificate. Pick an institute programme if the institute&rsquo;s name on the certificate matters to you; pick Tensorpath if
-        you want a short, live start on modern AI without a degree requirement.
+        you want a short, live start on modern AI without a degree requirement. Further down, we also compare Tensorpath with two short,
+        self-paced courses: Google AI Essentials and IndiaAI&rsquo;s free YUVA AI for ALL.
       </p>
       <p className="mt-2 text-sm text-slate-500">
-        Information on the other programmes checked on {CHECKED} on each programme&rsquo;s own page (sources below). Fees and
-        batches change; check their pages before you apply. We are not affiliated with Great Learning, TalentSprint, IIT Bombay, IISc or IIT Delhi.
+        Information on the other programmes checked on {CHECKED} on each programme&rsquo;s own page (sources below); the IIT Bombay
+        and IIT Delhi details were last checked on {IIT_CHECKED}. Fees and batches change; check their pages before you apply. We are
+        not affiliated with Great Learning, TalentSprint, IIT Bombay, IISc, IIT Delhi, Google, Coursera, IndiaAI or GUVI.
       </p>
 
-      <div className="mt-8 overflow-x-auto rounded-xl border border-slate-200">
-        <table className="w-full min-w-[820px] text-left text-sm">
-          <thead className="bg-slate-50 text-slate-900">
-            <tr>
-              <th className="px-4 py-3"></th>
-              {COLS.map((c) => <th key={c} scope="col" className="px-4 py-3 font-semibold">{c}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {ROWS.map((r) => (
-              <tr key={r[0]} className="border-t border-slate-200 align-top">
-                <th scope="row" className="px-4 py-3 font-semibold text-slate-900">{r[0]}</th>
-                {r.slice(1).map((c, i) => (
-                  <td key={i} className={`px-4 py-3 ${i === 0 ? "text-slate-900" : "text-slate-600"}`}>
-                    {c === "See the FAQ" ? <Link href="/faq" className="text-brand-600 hover:underline">See the FAQ</Link> : c}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <CompareTable cols={COLS} rows={ROWS} minWidth="min-w-[820px]" />
 
       <div className="mt-10 grid gap-6 md:grid-cols-2">
         <section className="rounded-xl border border-slate-200 p-5">
           <h2 className="text-lg font-bold text-slate-900">Where the institute programmes are better</h2>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-700">
             <li>The certificate carries the name of IIT Bombay, IISc or IIT Delhi.</li>
-            <li>University faculty teach the classes, and each includes time on campus.</li>
+            <li>University faculty teach the classes, and each offers time on campus (optional for IIT Bombay).</li>
             <li>They run longer: 5 to 6 months (the IISc programme lists 105 hours of learning).</li>
           </ul>
         </section>
@@ -120,6 +123,32 @@ export default function ComparePage() {
             <li>{TOTAL_DAYS} days instead of months, one live topic a day, every session recorded.</li>
             <li>No degree or coding requirement; open to anyone 16 or older.</li>
             <li>An AI learning companion between classes, a capstone project, a certificate anyone can verify, and placement support in Bengaluru.</li>
+          </ul>
+        </section>
+      </div>
+
+      <h2 className="mt-12 text-2xl font-bold text-slate-900">Short, self-paced courses</h2>
+      <p className="mt-2 max-w-3xl leading-relaxed text-slate-700">
+        If you mainly want to learn to use AI tools at work, short online courses are another option. They are self-paced, take hours
+        rather than days, and you can start any day. Tensorpath is live, runs for {TOTAL_DAYS} days and goes further into how modern AI works.
+      </p>
+      <CompareTable cols={SHORT_COLS} rows={SHORT_ROWS} minWidth="min-w-[640px]" />
+
+      <div className="mt-10 grid gap-6 md:grid-cols-2">
+        <section className="rounded-xl border border-slate-200 p-5">
+          <h2 className="text-lg font-bold text-slate-900">Where the short courses are better</h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-700">
+            <li>You can start any day and go at your own pace; there is no batch or approval step.</li>
+            <li>They are shorter: under 10 hours for Google AI Essentials, about 5 hours for YUVA AI for ALL.</li>
+            <li>Google AI Essentials gives a certificate from Google; YUVA AI for ALL is free and offered in regional languages.</li>
+          </ul>
+        </section>
+        <section className="rounded-xl border border-slate-200 p-5">
+          <h2 className="text-lg font-bold text-slate-900">Where Tensorpath fits</h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-700">
+            <li>Live classes with a trainer who answers your questions, not videos alone.</li>
+            <li>{TOTAL_DAYS} topics from the Transformer paper to AI agents, with a capstone project.</li>
+            <li>An AI learning companion between classes, and placement support in Bengaluru after certification.</li>
           </ul>
         </section>
       </div>
@@ -145,5 +174,32 @@ export default function ComparePage() {
         <Link href="/enquiry" className="px-1 py-2.5 font-semibold text-brand-600 hover:underline">Talk to us</Link>
       </div>
     </main>
+  );
+}
+
+function CompareTable({ cols, rows, minWidth }: { cols: string[]; rows: string[][]; minWidth: string }) {
+  return (
+    <div className="mt-8 overflow-x-auto rounded-xl border border-slate-200">
+      <table className={`w-full ${minWidth} text-left text-sm`}>
+        <thead className="bg-slate-50 text-slate-900">
+          <tr>
+            <th className="px-4 py-3"></th>
+            {cols.map((c) => <th key={c} scope="col" className="px-4 py-3 font-semibold">{c}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r[0]} className="border-t border-slate-200 align-top">
+              <th scope="row" className="px-4 py-3 font-semibold text-slate-900">{r[0]}</th>
+              {r.slice(1).map((c, i) => (
+                <td key={i} className={`px-4 py-3 ${i === 0 ? "text-slate-900" : "text-slate-600"}`}>
+                  {c === "See the FAQ" ? <Link href="/faq" className="text-brand-600 hover:underline">See the FAQ</Link> : c}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
